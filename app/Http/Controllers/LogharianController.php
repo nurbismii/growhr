@@ -31,7 +31,9 @@ class LogharianController extends Controller
         $user_modal = User::where('nik', '!=', null)->get();
 
         $pekerjaan = Pekerjaan::with(['getUser', 'getKategoriPekerjaan', 'getSifatPekerjaan', 'getPrioritas', 'getStatusPekerjaan', 'getPjPekerjaan', 'getSubPekerjaan'])
-            ->where('user_id', Auth::user()->id);
+            ->where('user_id', Auth::user()->id)
+            ->orderBy('status_pekerjaan_id', 'ASC')
+            ->orderBy('tanggal_mulai', 'ASC');
 
         if ($request->ajax()) {
             if ($request->has('pekerjaan')) {
