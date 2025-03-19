@@ -388,11 +388,16 @@
 
 @push('script')
 <script>
+    $(document).ready(function() {
+        updateStatusColor();
+    });
+
     document.addEventListener("DOMContentLoaded", function() {
+        // Fungsi untuk memperbarui warna select berdasarkan nilai yang dipilih
         window.updateSelectColor = function(select) {
             let selectedValue = select.value;
 
-            // Reset kelas warna
+            // Reset semua class warna
             select.classList.remove(
                 "text-danger", "text-primary", "text-success",
                 "text-secondary", "text-warning",
@@ -400,7 +405,7 @@
                 "bg-label-success", "bg-label-secondary", "bg-label-warning"
             );
 
-            // Tambahkan kelas warna sesuai status
+            // Tambahkan class warna sesuai status
             switch (selectedValue) {
                 case "1":
                     select.classList.add("text-danger", "bg-label-danger");
@@ -420,24 +425,22 @@
             }
         };
 
-        // Inisialisasi warna untuk elemen yang sudah ada
-        document.querySelectorAll(".main-status").forEach(updateSelectColor);
+        // Inisialisasi warna untuk semua elemen yang sudah ada di halaman
+        document.querySelectorAll(".main-status, .sub-status").forEach(updateSelectColor);
 
-        document.querySelectorAll(".sub-status").forEach(updateSelectColor);
-
-        // Delegasi event agar berlaku pada elemen yang dimuat ulang via AJAX
+        // Event listener untuk perubahan status (gunakan event delegation)
         document.addEventListener("change", function(event) {
-            if (event.target.classList.contains("main-status")) {
+            if (event.target.matches(".main-status, .sub-status")) {
                 updateSelectColor(event.target);
             }
         });
 
-        document.addEventListener("change", function(event) {
-            if (event.target.classList.contains("sub-status")) {
-                updateSelectColor(event.target);
-            }
+        // Pastikan warna diperbarui setelah DataTables reload
+        $('#log-harian').on('draw.dt', function() {
+            document.querySelectorAll(".main-status, .sub-status").forEach(updateSelectColor);
         });
     });
+
 
     document.addEventListener("DOMContentLoaded", function() {
         let today = new Date().toISOString().split('T')[0];
