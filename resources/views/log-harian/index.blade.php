@@ -173,7 +173,7 @@
 
     <div class="card">
         <div class="table-responsive text-nowrap">
-            <table class="table table-hover" id="log-harian">
+            <table class="table table-border" id="log-harian">
                 <thead class="table-primary">
                     <tr>
                         <th>No</th>
@@ -221,7 +221,7 @@
                         </td>
                         <td>{{ $kerjaan->getKategoriPekerjaan->kategori_pekerjaan }}</td>
                         <td>{{ $kerjaan->tanggal_mulai }}</td>
-                        <td>{{ $kerjaan->tanggal_selesai }}</td>
+                        <td class="tanggal-selesai">{{ $kerjaan->tanggal_selesai }}</td>
                         <td>{{ $kerjaan->durasi }}</td>
                         <td>{{ $kerjaan->deadline }}</td>
                         <td>{{ $kerjaan->getPjPekerjaan->name }}</td>
@@ -441,6 +441,37 @@
         });
     });
 
+    function updateRowColors() {
+        let today = new Date(); // Ambil tanggal hari ini
+
+        document.querySelectorAll("tr").forEach(row => {
+            let cell = row.querySelector(".tanggal-selesai"); // Ambil elemen tanggal selesai
+            if (!cell) return; // Jika tidak ada, lewati
+
+            let tanggalSelesai = new Date(cell.innerText.trim());
+            let selisihHari = Math.ceil((tanggalSelesai - today) / (1000 * 60 * 60 * 24));
+
+            // Reset semua warna
+            row.classList.remove("table-danger", "table-warning", "table-success");
+
+            if (selisihHari <= 0) {
+                row.classList.add("table-danger"); // Lewat deadline
+            } else if (selisihHari <= 1) {
+                row.classList.add("table-warning"); // 1 hari sebelum deadline
+            } else if (selisihHari <= 3) {
+                row.classList.add("table-success"); // 3 hari sebelum deadline
+            }
+        });
+    }
+
+    // Jalankan fungsi saat halaman dimuat
+    document.addEventListener("DOMContentLoaded", updateRowColors);
+
+    // Jalankan lagi jika data diperbarui via AJAX
+    $(document).on('xhr.dt', function() {
+        setTimeout(updateRowColors, 500); // Tunggu data baru di-load
+    });
+
 
     document.addEventListener("DOMContentLoaded", function() {
         let today = new Date().toISOString().split('T')[0];
@@ -588,8 +619,16 @@
                             kerjaan.get_pj_pekerjaan.name,
                             kerjaan.tingkat_kesulitan + "/10",
                             kerjaan.alasan,
-                            kerjaan.lampiran ?? '-',
-                            kerjaan.feedback_atasan ?? '-',
+                            kerjaan.lampiran ?
+                            `<a class="nav-link" target="_blank" href="/lampiran/pekerjaan/${kerjaan.lampiran}">
+                                <i class="bx bx-link-alt me-1"></i> ${kerjaan.lampiran}
+                            </a>` :
+                            `<a class="nav-link" target="_blank" href="#">
+                                <i class="bx bx-link-alt me-1"></i> ---
+                            </a>`,
+                            kerjaan.feedback_atasan ?
+                            `<small class="text-light fw-semibold"> ${kerjaan.feedback_atasan} </small>` :
+                            `<small class="text-light fw-semibold"> Belum ada feedbback </small>`,
                             '<div class="dropdown">' +
                             '<button type="button" class="btn text-primary p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">' +
                             '<i class="bx bx-edit"></i>' +
@@ -802,7 +841,7 @@
                                 updateSelectColor(select);
                             });
                         }, 100);
-                    }
+                    },
                 });
             }
         });

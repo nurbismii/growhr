@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\File;
+use Carbon\Carbon;
 
 class LogharianController extends Controller
 {
@@ -52,7 +53,7 @@ class LogharianController extends Controller
                     $pekerjaan->whereBetween('tanggal_mulai', array($startDate, $endDate));
                 }
             }
-            
+
             return response()->json([
                 'pekerjaan' => $pekerjaan->get(),
                 'status_pekerjaan' => $status_pekerjaan
