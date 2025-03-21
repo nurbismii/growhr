@@ -210,7 +210,7 @@
                         <td>{{ $kerjaan->deskripsi_pekerjaan }}</td>
                         <td>{{ $kerjaan->getPrioritas->prioritas }}</td>
                         <td>
-                            <select class="form-select form-select-sm main-status">
+                            <select class="form-select form-select-sm main-status status-pekerjaan">
                                 <option value="{{ $kerjaan->getStatusPekerjaan->id }}">{{ $kerjaan->getStatusPekerjaan->status_pekerjaan }}</option>
                                 @foreach($status_pekerjaan as $sp)
                                 @if($kerjaan->getStatusPekerjaan->id != $sp->id)
@@ -388,10 +388,6 @@
 
 @push('script')
 <script>
-    $(document).ready(function() {
-        updateStatusColor();
-    });
-
     document.addEventListener("DOMContentLoaded", function() {
         // Fungsi untuk memperbarui warna select berdasarkan nilai yang dipilih
         window.updateSelectColor = function(select) {
@@ -445,10 +441,18 @@
         let today = new Date(); // Ambil tanggal hari ini
 
         document.querySelectorAll("tr").forEach(row => {
-            let cell = row.querySelector(".tanggal-selesai"); // Ambil elemen tanggal selesai
-            if (!cell) return; // Jika tidak ada, lewati
+            let cellTanggal = row.querySelector(".tanggal-selesai"); // Ambil elemen tanggal selesai
+            let selectStatus = row.querySelector(".status-pekerjaan"); // Ambil elemen select status pekerjaan
 
-            let tanggalSelesai = new Date(cell.innerText.trim());
+            if (!cellTanggal || !selectStatus) return; // Jika tidak ada, lewati
+
+            let statusPekerjaan = selectStatus.options[selectStatus.selectedIndex].text.trim().toLowerCase();
+            if (statusPekerjaan === "selesai") {
+                row.classList.remove("table-danger", "table-warning", "table-success"); // Hapus semua warna jika selesai
+                return; // Tidak lanjutkan pengecekan warna
+            }
+
+            let tanggalSelesai = new Date(cellTanggal.innerText.trim());
             let selisihHari = Math.ceil((tanggalSelesai - today) / (1000 * 60 * 60 * 24));
 
             // Reset semua warna
@@ -470,6 +474,11 @@
     // Jalankan lagi jika data diperbarui via AJAX
     $(document).on('xhr.dt', function() {
         setTimeout(updateRowColors, 500); // Tunggu data baru di-load
+    });
+
+    // Jalankan update warna saat status pekerjaan berubah
+    $(document).on("change", ".status-pekerjaan", function() {
+        updateRowColors();
     });
 
 
@@ -608,12 +617,12 @@
                             kerjaan.get_sifat_pekerjaan.pekerjaan,
                             kerjaan.deskripsi_pekerjaan,
                             kerjaan.get_prioritas.prioritas,
-                            `<select class="form-select form-select-sm main-status">
+                            `<select class="form-select form-select-sm main-status status-pekerjaan">
                                 ${statusOptions}
                             </select>`,
                             kerjaan.get_kategori_pekerjaan.kategori_pekerjaan,
                             kerjaan.tanggal_mulai,
-                            kerjaan.tanggal_selesai,
+                            `<span class="tanggal-selesai">${kerjaan.tanggal_selesai}</span>`,
                             kerjaan.durasi,
                             kerjaan.deadline,
                             kerjaan.get_pj_pekerjaan.name,
@@ -647,6 +656,7 @@
                             '</div>'
                         ]).draw();
                     });
+                    setTimeout(updateRowColors, 500);
                 },
                 error: function(xhr) {
                     console.log(xhr.responseText);
