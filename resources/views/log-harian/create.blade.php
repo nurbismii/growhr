@@ -77,10 +77,19 @@
             <div class="card-body">
                 <form action="{{ route('log-harian.store') }}" method="post">
                     @csrf
-                    <button disabled class="btn btn-primary btn-lg mb-4">Form Kegiatan</button>
-                    <a href="{{ route('log-harian.index') }}" class="btn btn-primary text-white float-end">
-                        <span class="tf-icons bx bx-arrow-back"></span>&nbsp; Kembali
-                    </a>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <!-- Card Form Kegiatan (Lebih Besar) -->
+                        <div class="card text-white bg-primary shadow-lg px-4 py-2" style="max-width: 22rem; height: 3.5rem;">
+                            <div class="card-body p-0">
+                                <h6 class="card-title text-white fw-bold m-2 text-center">Form Kegiatan</h6>
+                            </div>
+                        </div>
+
+                        <!-- Tombol Kembali (Lebih Kecil) -->
+                        <a href="{{ route('log-harian.index') }}" class="btn btn-primary">
+                            <span class="tf-icons bx bx-arrow-back"></span>&nbsp; Kembali
+                        </a>
+                    </div>
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label for="tanggalPelaporan" class="form-label">Tanggal</label>
@@ -150,7 +159,7 @@
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="deadline" class="form-label">Deadline</label>
-                            <input type="date" class="form-control" name="deadline" id="deadline" required>
+                            <input type="text" class="form-control" name="deadline" id="deadline" required>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label fw-bold text-secondary">
@@ -197,6 +206,8 @@
     function calculateDays() {
         const startDate = new Date(document.getElementById("tanggalMulai").value);
         const endDate = new Date(document.getElementById("tanggalSelesai").value);
+        const duration = document.getElementById("duration");
+        const deadline = document.getElementById("deadline");
 
         if (!isNaN(startDate) && !isNaN(endDate)) {
             if (endDate < startDate) {
@@ -209,12 +220,14 @@
                 });
                 document.getElementById("tanggalSelesai").value = ""; // Reset input
                 document.getElementById("duration").value = "";
+                document.getElementById("deadline").value = "";
                 return;
             }
 
             const timeDiff = endDate - startDate;
             const daysDiff = timeDiff / (1000 * 60 * 60 * 24);
             document.getElementById("duration").value = daysDiff + " Hari";
+            document.getElementById("deadline").value = " H-" + (daysDiff - 1);
         } else {
             document.getElementById("duration").value = "";
         }

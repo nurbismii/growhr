@@ -129,41 +129,50 @@
 @endpush
 
 <div class="container-xxl flex-grow-1 container-p-y">
-    <button class="btn btn-primary btn-lg mb-3">Log Harian</button>
-    <a href="{{ route('log-harian.create') }}" class="btn btn-primary text-white float-end">
-        <span class="tf-icons bx bx-plus-circle"></span>&nbsp; Kegiatan
-    </a>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <!-- Card Form Kegiatan (Lebih Besar) -->
+        <div class="card text-white bg-primary shadow-lg px-4 py-2" style="max-width: 22rem; height: 3.5rem;">
+            <div class="card-body p-0">
+                <h6 class="card-title text-white fw-bold m-2 text-center">Log Harian</h6>
+            </div>
+        </div>
+
+        <!-- Tombol Kembali (Lebih Kecil) -->
+        <a href="{{ route('log-harian.create') }}" class="btn btn-primary">
+            <span class="tf-icons bx bx-plus-circle"></span>&nbsp; Kegiatan
+        </a>
+    </div>
 
     <!-- Basic Bootstrap Table -->
     <form id="search-form">
-        <div class="row mb-1">
+        <div class="row g-2 d-flex flex-wrap mb-3">
             @csrf
-            <div class="col-md-2 mb-2">
-                <select name="pekerjaan[]" class="form-control select-pekerjaan">
+            <div class="col-12 col-sm-6 col-md-2">
+                <select name="pekerjaan[]" class="form-control form-select w-100">
                     <option value="" disabled selected>Pekerjaan</option>
                     @foreach($kategori_pekerjaan as $kp)
                     <option value="{{ $kp->id }}">{{ $kp->kategori_pekerjaan }}</option>
                     @endforeach
                 </select>
             </div>
-            <div class="col-md-2 mb-2">
-                <select name="prioritas[]" class="form-control select-prioritas">
+            <div class="col-12 col-sm-6 col-md-2">
+                <select name="prioritas[]" class="form-control form-select w-100">
                     <option value="" disabled selected>Prioritas</option>
                     @foreach($prioritas as $priorit)
                     <option value="{{ $priorit->id }}">{{ $priorit->prioritas }}</option>
                     @endforeach
                 </select>
             </div>
-            <div class="col-md-2 mb-2">
-                <select name="pic[]" class="form-control select-pic">
+            <div class="col-12 col-sm-6 col-md-2">
+                <select name="pic[]" class="form-control form-select w-100">
                     <option value="" disabled selected>Person in Charge</option>
                     @foreach($user as $user)
                     <option value="{{ $user->id }}">{{ $user->name }}</option>
                     @endforeach
                 </select>
             </div>
-            <div class="col-md-3 mb-2">
-                <div class="input-group">
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="input-group w-100">
                     <span class="input-group-text"><i class="bx bx-calendar"></i></span>
                     <input type="text" name="tanggal" class="form-control daterange" />
                 </div>
@@ -220,10 +229,10 @@
                             </select>
                         </td>
                         <td>{{ $kerjaan->getKategoriPekerjaan->kategori_pekerjaan }}</td>
-                        <td>{{ $kerjaan->tanggal_mulai }}</td>
-                        <td class="tanggal-selesai">{{ $kerjaan->tanggal_selesai }}</td>
+                        <td>{{ date('d-m-Y', strtotime($kerjaan->tanggal_mulai)) }}</td>
+                        <td class="tanggal-selesai">{{ date('d-m-Y', strtotime($kerjaan->tanggal_selesai)) }}</td>
                         <td>{{ $kerjaan->durasi }}</td>
-                        <td>{{ $kerjaan->deadline }}</td>
+                        <td>{{ date('d-m-Y', strtotime($kerjaan->deadline)) }}</td>
                         <td>{{ $kerjaan->getPjPekerjaan->name }}</td>
                         <td>{{ $kerjaan->tingkat_kesulitan }}/10</td>
                         <td>{{ $kerjaan->alasan }}</td>
@@ -621,10 +630,10 @@
                                 ${statusOptions}
                             </select>`,
                             kerjaan.get_kategori_pekerjaan.kategori_pekerjaan,
-                            kerjaan.tanggal_mulai,
-                            `<span class="tanggal-selesai">${kerjaan.tanggal_selesai}</span>`,
+                            formatTimestamp(kerjaan.tanggal_mulai),
+                            `<span class="tanggal-selesai">${formatTimestamp(kerjaan.tanggal_selesai)}</span>`,
                             kerjaan.durasi,
-                            kerjaan.deadline,
+                            formatTimestamp(kerjaan.deadline),
                             kerjaan.get_pj_pekerjaan.name,
                             kerjaan.tingkat_kesulitan + "/10",
                             kerjaan.alasan,
@@ -791,7 +800,7 @@
                     type: "GET",
                     success: function(subPekerjaan) {
                         let subRows = subPekerjaan.map((sub, index) => `
-                    <tr class="sub-row table-secondary">
+                    <tr class="sub-row table-hover">
                         <td></td>
                         <td>${index + 1}</td>
                         <td>${escapeHtml(sub.get_user.name)}</td>
@@ -806,10 +815,10 @@
                             </select>
                         </td>
                         <td>${escapeHtml(sub.get_kategori_pekerjaan.kategori_pekerjaan)}</td>
-                        <td>${escapeHtml(sub.tanggal_mulai)}</td>
-                        <td>${escapeHtml(sub.tanggal_selesai)}</td>
+                        <td>${escapeHtml(formatTimestamp(sub.tanggal_mulai))}</td>
+                        <td>${escapeHtml(formatTimestamp(sub.tanggal_selesai))}</td>
                         <td>${escapeHtml(sub.durasi)}</td>
-                        <td>${escapeHtml(sub.deadline)}</td>
+                        <td>${escapeHtml(formatTimestamp(sub.deadline))}</td>
                         <td>${escapeHtml(sub.get_pj_pekerjaan.name)}</td>
                         <td>${escapeHtml(sub.tingkat_kesulitan)}/10</td>
                         <td>${escapeHtml(sub.alasan)}</td>
