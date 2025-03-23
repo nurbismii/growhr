@@ -311,10 +311,34 @@ class LogharianController extends Controller
     {
         $kerjaan = Pekerjaan::where('id', $id)->first();
 
+        if (!$kerjaan) {
+            return response()->json(['message' => 'Pekerjaan tidak ditemukan'], 404);
+        }
+
+        // Ambil semua SubPekerjaan terkait
+        $subPekerjaan = SubPekerjaan::where('pekerjaan_id', $kerjaan->id)->get();
+
+        // Cek apakah masih ada SubPekerjaan yang belum selesai (status_pekerjaan_id != 3)
+        $adaBelumSelesai = $subPekerjaan->contains(function ($sub) {
+            return $sub->status_pekerjaan_id != 3;
+        });
+
+        // Jika masih ada SubPekerjaan yang belum selesai dan ingin mengubah status ke 3, tolak update
+        if ($adaBelumSelesai && $request->status_pekerjaan_id == 3) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Update ditolak! Masih ada Sub Pekerjaan yang belum selesai.'
+            ], 400);
+        }
+
+        // Jika tidak ada sub pekerjaan atau update bukan ke status 3, izinkan update
         $kerjaan->status_pekerjaan_id = $request->status_pekerjaan_id;
         $kerjaan->save();
 
-        return response()->json(['message' => 'Status pekerjaan berhasil diperbarui']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Status pekerjaan berhasil diperbarui'
+        ]);
     }
 
     public function updateSubStatusPekerjaan(Request $request, $id)

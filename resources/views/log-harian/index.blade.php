@@ -4,6 +4,28 @@
 
 @push('styles')
 <style>
+    .tooltip-inner {
+        background-color: var(--bs-primary) !important;
+        color: white !important;
+        font-weight: bold;
+    }
+
+    .tooltip.bs-tooltip-top .tooltip-arrow::before {
+        border-top-color: var(--bs-primary) !important;
+    }
+
+    .tooltip.bs-tooltip-bottom .tooltip-arrow::before {
+        border-bottom-color: var(--bs-primary) !important;
+    }
+
+    .tooltip.bs-tooltip-start .tooltip-arrow::before {
+        border-left-color: var(--bs-primary) !important;
+    }
+
+    .tooltip.bs-tooltip-end .tooltip-arrow::before {
+        border-right-color: var(--bs-primary) !important;
+    }
+
     .custom-file-upload {
         display: flex;
         align-items: center;
@@ -130,25 +152,22 @@
 
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <!-- Card Form Kegiatan (Lebih Besar) -->
         <div class="card text-white bg-primary shadow-lg px-4 py-2" style="max-width: 22rem; height: 3.5rem;">
             <div class="card-body p-0">
                 <h6 class="card-title text-white fw-bold m-2 text-center">Log Harian</h6>
             </div>
         </div>
 
-        <!-- Tombol Kembali (Lebih Kecil) -->
         <a href="{{ route('log-harian.create') }}" class="btn btn-primary">
             <span class="tf-icons bx bx-plus-circle"></span>&nbsp; Kegiatan
         </a>
     </div>
 
-    <!-- Basic Bootstrap Table -->
     <form id="search-form">
         <div class="row g-2 d-flex flex-wrap mb-3">
             @csrf
             <div class="col-12 col-sm-6 col-md-2">
-                <select name="pekerjaan[]" class="form-control form-select w-100">
+                <select name="pekerjaan[]" class="form-control select-pekerjaan w-100">
                     <option value="" disabled selected>Pekerjaan</option>
                     @foreach($kategori_pekerjaan as $kp)
                     <option value="{{ $kp->id }}">{{ $kp->kategori_pekerjaan }}</option>
@@ -156,7 +175,7 @@
                 </select>
             </div>
             <div class="col-12 col-sm-6 col-md-2">
-                <select name="prioritas[]" class="form-control form-select w-100">
+                <select name="prioritas[]" class="form-control select-prioritas w-100">
                     <option value="" disabled selected>Prioritas</option>
                     @foreach($prioritas as $priorit)
                     <option value="{{ $priorit->id }}">{{ $priorit->prioritas }}</option>
@@ -164,7 +183,7 @@
                 </select>
             </div>
             <div class="col-12 col-sm-6 col-md-2">
-                <select name="pic[]" class="form-control form-select w-100">
+                <select name="pic[]" class="form-control select-pic w-100">
                     <option value="" disabled selected>Person in Charge</option>
                     @foreach($user as $user)
                     <option value="{{ $user->id }}">{{ $user->name }}</option>
@@ -185,25 +204,25 @@
             <table class="table table-border" id="log-harian">
                 <thead class="table-primary">
                     <tr>
-                        <th>No</th>
-                        <td></td>
-                        <th>PIC</th>
-                        <th>Tanggal Pencatatan</th>
-                        <th>Sifat Pekerjaan</th>
-                        <th>Deskripsi Pekerjaan</th>
-                        <th>Prioritas</th>
-                        <th>Status Pekerjaan</th>
-                        <th>Kategori Pekerjaan</th>
-                        <th>Tanggal Mulai</th>
-                        <th>Tanggal Selesai</th>
-                        <th>Durasi Pekerjaan</th>
-                        <th>Deadline</th>
-                        <th>Penanggung Jawab</th>
-                        <th>Tingkat Kesulitan</th>
-                        <th>Alasan Kesulitan</th>
-                        <th>Lampiran</th>
-                        <th>Feedback Atasan</th>
-                        <th>Aksi</th>
+                        <th class="text-center">No</th>
+                        <td class="text-center"></td>
+                        <th class="text-center">PIC</th>
+                        <th class="text-center">Tanggal Pencatatan</th>
+                        <th class="text-center">Sifat Pekerjaan</th>
+                        <th class="text-center">Deskripsi Pekerjaan</th>
+                        <th class="text-center">Prioritas</th>
+                        <th class="text-center">Status Pekerjaan</th>
+                        <th class="text-center">Kategori Pekerjaan</th>
+                        <th class="text-center">Tanggal Mulai</th>
+                        <th class="text-center">Tanggal Selesai</th>
+                        <th class="text-center">Durasi Pekerjaan</th>
+                        <th class="text-center">Deadline</th>
+                        <th class="text-center">Penanggung Jawab</th>
+                        <th class="text-center">Tingkat Kesulitan</th>
+                        <th class="text-center">Alasan Kesulitan</th>
+                        <th class="text-center">Lampiran</th>
+                        <th class="text-center">Feedback Atasan</th>
+                        <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -214,9 +233,13 @@
                             <button class="btn btn-sm btn-primary toggle-btn" data-id="{{$kerjaan->id}}">+</button>
                         </td>
                         <td>{{ $kerjaan->getUser ->name }}</td>
-                        <td>{{ date_format($kerjaan->created_at, 'd-m-Y') }}</td>
+                        <td>{{ date_format($kerjaan->created_at, 'Y-m-d') }}</td>
                         <td>{{ $kerjaan->getSifatPekerjaan->pekerjaan }}</td>
-                        <td>{{ $kerjaan->deskripsi_pekerjaan }}</td>
+                        <td>
+                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $kerjaan->deskripsi_pekerjaan }}">
+                                {{ substr($kerjaan->deskripsi_pekerjaan, 0, 25) }}...
+                            </span>
+                        </td>
                         <td>{{ $kerjaan->getPrioritas->prioritas }}</td>
                         <td>
                             <select class="form-select form-select-sm main-status status-pekerjaan">
@@ -229,18 +252,22 @@
                             </select>
                         </td>
                         <td>{{ $kerjaan->getKategoriPekerjaan->kategori_pekerjaan }}</td>
-                        <td>{{ date('d-m-Y', strtotime($kerjaan->tanggal_mulai)) }}</td>
-                        <td class="tanggal-selesai">{{ date('d-m-Y', strtotime($kerjaan->tanggal_selesai)) }}</td>
+                        <td>{{ $kerjaan->tanggal_mulai }}</td>
+                        <td class="tanggal-selesai">{{ $kerjaan->tanggal_selesai }}</td>
                         <td>{{ $kerjaan->durasi }}</td>
-                        <td>{{ date('d-m-Y', strtotime($kerjaan->deadline)) }}</td>
+                        <td class="deadline"></td>
                         <td>{{ $kerjaan->getPjPekerjaan->name }}</td>
                         <td>{{ $kerjaan->tingkat_kesulitan }}/10</td>
-                        <td>{{ $kerjaan->alasan }}</td>
+                        <td>
+                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $kerjaan->deskripsi_pekerjaan }}">
+                                {{ substr($kerjaan->alasan, 0, 25) }}...
+                            </span>
                         <td>
                             <a class="nav-link" target="_blank" href="{{ asset('lampiran/pekerjaan/' . $kerjaan->lampiran) }}"><i class="bx bx-link-alt me-1"></i>{{ $kerjaan->lampiran ?? '---' }}</a>
                         </td>
                         <td>
-                            <small class="text-light fw-semibold">{{ $kerjaan->feedback_atasan ?? 'Belum ada feedback' }}</small>
+                            
+                        <small class="text-light fst-italic fw-semibold">{{ $kerjaan->feedback_atasan ?? 'Belum ada feedback' }}</small>
                         </td>
                         <td>
                             <div class="dropdown">
@@ -350,7 +377,7 @@
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="deadline" class="form-label">Deadline</label>
-                            <input type="date" class="form-control" name="deadline" id="deadline" value="{{ $subpk->deadline }}" required>
+                            <input type="text" class="form-control deadline" name="deadline" id="deadline" value="{{ $subpk->deadline }}" required>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label fw-bold text-secondary">
@@ -559,7 +586,7 @@
         const mi = String(date.getMinutes()).padStart(2, '0');
         const ss = String(date.getSeconds()).padStart(2, '0');
 
-        return `${dd}-${mm}-${yyyy}`;
+        return `${yyyy}-${mm}-${dd}`;
     }
 
     function escapeHtml(text) {
@@ -624,7 +651,9 @@
                             kerjaan.get_user.name,
                             formatTimestamp(kerjaan.created_at),
                             kerjaan.get_sifat_pekerjaan.pekerjaan,
-                            kerjaan.deskripsi_pekerjaan,
+                            `<span data-bs-toggle="tooltip" data-bs-placement="top" title="${escapeHtml(kerjaan.deskripsi_pekerjaan)}">
+                                ${escapeHtml(kerjaan.deskripsi_pekerjaan.substring(0, 25))}...
+                            </span>`,
                             kerjaan.get_prioritas.prioritas,
                             `<select class="form-select form-select-sm main-status status-pekerjaan">
                                 ${statusOptions}
@@ -633,10 +662,12 @@
                             formatTimestamp(kerjaan.tanggal_mulai),
                             `<span class="tanggal-selesai">${formatTimestamp(kerjaan.tanggal_selesai)}</span>`,
                             kerjaan.durasi,
-                            formatTimestamp(kerjaan.deadline),
+                            `<div class="deadline"></div>`,
                             kerjaan.get_pj_pekerjaan.name,
                             kerjaan.tingkat_kesulitan + "/10",
-                            kerjaan.alasan,
+                            `<span data-bs-toggle="tooltip" data-bs-placement="top" title="${escapeHtml(kerjaan.alasan)}">
+                                ${escapeHtml(kerjaan.alasan.substring(0, 25))}...
+                            </span>`,
                             kerjaan.lampiran ?
                             `<a class="nav-link" target="_blank" href="/lampiran/pekerjaan/${kerjaan.lampiran}">
                                 <i class="bx bx-link-alt me-1"></i> ${kerjaan.lampiran}
@@ -645,8 +676,8 @@
                                 <i class="bx bx-link-alt me-1"></i> ---
                             </a>`,
                             kerjaan.feedback_atasan ?
-                            `<small class="text-light fw-semibold"> ${kerjaan.feedback_atasan} </small>` :
-                            `<small class="text-light fw-semibold"> Belum ada feedbback </small>`,
+                            `<small class="text-light fst-italic fw-semibold"> ${kerjaan.feedback_atasan} </small>` :
+                            `<small class="text-light fst-italic fw-semibold"> Belum ada feedbback </small>`,
                             '<div class="dropdown">' +
                             '<button type="button" class="btn text-primary p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">' +
                             '<i class="bx bx-edit"></i>' +
@@ -666,6 +697,10 @@
                         ]).draw();
                     });
                     setTimeout(updateRowColors, 500);
+                    updateDeadline(); //
+                    setTimeout(() => {
+                        $('[data-bs-toggle="tooltip"]').tooltip();
+                    }, 100);
                 },
                 error: function(xhr) {
                     console.log(xhr.responseText);
@@ -704,20 +739,19 @@
                 success: function(response) {
                     Swal.fire({
                         title: "Berhasil!",
-                        text: "Status pekerjaan telah diperbarui.",
+                        text: response.message,
                         icon: "success",
                         timer: 1500,
                         showConfirmButton: false
                     });
                 },
                 error: function(xhr) {
+                    let response = xhr.responseJSON;
                     Swal.fire({
                         title: "Gagal!",
-                        text: "Terjadi kesalahan saat memperbarui status.",
-                        icon: "error",
-                        confirmButtonText: "Coba Lagi"
+                        text: response ? response.message : "Terjadi kesalahan.",
+                        icon: "error"
                     });
-                    console.error("Gagal memperbarui status pekerjaan:", xhr.responseText);
                 }
             });
         });
@@ -806,22 +840,30 @@
                         <td>${escapeHtml(sub.get_user.name)}</td>
                         <td>${formatTimestamp(sub.created_at)}</td>
                         <td>${escapeHtml(sub.get_sifat_pekerjaan.pekerjaan)}</td>
-                        <td>${escapeHtml(sub.deskripsi_pekerjaan)}</td>
+                        <td>
+                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="${escapeHtml(sub.deskripsi_pekerjaan)}">
+                                ${escapeHtml(sub.deskripsi_pekerjaan.substring(0, 25))}...
+                            </span>
+                        </td>
                         <td>${escapeHtml(sub.get_prioritas.prioritas)}</td>
                         <td>
-                            <select class="form-select form-select-sm sub-status" data-id="${sub.id}">
+                            <select class="form-select status-pekerjaan  form-select-sm sub-status" data-id="${sub.id}">
                                 <option value="${sub.get_status_pekerjaan.id}" selected>${escapeHtml(sub.get_status_pekerjaan.status_pekerjaan)}</option>
                                 ${statusOptions}
                             </select>
                         </td>
                         <td>${escapeHtml(sub.get_kategori_pekerjaan.kategori_pekerjaan)}</td>
-                        <td>${escapeHtml(formatTimestamp(sub.tanggal_mulai))}</td>
-                        <td>${escapeHtml(formatTimestamp(sub.tanggal_selesai))}</td>
+                        <td>${escapeHtml(sub.tanggal_mulai)}</td>
+                        <td class="tanggal-selesai">${escapeHtml(sub.tanggal_selesai)}</td>
                         <td>${escapeHtml(sub.durasi)}</td>
-                        <td>${escapeHtml(formatTimestamp(sub.deadline))}</td>
+                        <td class"deadline">${escapeHtml(sub.deadline)}</td>
                         <td>${escapeHtml(sub.get_pj_pekerjaan.name)}</td>
                         <td>${escapeHtml(sub.tingkat_kesulitan)}/10</td>
-                        <td>${escapeHtml(sub.alasan)}</td>
+                        <td>
+                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="${escapeHtml(sub.alasan)}">
+                                ${escapeHtml(sub.alasan.substring(0, 25))}...
+                            </span>
+                        </td>
                         <td>${sub.lampiran && sub.lampiran.trim() !== "" ? 
                                 `<a class="nav-link" target="_blank" href="/lampiran/pekerjaan/sub/${sub.lampiran}">
                                      <i class="bx bx-link-alt me-1"></i> ${sub.lampiran}
@@ -830,8 +872,8 @@
                                  </a>`}
                         </td>
                         <td>${sub.feedback_atasan ? 
-                            `<small class="text-light fw-semibold">${sub.feedback_atasan}</small>` : 
-                            `<small class="text-light fw-semibold">Belum ada feedback</small>`}
+                            `<small class="text-light fst-italic fw-semibold">${sub.feedback_atasan}</small>` : 
+                            `<small class="text-light fst-italic fw-semibold">Belum ada feedback</small>`}
                         </td>
                         <td>
                             <div class="dropdown">
@@ -854,6 +896,13 @@
                         // Tambahkan sub-row setelah baris utama
                         $(tr).after(subRows);
                         $(tr).find('.toggle-btn').html('-').removeClass('btn-primary').addClass('btn-primary');
+                        updateDeadline(); //
+
+                        setTimeout(updateRowColors, 100);
+
+                        setTimeout(() => {
+                            $('[data-bs-toggle="tooltip"]').tooltip();
+                        }, 100);
 
                         setTimeout(() => {
                             document.querySelectorAll(".sub-status").forEach(function(select) {
@@ -933,6 +982,102 @@
         $("#fileLabel" + fileId.replace("fileInput", "")).text(fileName);
         $("#fileName" + fileId.replace("fileInput", "")).text(fileName);
     });
+
+    document.addEventListener("DOMContentLoaded", function() {
+        function calculateDays(startInput, endInput, durationInput, deadlineInput) {
+            const startDate = new Date(startInput.value);
+            const endDate = new Date(endInput.value);
+
+            if (!isNaN(startDate) && !isNaN(endDate)) {
+                if (endDate < startDate) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Tanggal Tidak Valid!",
+                        text: "Tanggal Selesai tidak boleh lebih kecil dari Tanggal Mulai.",
+                        confirmButtonText: "OK",
+                        allowOutsideClick: false
+                    });
+                    endInput.value = "";
+                    durationInput.value = "";
+                    deadlineInput.value = "";
+                    return;
+                }
+
+                const timeDiff = endDate - startDate;
+                const daysDiff = timeDiff / (1000 * 60 * 60 * 24);
+                durationInput.value = daysDiff + " Hari";
+                deadlineInput.value = daysDiff > 0 ? "H-" + daysDiff : "H-0";
+            } else {
+                durationInput.value = "";
+                deadlineInput.value = "";
+            }
+        }
+
+        // Loop untuk setiap modal yang ada di halaman
+        document.querySelectorAll(".modal").forEach(modal => {
+            const startInput = modal.querySelector(".tanggalMulai");
+            const endInput = modal.querySelector(".tanggalSelesai");
+            const durationInput = modal.querySelector(".duration");
+            const deadlineInput = modal.querySelector(".deadline");
+
+            if (startInput && endInput && durationInput && deadlineInput) {
+                startInput.addEventListener("change", () => calculateDays(startInput, endInput, durationInput, deadlineInput));
+                endInput.addEventListener("change", () => calculateDays(startInput, endInput, durationInput, deadlineInput));
+            }
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+        updateDeadline();
+    });
+
+    // Fungsi untuk mengupdate deadline di tabel utama dan sub-tabel
+    function updateDeadline() {
+        let today = new Date();
+        today.setHours(0, 0, 0, 0); // Reset waktu agar lebih akurat
+
+        // Update deadline di tabel utama
+        document.querySelectorAll("#log-harian tbody tr").forEach(row => {
+            let cellTanggalSelesai = row.querySelector("td:nth-child(11)"); // Tanggal Selesai
+            let cellDeadline = row.querySelector("td:nth-child(13)"); // Deadline
+
+            if (!cellTanggalSelesai || !cellDeadline) return;
+
+            let tanggalSelesai = new Date(cellTanggalSelesai.innerText.trim());
+            tanggalSelesai.setHours(0, 0, 0, 0);
+
+            let selisihHari = Math.ceil((tanggalSelesai - today) / (1000 * 60 * 60 * 24));
+
+            // Jika selisih -1 atau lebih kecil, ubah menjadi 0 (H-0)
+            if (selisihHari <= -1) {
+                selisihHari = 0;
+            }
+
+            // Update nilai deadline
+            cellDeadline.innerText = `H-${selisihHari}`;
+        });
+
+        // Update deadline di sub-tabel
+        document.querySelectorAll("#log-harian tbody tr.sub-row").forEach(row => {
+            let cellTanggalSelesai = row.querySelector("td:nth-child(11)"); // Tanggal Selesai sub
+            let cellDeadline = row.querySelector("td:nth-child(13)"); // Deadline sub
+
+            if (!cellTanggalSelesai || !cellDeadline) return;
+
+            let tanggalSelesai = new Date(cellTanggalSelesai.innerText.trim());
+            tanggalSelesai.setHours(0, 0, 0, 0);
+
+            let selisihHari = Math.ceil((tanggalSelesai - today) / (1000 * 60 * 60 * 24));
+
+            // Jika selisih -1 atau lebih kecil, ubah menjadi 0 (H-0)
+            if (selisihHari <= -1) {
+                selisihHari = 0;
+            }
+
+            // Update nilai deadline
+            cellDeadline.innerText = `H-${selisihHari}`;
+        });
+    }
 </script>
 @endpush
 

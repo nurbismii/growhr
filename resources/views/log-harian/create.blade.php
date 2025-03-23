@@ -159,7 +159,7 @@
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="deadline" class="form-label">Deadline</label>
-                            <input type="text" class="form-control" name="deadline" id="deadline" required>
+                            <input type="text" class="form-control" name="deadline" id="deadline" required readonly>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label fw-bold text-secondary">
@@ -227,7 +227,7 @@
             const timeDiff = endDate - startDate;
             const daysDiff = timeDiff / (1000 * 60 * 60 * 24);
             document.getElementById("duration").value = daysDiff + " Hari";
-            document.getElementById("deadline").value = " H-" + (daysDiff - 1);
+            document.getElementById("deadline").value = " H-" + 1;
         } else {
             document.getElementById("duration").value = "";
         }

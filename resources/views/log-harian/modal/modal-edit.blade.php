@@ -77,7 +77,7 @@
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="deadline" class="form-label">Deadline</label>
-                            <input type="date" class="form-control" name="deadline" id="deadline" value="{{ $pk->deadline }}" required>
+                            <input type="text" class="form-control deadline" name="deadline" id="deadline" required readonly>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label fw-bold text-secondary">
