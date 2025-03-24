@@ -44,10 +44,27 @@
         <div class="card mb-2">
             <div class="card-body">
                 <form action="" method="post">
-                    <button disabled class="btn btn-primary btn-lg mb-4">Form Hasil</button>
-                    <a href="{{ route('laporan-hasil.index') }}" class="btn btn-primary text-white float-end">
-                        <span class="tf-icons bx bx-arrow-back"></span>&nbsp; Kembali
-                    </a>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="card text-white bg-primary shadow-lg px-4 py-2" style="max-width: 22rem; height: 3.5rem;">
+                            <div class="card-body p-0">
+                                <h6 class="card-title text-white fw-bold m-2 text-center">Form Hasil</h6>
+                            </div>
+                        </div>
+                        <a href="" class="btn btn-primary">
+                            <span class="tf-icons bx bx-plus-circle"></span>&nbsp; Kembali
+                        </a>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="card text-white bg-primary shadow-lg px-4 py-2" style="max-width: 22rem; height: 3.5rem;">
+                            <div class="card-body p-0">
+                                <h6 class="card-title text-white fw-bold m-2 text-center">Laporan Hasil</h6>
+                            </div>
+                        </div>
+                        <a href="{{ route('laporan-hasil.index') }}" class="btn btn-primary">
+                            <span class="tf-icons bx bx-plus-circle"></span>&nbsp; Kegiatan
+                        </a>
+                    </div>
+
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label for="tanggalPelaporan" class="form-label">Tanggal</label>
@@ -59,7 +76,7 @@
                                 <option selected disabled>-- Pilih Kategori Pekerjaan --</option>
                             </select>
                         </div>
-                        
+
                         <div class="col-md-12 mb-3">
                             <label for="deskripsiTugas" class="form-label">Deskripsi Kendala</label>
                             <textarea class="form-control" name="deskripsi_tugas" id="deskripsiTugas" placeholder="Isi Tugas" rows="2" required></textarea>

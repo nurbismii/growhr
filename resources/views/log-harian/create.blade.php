@@ -79,7 +79,7 @@
                     @csrf
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <!-- Card Form Kegiatan (Lebih Besar) -->
-                        <div class="card text-white bg-primary shadow-lg px-4 py-2" style="max-width: 22rem; height: 3.5rem;">
+                        <div class="card text-white bg-primary shadow-lg px-3 py-2" style="max-width: 22rem; height: 3rem;">
                             <div class="card-body p-0">
                                 <h6 class="card-title text-white fw-bold m-2 text-center">Form Kegiatan</h6>
                             </div>
@@ -92,73 +92,95 @@
                     </div>
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="tanggalPelaporan" class="form-label">Tanggal</label>
+                            <label for="tanggalPelaporan" class="form-label">Tanggal
+                                <span class="text-danger">*</span>
+                            </label>
                             <input type="date" class="form-control" name="tanggal_pelaporan" id="tanggalPelaporan" readonly>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="sifatPekerjaan" class="form-label">Sifat Pekerjaan</label>
+                            <label for="sifatPekerjaan" class="form-label">Sifat Pekerjaan
+                                <span class="text-danger">*</span>
+                            </label>
                             <select id="sifatPekerjaan" name="sifat_pekerjaan" class="form-select" required>
-                                <option selected disabled>-- Pilih Kategori Pekerjaan --</option>
+                                <option value="">-- Pilih Kategori Pekerjaan --</option>
                                 @foreach($sifat_pekerjaan as $sp)
                                 <option value="{{ $sp->id }}">{{ $sp->pekerjaan }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="kategoriKegiatan" class="form-label">Kategori Pekerjaan</label>
+                            <label for="kategoriKegiatan" class="form-label">Kategori Pekerjaan
+                                <span class="text-danger">*</span>
+                            </label>
                             <select id="kategoriKegiatan" name="kategori_pekerjaan_id" class="form-select" required>
-                                <option selected disabled>-- Pilih Kategori Kegiatan --</option>
+                                <option value="">-- Pilih Kategori Kegiatan --</option>
                                 @foreach($kategori_pekerjaan as $kategori)
                                 <option value="{{ $kategori->id }}">{{ $kategori->kategori_pekerjaan }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="pj_pekerjaan" class="form-label">Penanggung Jawab</label>
+                            <label for="pj_pekerjaan" class="form-label">Penanggung Jawab
+                                <span class="text-danger">*</span>
+                            </label>
                             <select id="pj_pekerjaan" name="pj_pekerjaan_id" class="form-select" required>
-                                <option selected disabled>-- Pilih Penanggung Jawab --</option>
+                                <option value="">-- Pilih Penanggung Jawab --</option>
                                 @foreach($user as $user)
                                 <option value="{{ $user->id }}">{{ $user->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="prioritas" class="form-label">Prioritas</label>
+                            <label for="prioritas" class="form-label">Prioritas
+                                <span class="text-danger">*</span>
+                            </label>
                             <select id="prioritas" name="prioritas_id" class="form-select" required>
-                                <option selected disabled>-- Pilih Prioritas --</option>
+                                <option value="">-- Pilih Prioritas --</option>
                                 @foreach($prioritas as $priorit)
                                 <option value="{{ $priorit->id }}">{{ $priorit->prioritas }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="statusPekerjaan" class="form-label">Status Pekerjaan</label>
+                            <label for="statusPekerjaan" class="form-label">Status Pekerjaan
+                                <span class="text-danger">*</span>
+                            </label>
                             <select id="statusPekerjaan" name="status_pekerjaan_id" class="form-select" required>
-                                <option selected disabled>-- Pilih Status Pekerjaan --</option>
+                                <option value="">-- Pilih Status Pekerjaan --</option>
                                 @foreach($status_pekerjaan as $sk)
                                 <option value="{{ $sk->id }}">{{ $sk->status_pekerjaan }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-12 mb-3">
-                            <label for="deskripsiTugas" class="form-label">Deskripsi Tugas</label>
+                            <label for="deskripsiTugas" class="form-label">Deskripsi Tugas
+                                <span class="text-danger">*</span>
+                            </label>
                             <textarea class="form-control" name="deskripsi_pekerjaan" id="deskripsiTugas" placeholder="Isi Tugas" rows="3" required></textarea>
                         </div>
 
                         <div class="col-md-4 mb-3">
-                            <label for="tanggalMulai" class="form-label">Tanggal Mulai</label>
+                            <label for="tanggalMulai" class="form-label">Tanggal Mulai
+                                <span class="text-danger">*</span>
+                            </label>
                             <input type="date" class="form-control" name="tanggal_mulai" id="tanggalMulai" required>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="tanggalSelesai" class="form-label">Tanggal Selesai</label>
+                            <label for="tanggalSelesai" class="form-label">Tanggal Selesai
+                                <span class="text-danger">*</span>
+                            </label>
                             <input type="date" class="form-control" name="tanggal_selesai" id="tanggalSelesai" required>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="duration" class="form-label">Durasi</label>
+                            <label for="duration" class="form-label">Durasi
+                                <span class="text-danger">*</span>
+                            </label>
                             <input type="text" class="form-control" name="durasi" id="duration" required readonly>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="deadline" class="form-label">Deadline</label>
+                            <label for="deadline" class="form-label">Deadline
+                                <span class="text-danger">*</span>
+                            </label>
                             <input type="text" class="form-control" name="deadline" id="deadline" required readonly>
                         </div>
                         <div class="col-md-4 mb-3">
@@ -175,7 +197,9 @@
                             </div>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="alasanPemilihan" class="form-label">Alasan pemilihan tingkat kesulitan</label>
+                            <label for="alasanPemilihan" class="form-label">Alasan pemilihan tingkat kesulitan
+                                <span class="text-danger">*</span>
+                            </label>
                             <input type="text" class="form-control" name="alasan" id="alasanPemilihan" required>
                         </div>
                         <div class="col-md-12 mb-3">

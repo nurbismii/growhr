@@ -9,7 +9,6 @@
             <div class="modal-body">
                 <form action="{{ route('log-harian.store.sub') }}" method="post">
                     @csrf
-                    <button disabled class="btn btn-primary btn-lg mb-4">Form Kegiatan</button>
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label for="tanggalPelaporan" class="form-label">Tanggal</label>
@@ -92,7 +91,7 @@
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="alasanPemilihan" class="form-label">Alasan pemilihan tingkat kesulitan</label>
-                            <input type="text" class="form-control" name="alasan" id="alasanPemilihan" required>
+                            <textarea type="text" rows="2" class="form-control" name="alasan" id="alasanPemilihan" required></textarea>
                         </div>
                         <div class="col-md-12 mb-3">
                             <div class="mb-3">

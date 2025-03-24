@@ -2,11 +2,16 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
-    <button class="btn btn-primary btn-lg mb-2">Laporan Hasil</button>
-    <a href="{{ route('laporan-hasil.create') }}" class="btn btn-primary text-white float-end">
-        <span class="tf-icons bx bx-plus-circle"></span>&nbsp; Hasil
-    </a>
-
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="card text-white bg-primary shadow-lg px-4 py-2" style="max-width: 22rem; height: 3.5rem;">
+            <div class="card-body p-0">
+                <h6 class="card-title text-white fw-bold m-2 text-center">Laporan Hasil</h6>
+            </div>
+        </div>
+        <a href="{ route('laporan-hasil.create') }}" class="btn btn-primary">
+            <span class="tf-icons bx bx-plus-circle"></span>&nbsp; Hasil
+        </a>
+    </div>
     <!-- Basic Bootstrap Table -->
     <div class="row mb-3">
         <div class="col-md-3 mb-3">

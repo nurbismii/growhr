@@ -10,7 +10,6 @@
                 <form action="{{ route('log-harian.update', $pk->id) }}" method="post" enctype="multipart/form-data">
                     @csrf
                     {{ method_field('patch') }}
-                    <button disabled class="btn btn-primary btn-lg mb-4">Form Pekerjaan</button>
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label for="tanggalPelaporan" class="form-label">Tanggal</label>
@@ -94,7 +93,7 @@
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="alasanPemilihan" class="form-label">Alasan pemilihan tingkat kesulitan</label>
-                            <input type="text" class="form-control" name="alasan" id="alasanPemilihan" value="{{ $pk->alasan }}" required>
+                            <textarea type="text" rows="2" class="form-control" name="alasan" id="alasanPemilihan" required>{{ $pk->alasan }}</textarea>
                         </div>
                         <div class="col-md-12 mb-3">
                             <div class="mb-3">

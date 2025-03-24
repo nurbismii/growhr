@@ -152,7 +152,7 @@
 
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="card text-white bg-primary shadow-lg px-4 py-2" style="max-width: 22rem; height: 3.5rem;">
+        <div class="card text-white bg-primary shadow-lg px-3 py-2" style="max-width: 22rem; height: 3rem;">
             <div class="card-body p-0">
                 <h6 class="card-title text-white fw-bold m-2 text-center">Log Harian</h6>
             </div>
@@ -266,8 +266,8 @@
                             <a class="nav-link" target="_blank" href="{{ asset('lampiran/pekerjaan/' . $kerjaan->lampiran) }}"><i class="bx bx-link-alt me-1"></i>{{ $kerjaan->lampiran ?? '---' }}</a>
                         </td>
                         <td>
-                            
-                        <small class="text-light fst-italic fw-semibold">{{ $kerjaan->feedback_atasan ?? 'Belum ada feedback' }}</small>
+
+                            <small class="text-light fst-italic fw-semibold">{{ $kerjaan->feedback_atasan ?? 'Belum ada feedback' }}</small>
                         </td>
                         <td>
                             <div class="dropdown">
@@ -311,7 +311,6 @@
                 <form action="{{ route('log-harian.update.sub', $subpk->id) }}" method="post" enctype="multipart/form-data">
                     @csrf
                     {{ method_field('patch') }}
-                    <button disabled class="btn btn-primary btn-lg mb-4">Form Pekerjaan</button>
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label for="tanggalPelaporan" class="form-label">Tanggal</label>
@@ -319,7 +318,7 @@
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="sifatPekerjaan" class="form-label">Sifat Pekerjaan</label>
-                            <input type="text" class="form-control" name="sifat_pekerjaan" readonly>
+                            <input type="text" class="form-control" value="{{ $subpk->getSifatPekerjaan->pekerjaan }}" readonly>
                             <input type="hidden" class="form-control" name="sifat_pekerjaan" value="{{ $subpk->getSifatPekerjaan->id }}" readonly>
                         </div>
                         <div class="col-md-4 mb-3">
@@ -394,7 +393,7 @@
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="alasanPemilihan" class="form-label">Alasan pemilihan tingkat kesulitan</label>
-                            <input type="text" class="form-control" name="alasan" id="alasanPemilihan" value="{{ $subpk->alasan }}" required>
+                            <textarea type="text" rows="2" class="form-control" name="alasan" id="alasanPemilihan" required>{{$subpk->alasan}}</textarea>
                         </div>
                         <div class="col-md-12 mb-3">
                             <div class="mb-3">
@@ -956,21 +955,32 @@
         }
     });
 
-    document.querySelectorAll(".slider-container").forEach(container => {
-        const slider = container.querySelector(".slider-range");
-        const sliderValue = container.querySelector(".slider-value");
+    document.addEventListener("DOMContentLoaded", function() {
+        function initializeSliders(modal) {
+            modal.querySelectorAll(".slider-container").forEach(container => {
+                const slider = container.querySelector(".slider-range");
+                const sliderValue = container.querySelector(".slider-value");
 
-        function updateValuePosition() {
-            const percent = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
-            sliderValue.style.left = `calc(${percent}% - 5px)`;
-            sliderValue.textContent = slider.value;
+                function updateValuePosition() {
+                    const percent = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+                    sliderValue.style.left = `calc(${percent}% - 5px)`;
+                    sliderValue.textContent = slider.value;
+                }
+
+                // Pastikan jika nilai sudah ada, gunakan yang ada. Jika tidak, set default 8
+                slider.value = slider.value || 8;
+                updateValuePosition();
+
+                slider.addEventListener("input", updateValuePosition);
+            });
         }
 
-        slider.addEventListener("input", updateValuePosition);
-
-        // Set nilai default
-        slider.value = 8;
-        updateValuePosition();
+        // Pastikan kode dijalankan setiap kali modal dibuka
+        document.querySelectorAll(".modal").forEach(modal => {
+            modal.addEventListener("shown.bs.modal", function() {
+                initializeSliders(modal);
+            });
+        });
     });
 
 
