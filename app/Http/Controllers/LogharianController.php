@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\KategoriPekerjaan;
 use App\Models\Pekerjaan;
 use App\Models\Prioritas;
+use App\Models\RiwayatPembaruanStatusPekerjaan;
 use App\Models\SifatPekerjaan;
 use App\Models\StatusPekerjaan;
 use App\Models\SubPekerjaan;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\File;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class LogharianController extends Controller
 {
@@ -309,7 +311,7 @@ class LogharianController extends Controller
 
     public function updateStatusPekerjaan(Request $request, $id)
     {
-        $kerjaan = Pekerjaan::where('id', $id)->first();
+        $kerjaan = Pekerjaan::with('getStatusPekerjaan')->where('id', $id)->first();
 
         if (!$kerjaan) {
             return response()->json(['message' => 'Pekerjaan tidak ditemukan'], 404);
@@ -331,23 +333,58 @@ class LogharianController extends Controller
             ], 400);
         }
 
-        // Jika tidak ada sub pekerjaan atau update bukan ke status 3, izinkan update
-        $kerjaan->status_pekerjaan_id = $request->status_pekerjaan_id;
-        $kerjaan->save();
+        DB::beginTransaction();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Status pekerjaan berhasil diperbarui'
-        ]);
+        try {
+            RiwayatPembaruanStatusPekerjaan::create([
+                'pekerjaan_id' => $kerjaan->id,
+                'pembaruan' => date('Y-m-d H:i:s'),
+                'status_pembaruan' => $kerjaan->getStatusPekerjaan->status_pekerjaan,
+            ]);
+            
+            // Jika tidak ada sub pekerjaan atau update bukan ke status 3, izinkan update
+            $kerjaan->status_pekerjaan_id = $request->status_pekerjaan_id;
+            $kerjaan->save();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Status pekerjaan berhasil diperbarui'
+            ]);
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak dapat melakukan perubahan'
+            ]);
+        }
     }
 
     public function updateSubStatusPekerjaan(Request $request, $id)
     {
-        $subPekerjaan = SubPekerjaan::where('id', $id)->first();
+        $subPekerjaan = SubPekerjaan::with('getStatusPekerjaan')->where('id', $id)->first();
 
-        $subPekerjaan->status_pekerjaan_id = $request->status_pekerjaan_id;
-        $subPekerjaan->save();
+        DB::beginTransaction();
 
-        return response()->json(['message' => 'Status sub pekerjaan berhasil diperbarui']);
+        try {
+            RiwayatPembaruanStatusPekerjaan::create([
+                'sub_pekerjaan_id' => $subPekerjaan->id,
+                'pembaruan' => date('Y-m-d H:i:s'),
+                'status_pembaruan' => $subPekerjaan->getStatusPekerjaan->status_pekerjaan,
+            ]);
+
+            $subPekerjaan->status_pekerjaan_id = $request->status_pekerjaan_id;
+            $subPekerjaan->save();
+
+            DB::commit();
+            return response()->json(['message' => 'Status sub pekerjaan berhasil diperbarui']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json(['message' => 'Terjadi kesalahan']);
+        }
     }
 }
