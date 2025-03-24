@@ -4,14 +4,13 @@
 <div class="container-xxl flex-grow-1 container-p-y">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="card text-white bg-primary shadow-lg px-4 py-2" style="max-width: 22rem; height: 3.5rem;">
+        <div class="card text-white bg-primary shadow-lg px-3 py-2" style="max-width: 22rem; height: 3rem;">
             <div class="card-body p-0">
                 <h6 class="card-title text-white fw-bold m-2 text-center">Laporan Masalah</h6>
             </div>
         </div>
-
         <a href="{{ route('laporan-masalah.create') }}" class="btn btn-primary">
-            <span class="tf-icons bx bx-plus-circle"></span>&nbsp; Kegiatan
+            <span class="tf-icons bx bx-plus-circle"></span>&nbsp; Masalah
         </a>
     </div>
 
@@ -39,12 +38,7 @@
         <div class="col-md-2 mb-3">
             <input class="form-control" type="month">
         </div>
-
-        <div class="col-md-3">
-            <button type="button" class="btn btn-outline-primary float-end">
-                <span class="tf-icons bx bx-search"></span>&nbsp; Laporan
-            </button>
-        </div>
+        
     </div>
 
 

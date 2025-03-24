@@ -19,12 +19,12 @@
     }
 
     .custom-file-upload:hover {
-        border-color: #696cff;
+        border-color: #8c52ff;
     }
 
     .custom-file-upload i {
         font-size: 24px;
-        color: #696cff;
+        color: #8c52ff;
     }
 
     .file-name {
@@ -47,7 +47,7 @@
 
     input[type="range"] {
         width: 100%;
-        accent-color: #696cff;
+        accent-color: #8c52ff;
     }
 
     .slider-wrapper {
@@ -79,12 +79,11 @@
                     @csrf
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <!-- Card Form Kegiatan (Lebih Besar) -->
-                        <div class="card text-white bg-primary shadow-lg px-3 py-2" style="max-width: 22rem; height: 3rem;">
+                        <div class="card text-white bg-primary shadow-lg px-2 py-1" style="max-width: 22rem; height: 2.5rem;">
                             <div class="card-body p-0">
                                 <h6 class="card-title text-white fw-bold m-2 text-center">Form Kegiatan</h6>
                             </div>
                         </div>
-
                         <!-- Tombol Kembali (Lebih Kecil) -->
                         <a href="{{ route('log-harian.index') }}" class="btn btn-primary">
                             <span class="tf-icons bx bx-arrow-back"></span>&nbsp; Kembali
@@ -156,7 +155,7 @@
                             <label for="deskripsiTugas" class="form-label">Deskripsi Tugas
                                 <span class="text-danger">*</span>
                             </label>
-                            <textarea class="form-control" name="deskripsi_pekerjaan" id="deskripsiTugas" placeholder="Isi Tugas" rows="3" required></textarea>
+                            <textarea class="form-control" maxlength="128" name="deskripsi_pekerjaan" id="deskripsiTugas" placeholder="Isi Tugas" rows="3" required></textarea>
                         </div>
 
                         <div class="col-md-4 mb-3">
@@ -233,6 +232,9 @@
         const duration = document.getElementById("duration");
         const deadline = document.getElementById("deadline");
 
+        let today = new Date();
+        today.setHours(0, 0, 0, 0); // Reset waktu agar lebih akurat
+
         if (!isNaN(startDate) && !isNaN(endDate)) {
             if (endDate < startDate) {
                 Swal.fire({
@@ -247,11 +249,16 @@
                 document.getElementById("deadline").value = "";
                 return;
             }
-
             const timeDiff = endDate - startDate;
+
+            tglAkhir = endDate
+            tglAkhir.setHours(0, 0, 0, 0)
+
+            const selisih = ((tglAkhir - today) / (1000 * 60 * 60 * 24));
+
             const daysDiff = timeDiff / (1000 * 60 * 60 * 24);
             document.getElementById("duration").value = daysDiff + " Hari";
-            document.getElementById("deadline").value = " H-" + 1;
+            document.getElementById("deadline").value = " H-" + selisih;
         } else {
             document.getElementById("duration").value = "";
         }
@@ -259,9 +266,13 @@
 
     document.getElementById("tanggalMulai").addEventListener("change", calculateDays);
     document.getElementById("tanggalSelesai").addEventListener("change", calculateDays);
-</script>
 
-<script>
+    $("#fileInput").change(function() {
+        let fileName = this.files[0] ? this.files[0].name : "Pilih File";
+        $("#fileLabel").text(fileName);
+        $("#fileName").text(fileName);
+    });
+
     document.addEventListener("DOMContentLoaded", function() {
         let today = new Date().toISOString().split('T')[0];
         document.getElementById("tanggalPelaporan").value = today;
@@ -281,14 +292,6 @@
     // Set nilai default sesuai dengan tampilan awal
     slider.value = 8;
     updateValuePosition();
-</script>
-
-<script>
-    $("#fileInput").change(function() {
-        let fileName = this.files[0] ? this.files[0].name : "Pilih File";
-        $("#fileLabel").text(fileName);
-        $("#fileName").text(fileName);
-    });
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"></script>

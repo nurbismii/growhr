@@ -35,7 +35,8 @@ class LogharianController extends Controller
         $pekerjaan = Pekerjaan::with(['getUser', 'getKategoriPekerjaan', 'getSifatPekerjaan', 'getPrioritas', 'getStatusPekerjaan', 'getPjPekerjaan', 'getSubPekerjaan'])
             ->where('user_id', Auth::user()->id)
             ->orderBy('status_pekerjaan_id', 'ASC')
-            ->orderBy('tanggal_mulai', 'ASC');
+            ->orderBy('tanggal_mulai', 'ASC')
+            ->orderBy('tingkat_kesulitan', 'DESC');
 
         if ($request->ajax()) {
             if ($request->has('pekerjaan')) {
@@ -131,7 +132,7 @@ class LogharianController extends Controller
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date',
             'durasi' => 'required',
-            'deadline' => 'required|date',
+            'deadline' => 'required',
             'tingkat_kesulitan' => 'required|numeric|min:1|max:10',
             'alasan' => 'nullable|string',
             'lampiran' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
@@ -245,7 +246,7 @@ class LogharianController extends Controller
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date',
             'durasi' => 'required',
-            'deadline' => 'required|date',
+            'deadline' => 'required',
             'tingkat_kesulitan' => 'required|numeric|min:1|max:10',
             'alasan' => 'nullable|string',
             'lampiran' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
@@ -311,6 +312,9 @@ class LogharianController extends Controller
 
     public function updateStatusPekerjaan(Request $request, $id)
     {
+        $belum_mulai = 1;
+        $selesai = 3;
+
         $kerjaan = Pekerjaan::with('getStatusPekerjaan')->where('id', $id)->first();
 
         if (!$kerjaan) {
@@ -325,8 +329,15 @@ class LogharianController extends Controller
             return $sub->status_pekerjaan_id != 3;
         });
 
+        if ($request->status_pekerjaan_id == $belum_mulai) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Update ditolak! tidak dapat diproses.'
+            ], 400);
+        }
+
         // Jika masih ada SubPekerjaan yang belum selesai dan ingin mengubah status ke 3, tolak update
-        if ($adaBelumSelesai && $request->status_pekerjaan_id == 3) {
+        if ($adaBelumSelesai && $request->status_pekerjaan_id == $selesai) {
             return response()->json([
                 'success' => false,
                 'message' => 'Update ditolak! Masih ada Sub Pekerjaan yang belum selesai.'
@@ -341,7 +352,7 @@ class LogharianController extends Controller
                 'pembaruan' => date('Y-m-d H:i:s'),
                 'status_pembaruan' => $kerjaan->getStatusPekerjaan->status_pekerjaan,
             ]);
-            
+
             // Jika tidak ada sub pekerjaan atau update bukan ke status 3, izinkan update
             $kerjaan->status_pekerjaan_id = $request->status_pekerjaan_id;
             $kerjaan->save();

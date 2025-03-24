@@ -7,7 +7,6 @@
     .tooltip-inner {
         background-color: var(--bs-primary) !important;
         color: white !important;
-        font-weight: bold;
     }
 
     .tooltip.bs-tooltip-top .tooltip-arrow::before {
@@ -41,12 +40,12 @@
     }
 
     .custom-file-upload:hover {
-        border-color: #696cff;
+        border-color: #8c52ff;
     }
 
     .custom-file-upload i {
         font-size: 24px;
-        color: #696cff;
+        color: #8c52ff;
     }
 
     .file-name {
@@ -69,7 +68,7 @@
 
     input[type="range"] {
         width: 100%;
-        accent-color: #696cff;
+        accent-color: #8c52ff;
     }
 
     .slider-wrapper {
@@ -92,7 +91,7 @@
     }
 
     .btn-light-gray {
-        background-color: #D3D3D3;
+        background-color: #8c52ff;
         /* Light gray color */
         color: #000;
         /* Text color */
@@ -152,7 +151,7 @@
 
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="card text-white bg-primary shadow-lg px-3 py-2" style="max-width: 22rem; height: 3rem;">
+        <div class="card text-white bg-primary shadow-lg px-2 py-1" style="max-width: 26rem; height: 2.5rem;">
             <div class="card-body p-0">
                 <h6 class="card-title text-white fw-bold m-2 text-center">Log Harian</h6>
             </div>
@@ -166,7 +165,7 @@
     <form id="search-form">
         <div class="row g-2 d-flex flex-wrap mb-3">
             @csrf
-            <div class="col-12 col-sm-6 col-md-2">
+            <div class="col-12 col-sm-6 col-md-3">
                 <select name="pekerjaan[]" class="form-control select-pekerjaan w-100">
                     <option value="" disabled selected>Pekerjaan</option>
                     @foreach($kategori_pekerjaan as $kp)
@@ -174,7 +173,7 @@
                     @endforeach
                 </select>
             </div>
-            <div class="col-12 col-sm-6 col-md-2">
+            <div class="col-12 col-sm-6 col-md-3">
                 <select name="prioritas[]" class="form-control select-prioritas w-100">
                     <option value="" disabled selected>Prioritas</option>
                     @foreach($prioritas as $priorit)
@@ -182,7 +181,7 @@
                     @endforeach
                 </select>
             </div>
-            <div class="col-12 col-sm-6 col-md-2">
+            <div class="col-12 col-sm-6 col-md-3">
                 <select name="pic[]" class="form-control select-pic w-100">
                     <option value="" disabled selected>Person in Charge</option>
                     @foreach($user as $user)
@@ -204,25 +203,25 @@
             <table class="table table-border" id="log-harian">
                 <thead class="table-primary">
                     <tr>
-                        <th class="text-center">No</th>
-                        <td class="text-center"></td>
-                        <th class="text-center">PIC</th>
-                        <th class="text-center">Tanggal Pencatatan</th>
-                        <th class="text-center">Sifat Pekerjaan</th>
-                        <th class="text-center">Deskripsi Pekerjaan</th>
-                        <th class="text-center">Prioritas</th>
-                        <th class="text-center">Status Pekerjaan</th>
-                        <th class="text-center">Kategori Pekerjaan</th>
-                        <th class="text-center">Tanggal Mulai</th>
-                        <th class="text-center">Tanggal Selesai</th>
-                        <th class="text-center">Durasi Pekerjaan</th>
-                        <th class="text-center">Deadline</th>
-                        <th class="text-center">Penanggung Jawab</th>
-                        <th class="text-center">Tingkat Kesulitan</th>
-                        <th class="text-center">Alasan Kesulitan</th>
-                        <th class="text-center">Lampiran</th>
-                        <th class="text-center">Feedback Atasan</th>
-                        <th class="text-center">Aksi</th>
+                        <th class="text-center text-white">No</th>
+                        <td class="text-center text-white"></td>
+                        <th class="text-center text-white">PIC</th>
+                        <th class="text-center text-white">Tanggal Pencatatan</th>
+                        <th class="text-center text-white">Sifat Pekerjaan</th>
+                        <th class="text-center text-white">Deskripsi Pekerjaan</th>
+                        <th class="text-center text-white">Prioritas</th>
+                        <th class="text-center text-white">Status Pekerjaan</th>
+                        <th class="text-center text-white">Kategori Pekerjaan</th>
+                        <th class="text-center text-white">Tanggal Mulai</th>
+                        <th class="text-center text-white">Tanggal Selesai</th>
+                        <th class="text-center text-white">Durasi Pekerjaan</th>
+                        <th class="text-center text-white">Deadline</th>
+                        <th class="text-center text-white">Penanggung Jawab</th>
+                        <th class="text-center text-white">Tingkat Kesulitan</th>
+                        <th class="text-center text-white">Alasan Kesulitan</th>
+                        <th class="text-center text-white">Lampiran</th>
+                        <th class="text-center text-white">Feedback Atasan</th>
+                        <th class="text-center text-white">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -474,6 +473,7 @@
 
     function updateRowColors() {
         let today = new Date(); // Ambil tanggal hari ini
+        today.setHours(0, 0, 0, 0);
 
         document.querySelectorAll("tr").forEach(row => {
             let cellTanggal = row.querySelector(".tanggal-selesai"); // Ambil elemen tanggal selesai
@@ -488,6 +488,8 @@
             }
 
             let tanggalSelesai = new Date(cellTanggal.innerText.trim());
+            tanggalSelesai.setHours(0, 0, 0, 0);
+
             let selisihHari = Math.ceil((tanggalSelesai - today) / (1000 * 60 * 60 * 24));
 
             // Reset semua warna
@@ -832,70 +834,87 @@
                     url: "/log-harian/sub/" + id,
                     type: "GET",
                     success: function(subPekerjaan) {
-                        let subRows = subPekerjaan.map((sub, index) => `
-                    <tr class="sub-row table-hover">
-                        <td></td>
-                        <td>${index + 1}</td>
-                        <td>${escapeHtml(sub.get_user.name)}</td>
-                        <td>${formatTimestamp(sub.created_at)}</td>
-                        <td>${escapeHtml(sub.get_sifat_pekerjaan.pekerjaan)}</td>
-                        <td>
-                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="${escapeHtml(sub.deskripsi_pekerjaan)}">
-                                ${escapeHtml(sub.deskripsi_pekerjaan.substring(0, 25))}...
-                            </span>
-                        </td>
-                        <td>${escapeHtml(sub.get_prioritas.prioritas)}</td>
-                        <td>
-                            <select class="form-select status-pekerjaan  form-select-sm sub-status" data-id="${sub.id}">
-                                <option value="${sub.get_status_pekerjaan.id}" selected>${escapeHtml(sub.get_status_pekerjaan.status_pekerjaan)}</option>
-                                ${statusOptions}
-                            </select>
-                        </td>
-                        <td>${escapeHtml(sub.get_kategori_pekerjaan.kategori_pekerjaan)}</td>
-                        <td>${escapeHtml(sub.tanggal_mulai)}</td>
-                        <td class="tanggal-selesai">${escapeHtml(sub.tanggal_selesai)}</td>
-                        <td>${escapeHtml(sub.durasi)}</td>
-                        <td class"deadline">${escapeHtml(sub.deadline)}</td>
-                        <td>${escapeHtml(sub.get_pj_pekerjaan.name)}</td>
-                        <td>${escapeHtml(sub.tingkat_kesulitan)}/10</td>
-                        <td>
-                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="${escapeHtml(sub.alasan)}">
-                                ${escapeHtml(sub.alasan.substring(0, 25))}...
-                            </span>
-                        </td>
-                        <td>${sub.lampiran && sub.lampiran.trim() !== "" ? 
-                                `<a class="nav-link" target="_blank" href="/lampiran/pekerjaan/sub/${sub.lampiran}">
-                                     <i class="bx bx-link-alt me-1"></i> ${sub.lampiran}
-                                 </a>` : `<a class="nav-link" href="#">
-                                     <i class="bx bx-link-alt me-1"></i> ---
-                                 </a>`}
-                        </td>
-                        <td>${sub.feedback_atasan ? 
-                            `<small class="text-light fst-italic fw-semibold">${sub.feedback_atasan}</small>` : 
-                            `<small class="text-light fst-italic fw-semibold">Belum ada feedback</small>`}
-                        </td>
-                        <td>
-                            <div class="dropdown">
-                                <button type="button" class="btn text-primary p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                    <i class="bx bx-edit"></i>
-                                </button>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#sub-edit${sub.id}">
-                                        <i class="bx text-primary bx-edit-alt me-2"></i> Edit
-                                    </a>
-                                    <a class="dropdown-item delete-btn" href="${"{{ route('log-harian.destroy.sub', ':id') }}".replace(':id', sub.id)}" data-confirm-delete="true">
-                                        <i class="bx text-primary  bx-trash me-2"></i> Delete
-                                    </a>
+                        let subRows = '';
+
+                        if (subPekerjaan.length === 0) {
+                            Swal.fire({
+                                title: "Opps!",
+                                text: "Belum ada sub kegiatan",
+                                icon: "info",
+                                timer: 1500,
+                                showConfirmButton: true
+                            });
+                            subRows = `
+                        <tr class="sub-row">
+                            <td colspan="20" class="text-center text-muted">Tidak ada sub-pekerjaan tersedia</td>
+                        </tr>
+                    `;
+                        } else {
+                            subRows = subPekerjaan.map((sub, index) => `
+                        <tr class="sub-row table-hover">
+                            <td></td>
+                            <td>${index + 1}</td>
+                            <td>${escapeHtml(sub.get_user.name)}</td>
+                            <td>${formatTimestamp(sub.created_at)}</td>
+                            <td>${escapeHtml(sub.get_sifat_pekerjaan.pekerjaan)}</td>
+                            <td>
+                                <span data-bs-toggle="tooltip" data-bs-placement="top" title="${escapeHtml(sub.deskripsi_pekerjaan)}">
+                                    ${escapeHtml(sub.deskripsi_pekerjaan.substring(0, 25))}...
+                                </span>
+                            </td>
+                            <td>${escapeHtml(sub.get_prioritas.prioritas)}</td>
+                            <td>
+                                <select class="form-select status-pekerjaan form-select-sm sub-status" data-id="${sub.id}">
+                                    <option value="${sub.get_status_pekerjaan.id}" selected>${escapeHtml(sub.get_status_pekerjaan.status_pekerjaan)}</option>
+                                    ${statusOptions}
+                                </select>
+                            </td>
+                            <td>${escapeHtml(sub.get_kategori_pekerjaan.kategori_pekerjaan)}</td>
+                            <td>${escapeHtml(sub.tanggal_mulai)}</td>
+                            <td class="tanggal-selesai">${escapeHtml(sub.tanggal_selesai)}</td>
+                            <td>${escapeHtml(sub.durasi)}</td>
+                            <td class="deadline">${escapeHtml(sub.deadline)}</td>
+                            <td>${escapeHtml(sub.get_pj_pekerjaan.name)}</td>
+                            <td>${escapeHtml(sub.tingkat_kesulitan)}/10</td>
+                            <td>
+                                <span data-bs-toggle="tooltip" data-bs-placement="top" title="${escapeHtml(sub.alasan)}">
+                                    ${escapeHtml(sub.alasan.substring(0, 25))}...
+                                </span>
+                            </td>
+                            <td>${sub.lampiran && sub.lampiran.trim() !== "" ? 
+                                    `<a class="nav-link" target="_blank" href="/lampiran/pekerjaan/sub/${sub.lampiran}">
+                                         <i class="bx bx-link-alt me-1"></i> ${sub.lampiran}
+                                     </a>` : `<a class="nav-link" href="#">
+                                         <i class="bx bx-link-alt me-1"></i> ---
+                                     </a>`}
+                            </td>
+                            <td>${sub.feedback_atasan ? 
+                                `<small class="text-light fst-italic fw-semibold">${sub.feedback_atasan}</small>` : 
+                                `<small class="text-light fst-italic fw-semibold">Belum ada feedback</small>`}
+                            </td>
+                            <td>
+                                <div class="dropdown">
+                                    <button type="button" class="btn text-primary p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                        <i class="bx bx-edit"></i>
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#sub-edit${sub.id}">
+                                            <i class="bx text-primary bx-edit-alt me-2"></i> Edit
+                                        </a>
+                                        <a class="dropdown-item delete-btn" href="${"{{ route('log-harian.destroy.sub', ':id') }}".replace(':id', sub.id)}" data-confirm-delete="true">
+                                            <i class="bx text-primary bx-trash me-2"></i> Delete
+                                        </a>
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                    </tr>
-                `).join('');
+                            </td>
+                        </tr>
+                    `).join('');
+                        }
 
                         // Tambahkan sub-row setelah baris utama
                         $(tr).after(subRows);
                         $(tr).find('.toggle-btn').html('-').removeClass('btn-primary').addClass('btn-primary');
-                        updateDeadline(); //
+                        updateDeadline();
 
                         setTimeout(updateRowColors, 100);
 
@@ -912,6 +931,7 @@
                 });
             }
         });
+
     });
 
     function calculateDays(event) {
@@ -998,6 +1018,9 @@
             const startDate = new Date(startInput.value);
             const endDate = new Date(endInput.value);
 
+            let today = new Date();
+            today.setHours(0, 0, 0, 0); // Reset waktu agar lebih akurat
+
             if (!isNaN(startDate) && !isNaN(endDate)) {
                 if (endDate < startDate) {
                     Swal.fire({
@@ -1014,9 +1037,15 @@
                 }
 
                 const timeDiff = endDate - startDate;
+
+                tglAkhir = endDate
+                tglAkhir.setHours(0, 0, 0, 0)
+
+                const selisih = ((tglAkhir - today) / (1000 * 60 * 60 * 24));
+
                 const daysDiff = timeDiff / (1000 * 60 * 60 * 24);
                 durationInput.value = daysDiff + " Hari";
-                deadlineInput.value = daysDiff > 0 ? "H-" + daysDiff : "H-0";
+                deadlineInput.value = selisih > 0 ? "H-" + selisih : "H-0";
             } else {
                 durationInput.value = "";
                 deadlineInput.value = "";

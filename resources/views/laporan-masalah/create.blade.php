@@ -45,7 +45,7 @@
             <div class="card-body">
                 <form action="" method="post">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <div class="card text-white bg-primary shadow-lg px-4 py-2" style="max-width: 22rem; height: 3.5rem;">
+                        <div class="card text-white bg-primary shadow-lg px-3 py-2" style="max-width: 22rem; height: 3rem;">
                             <div class="card-body p-0">
                                 <h6 class="card-title text-white fw-bold m-2 text-center">Form Kegiatan</h6>
                             </div>
