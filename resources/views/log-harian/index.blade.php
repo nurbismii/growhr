@@ -93,7 +93,7 @@
     .btn-light-gray {
         background-color: #8c52ff;
         /* Light gray color */
-        color: #000;
+        color: #fff;
         /* Text color */
     }
 
@@ -229,7 +229,10 @@
                     <tr>
                         <td>{{ ++$no }}</td>
                         <td>
-                            <button class="btn btn-sm btn-primary toggle-btn" data-id="{{$kerjaan->id}}">+</button>
+                            <button class="btn btn-sm toggle-btn {{ $kerjaan->getSubPekerjaan->isEmpty() ? 'btn-light-gray' : 'btn-primary' }}"
+                                data-id="{{ $kerjaan->id }}">
+                                {{ $kerjaan->getSubPekerjaan->isEmpty() ? '-' : '+' }}
+                            </button>
                         </td>
                         <td>{{ $kerjaan->getUser ->name }}</td>
                         <td>{{ date_format($kerjaan->created_at, 'Y-m-d') }}</td>
@@ -375,7 +378,7 @@
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="deadline" class="form-label">Deadline</label>
-                            <input type="text" class="form-control deadline" name="deadline" id="deadline" required>
+                            <input type="text" class="form-control deadline" name="deadline" id="deadline" readonly>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label fw-bold text-secondary">
@@ -646,9 +649,13 @@
                             `<option value="${sp.id}" ${kerjaan.get_status_pekerjaan.id === sp.id ? "selected" : ""}>${sp.status_pekerjaan}</option>`
                         ).join("");
 
+                        let toggleIcon = kerjaan.get_sub_pekerjaan.length > 0 ?
+                            '<button class="btn btn-sm btn-primary toggle-btn" data-id="' + kerjaan.id + '">+</button>' :
+                            '<button class="btn btn-sm btn-primary toggle-btn" data-id="' + kerjaan.id + '">-</button>';
+
                         table.row.add([
                             index + 1,
-                            '<button class="btn btn-sm btn-primary toggle-btn" data-id="' + kerjaan.id + '">+</button>',
+                            toggleIcon,
                             kerjaan.get_user.name,
                             formatTimestamp(kerjaan.created_at),
                             kerjaan.get_sifat_pekerjaan.pekerjaan,
@@ -818,18 +825,18 @@
             let tr = $(this).closest('tr');
             let row = table.row(tr);
             let id = $(this).data('id');
+            let toggleBtn = $(this);
 
             // Cek apakah sub-row sudah ada
             if ($(tr).next().hasClass('sub-row')) {
                 // Jika sudah ada, hapus semua sub-row terkait
                 $(tr).nextAll('.sub-row').remove();
-                $(this).html('+').removeClass('btn-secondary').addClass('btn-primary');
+                toggleBtn.html('+').removeClass('btn-primary').addClass('btn-light-gray');
             } else {
-                // Hapus semua sub-row yang terbuka sebelumnya
-                $('.sub-row').remove();
-                $('.toggle-btn').removeClass('btn-secondary').addClass('btn-primary').html('+');
+                // Ubah ikon tombol menjadi loading sebelum AJAX dipanggil
+                toggleBtn.html('⏳');
 
-                // Ambil data sub-pekerjaan melalui AJAX
+                // Ambil data sub-pekerjaan melalui AJAX sebelum menampilkan sub-row
                 $.ajax({
                     url: "/log-harian/sub/" + id,
                     type: "GET",
@@ -838,90 +845,83 @@
 
                         if (subPekerjaan.length === 0) {
                             Swal.fire({
-                                title: "Opps!",
+                                title: "Oops!",
                                 text: "Belum ada sub kegiatan",
                                 icon: "info",
                                 timer: 1500,
                                 showConfirmButton: true
                             });
-                            subRows = `
-                        <tr class="sub-row">
-                            <td colspan="20" class="text-center text-muted">Tidak ada sub-pekerjaan tersedia</td>
-                        </tr>
-                    `;
+                            toggleBtn.html('-').removeClass('btn-primary').addClass('btn-light-gray');
                         } else {
                             subRows = subPekerjaan.map((sub, index) => `
-                        <tr class="sub-row table-hover">
-                            <td></td>
-                            <td>${index + 1}</td>
-                            <td>${escapeHtml(sub.get_user.name)}</td>
-                            <td>${formatTimestamp(sub.created_at)}</td>
-                            <td>${escapeHtml(sub.get_sifat_pekerjaan.pekerjaan)}</td>
-                            <td>
-                                <span data-bs-toggle="tooltip" data-bs-placement="top" title="${escapeHtml(sub.deskripsi_pekerjaan)}">
-                                    ${escapeHtml(sub.deskripsi_pekerjaan.substring(0, 25))}...
-                                </span>
-                            </td>
-                            <td>${escapeHtml(sub.get_prioritas.prioritas)}</td>
-                            <td>
-                                <select class="form-select status-pekerjaan form-select-sm sub-status" data-id="${sub.id}">
-                                    <option value="${sub.get_status_pekerjaan.id}" selected>${escapeHtml(sub.get_status_pekerjaan.status_pekerjaan)}</option>
-                                    ${statusOptions}
-                                </select>
-                            </td>
-                            <td>${escapeHtml(sub.get_kategori_pekerjaan.kategori_pekerjaan)}</td>
-                            <td>${escapeHtml(sub.tanggal_mulai)}</td>
-                            <td class="tanggal-selesai">${escapeHtml(sub.tanggal_selesai)}</td>
-                            <td>${escapeHtml(sub.durasi)}</td>
-                            <td class="deadline">${escapeHtml(sub.deadline)}</td>
-                            <td>${escapeHtml(sub.get_pj_pekerjaan.name)}</td>
-                            <td>${escapeHtml(sub.tingkat_kesulitan)}/10</td>
-                            <td>
-                                <span data-bs-toggle="tooltip" data-bs-placement="top" title="${escapeHtml(sub.alasan)}">
-                                    ${escapeHtml(sub.alasan.substring(0, 25))}...
-                                </span>
-                            </td>
-                            <td>${sub.lampiran && sub.lampiran.trim() !== "" ? 
-                                    `<a class="nav-link" target="_blank" href="/lampiran/pekerjaan/sub/${sub.lampiran}">
-                                         <i class="bx bx-link-alt me-1"></i> ${sub.lampiran}
-                                     </a>` : `<a class="nav-link" href="#">
-                                         <i class="bx bx-link-alt me-1"></i> ---
-                                     </a>`}
-                            </td>
-                            <td>${sub.feedback_atasan ? 
-                                `<small class="text-light fst-italic fw-semibold">${sub.feedback_atasan}</small>` : 
-                                `<small class="text-light fst-italic fw-semibold">Belum ada feedback</small>`}
-                            </td>
-                            <td>
-                                <div class="dropdown">
-                                    <button type="button" class="btn text-primary p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                        <i class="bx bx-edit"></i>
-                                    </button>
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#sub-edit${sub.id}">
-                                            <i class="bx text-primary bx-edit-alt me-2"></i> Edit
-                                        </a>
-                                        <a class="dropdown-item delete-btn" href="${"{{ route('log-harian.destroy.sub', ':id') }}".replace(':id', sub.id)}" data-confirm-delete="true">
-                                            <i class="bx text-primary bx-trash me-2"></i> Delete
-                                        </a>
-                                    </div>
+                    <tr class="sub-row table-hover">
+                        <td></td>
+                        <td>${index + 1}</td>
+                        <td>${escapeHtml(sub.get_user.name)}</td>
+                        <td>${formatTimestamp(sub.created_at)}</td>
+                        <td>${escapeHtml(sub.get_sifat_pekerjaan.pekerjaan)}</td>
+                        <td>
+                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="${escapeHtml(sub.deskripsi_pekerjaan)}">
+                                ${escapeHtml(sub.deskripsi_pekerjaan.substring(0, 25))}...
+                            </span>
+                        </td>
+                        <td>${escapeHtml(sub.get_prioritas.prioritas)}</td>
+                        <td>
+                            <select class="form-select status-pekerjaan form-select-sm sub-status" data-id="${sub.id}">
+                                <option value="${sub.get_status_pekerjaan.id}" selected>${escapeHtml(sub.get_status_pekerjaan.status_pekerjaan)}</option>
+                                ${statusOptions}
+                            </select>
+                        </td>
+                        <td>${escapeHtml(sub.get_kategori_pekerjaan.kategori_pekerjaan)}</td>
+                        <td>${escapeHtml(sub.tanggal_mulai)}</td>
+                        <td class="tanggal-selesai">${escapeHtml(sub.tanggal_selesai)}</td>
+                        <td>${escapeHtml(sub.durasi)}</td>
+                        <td class="deadline">${escapeHtml(sub.deadline)}</td>
+                        <td>${escapeHtml(sub.get_pj_pekerjaan.name)}</td>
+                        <td>${escapeHtml(sub.tingkat_kesulitan)}/10</td>
+                        <td>
+                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="${escapeHtml(sub.alasan)}">
+                                ${escapeHtml(sub.alasan.substring(0, 25))}...
+                            </span>
+                        </td>
+                        <td>${sub.lampiran && sub.lampiran.trim() !== "" ? 
+                                `<a class="nav-link" target="_blank" href="/lampiran/pekerjaan/sub/${sub.lampiran}">
+                                     <i class="bx bx-link-alt me-1"></i> ${sub.lampiran}
+                                 </a>` : `<a class="nav-link" href="#">
+                                     <i class="bx bx-link-alt me-1"></i> ---
+                                 </a>`}
+                        </td>
+                        <td>${sub.feedback_atasan ? 
+                            `<small class="text-light fst-italic fw-semibold">${sub.feedback_atasan}</small>` : 
+                            `<small class="text-light fst-italic fw-semibold">Belum ada feedback</small>`}
+                        </td>
+                        <td>
+                            <div class="dropdown">
+                                <button type="button" class="btn text-primary p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                    <i class="bx bx-edit"></i>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#sub-edit${sub.id}">
+                                        <i class="bx text-primary bx-edit-alt me-2"></i> Edit
+                                    </a>
+                                    <a class="dropdown-item delete-btn" href="${"{{ route('log-harian.destroy.sub', ':id') }}".replace(':id', sub.id)}" data-confirm-delete="true">
+                                        <i class="bx text-primary bx-trash me-2"></i> Delete
+                                    </a>
                                 </div>
-                            </td>
-                        </tr>
-                    `).join('');
+                            </div>
+                        </td>
+                    </tr>`).join('');
+
+                            // Tambahkan sub-row setelah baris utama
+                            $(tr).after(subRows);
+                            toggleBtn.html('-').removeClass('btn-light-gray').addClass('btn-primary');
                         }
 
-                        // Tambahkan sub-row setelah baris utama
-                        $(tr).after(subRows);
-                        $(tr).find('.toggle-btn').html('-').removeClass('btn-primary').addClass('btn-primary');
                         updateDeadline();
-
                         setTimeout(updateRowColors, 100);
-
                         setTimeout(() => {
                             $('[data-bs-toggle="tooltip"]').tooltip();
                         }, 100);
-
                         setTimeout(() => {
                             document.querySelectorAll(".sub-status").forEach(function(select) {
                                 updateSelectColor(select);
@@ -931,6 +931,7 @@
                 });
             }
         });
+
 
     });
 

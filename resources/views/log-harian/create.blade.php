@@ -180,7 +180,7 @@
                             <label for="deadline" class="form-label">Deadline
                                 <span class="text-danger">*</span>
                             </label>
-                            <input type="text" class="form-control" name="deadline" id="deadline" required readonly>
+                            <input type="text" class="form-control" name="deadline" id="deadline" readonly>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label fw-bold text-secondary">

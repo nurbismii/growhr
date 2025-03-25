@@ -76,7 +76,7 @@
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="deadline" class="form-label">Deadline</label>
-                            <input type="text" class="form-control deadline" name="deadline" id="deadline" required readonly>
+                            <input type="text" class="form-control deadline" name="deadline" id="deadline" readonly>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label fw-bold text-secondary">
