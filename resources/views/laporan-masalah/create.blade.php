@@ -19,12 +19,12 @@
     }
 
     .custom-file-upload:hover {
-        border-color: #696cff;
+        border-color: #8c52ff;
     }
 
     .custom-file-upload i {
         font-size: 24px;
-        color: #696cff;
+        color: #8c52ff;
     }
 
     .file-name {
@@ -43,16 +43,16 @@
     <div class="col-md-12">
         <div class="card mb-2">
             <div class="card-body">
-                <form action="" method="post">
+                <form action="{{ route('laporan-masalah.store') }}" method="post" enctype="multipart/form-data">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div class="card text-white bg-primary shadow-lg px-3 py-2" style="max-width: 22rem; height: 3rem;">
                             <div class="card-body p-0">
-                                <h6 class="card-title text-white fw-bold m-2 text-center">Form Kegiatan</h6>
+                                <h6 class="card-title text-white fw-bold m-2 text-center">Form Pengaduan</h6>
                             </div>
                         </div>
 
                         <a href="{{ route('laporan-masalah.index') }}" class="btn btn-primary">
-                            <span class="tf-icons bx bx-plus-circle"></span>&nbsp; Kegiatan
+                            <span class="tf-icons bx bx-arrow-back"></span>&nbsp; Kembali
                         </a>
                     </div>
                     <div class="row">
@@ -62,59 +62,90 @@
                         </div>
                         <div class="col-md-8 mb-3">
                             <label for="jenisKegiatan" class="form-label">Jenis Pekerjaan</label>
-                            <select id="jenisKegiatan" name="jenis_pekerjaan_id" class="form-select" required>
-                                <option selected disabled>-- Pilih Kategori Pekerjaan --</option>
+                            <select id="jenisKegiatan" name="jenis_pekerjaan_id" class="form-select select-pekerjaan" required>
+                                <option value="">-- Pilih Kategori Pekerjaan --</option>
+                                @foreach($pekerjaan as $pk)
+                                <option value="{{ $pk->id }}">{{ $pk->deskripsi_pekerjaan }} | {{ $pk->tanggal_mulai }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="divisi" class="form-label">Kategori Kendala</label>
-                            <select id="divisi" name="divisi_id" class="form-select" required>
-                                <option selected disabled>-- Pilih Divisi --</option>
+                            <select id="divisi" name="kategori_kendala" class="form-select" required>
+                                <option value="">-- Pilih Kategori Kendala --</option>
+                                <option value="Man">Man (Manusia)</option>
+                                <option value="Method">Metode</option>
                             </select>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="prioritas" class="form-label">Tingkat Dampak</label>
                             <select id="prioritas" name="prioritas_id" class="form-select" required>
-                                <option selected disabled>-- Pilih Prioritas --</option>
+                                <option value="">-- Pilih Prioritas --</option>
+                                @foreach($prioritas as $prioriti)
+                                <option value="{{ $prioriti->id }}">{{ $prioriti->prioritas }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="statusKegiatan" class="form-label">Status Penyelesaian</label>
                             <select id="statusKegiatan" name="status_pekerjaan_id" class="form-select" required>
-                                <option selected disabled>-- Pilih Status Pekerjaan --</option>
+                                <option value="">-- Pilih Status Pekerjaan --</option>
+                                @foreach($status_pekerjaan as $sk)
+                                <option value="{{ $sk->id }}">{{ $sk->status_pekerjaan }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="col-md-12 mb-3">
+                            <label for="alasanPenentuanTingkatDampak" class="form-label">Alasan Penentuan Tingkat Dampak</label>
+                            <input class="form-control" name="alasan_tingkat_dampak_pengaduan" id="alasanPenentuanTingkatDampak" required></input>
+                        </div>
+                        <div class="col-md-12 mb-3">
                             <label for="deskripsiTugas" class="form-label">Deskripsi Kendala</label>
-                            <textarea class="form-control" name="deskripsi_tugas" id="deskripsiTugas" placeholder="Isi Tugas" rows="2" required></textarea>
+                            <textarea class="form-control" name="deskripsi_kendala" id="deskripsiTugas" placeholder="Isi deksripsi" rows="2" required></textarea>
                         </div>
                         <div class="col-md-12 mb-3">
-                            <label for="deskripsiTugas" class="form-label">Solusi yang telah dicoba (Opsional)</label>
-                            <textarea class="form-control" name="deskripsi_tugas" id="deskripsiTugas" placeholder="Isi Tugas" rows="2" required></textarea>
+                            <label for="langkahPenyelesaian" class="form-label">Langkah Penyelesaian</label>
+                            <textarea class="form-control" name="langkah_penyelesaian" id="langkahPenyelesaian" placeholder="Langkah penyelesaian" rows="2" required></textarea>
                         </div>
-
-                        <div class="col-md-12 mb-3">
-                            <label for="deskripsiTugas" class="form-label">Perlu ditindaklanjuti atasan ?</label>
-                            <br>
-                            <input type="radio" class="btn-check" name="options" id="option1">
-                            <label class="btn btn-outline-primary btn-sm" for="option1">Ya</label>
-
-                            <input type="radio" class="btn-check" name="options" id="option2">
-                            <label class="btn btn-outline-primary btn-sm" for="option2">Tidak</label>
-                        </div>
-
-
-                        <div class="col-md-12 mb-3">
+                        <div class="col-md-4 mb-3">
                             <div class="mb-3">
-                                <label class="form-label fw-bold text-muted">Lampiran Dokumen (Opsional)</label>
+                                <label class="form-label fw-bold text-muted">Dokumen Bukti Permasalahan</label>
                                 <div>
-                                    <label for="fileInput" class="custom-file-upload">
+                                    <label for="InputPermasalahan" class="custom-file-upload">
                                         <i class="bi bi-plus-circle"></i>
-                                        <span id="fileLabel" class="ms-2">Pilih file</span>
+                                        <span id="labelPermasalahan" class="ms-2">Pilih file</span>
                                     </label>
-                                    <input type="file" id="fileInput" name="lampiran">
+                                    <input type="file" id="InputPermasalahan" name="doc_permasalahan">
                                 </div>
-                                <div id="fileName" class="file-name"></div>
+                                <div id="DocPermasalahan" class="file-name"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-muted">Dokumen Analisis Risiko</label>
+                                <div>
+                                    <label for="InputAnalisa" class="custom-file-upload">
+                                        <i class="bi bi-plus-circle"></i>
+                                        <span id="labelAnalisa" class="ms-2">Pilih file</span>
+                                    </label>
+                                    <input type="file" id="InputAnalisa" name="doc_analisa">
+                                </div>
+                                <div id="DocAnalisa" class="file-name"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-muted">Dokumen Solusi (Opsional)</label>
+                                <div>
+                                    <label for="InputSolusi" class="custom-file-upload">
+                                        <i class="bi bi-plus-circle"></i>
+                                        <span id="labelSolusi" class="ms-2">Pilih file</span>
+                                    </label>
+                                    <input type="file" id="InputSolusi" name="doc_solusi">
+                                </div>
+                                <div id="DocSolusi" class="file-name"></div>
                             </div>
                         </div>
                     </div>
@@ -129,6 +160,14 @@
 
 @push('script')
 <script>
+    $(document).ready(function() {
+        $('.select-pekerjaan').select2({
+            theme: 'bootstrap-5',
+            placeholder: "Pekerjaan",
+            allowClear: true // Memungkinkan pengguna menghapus pilihan
+        });
+    });
+
     document.addEventListener("DOMContentLoaded", function() {
         let today = new Date().toISOString().split('T')[0];
         document.getElementById("tanggalPelaporan").value = today;
@@ -136,14 +175,24 @@
 </script>
 
 <script>
-    $("#fileInput").change(function() {
+    $("#InputPermasalahan").change(function() {
         let fileName = this.files[0] ? this.files[0].name : "Pilih File";
-        $("#fileLabel").text(fileName);
-        $("#fileName").text(fileName);
+        $("#labelPermasalahan").text(fileName);
+        $("#DocPermasalahan").text(fileName);
+    });
+
+    $("#InputAnalisa").change(function() {
+        let fileName = this.files[0] ? this.files[0].name : "Pilih File";
+        $("#labelAnalisa").text(fileName);
+        $("#DocAnalisa").text(fileName);
+    });
+
+    $("#InputSolusi").change(function() {
+        let fileName = this.files[0] ? this.files[0].name : "Pilih File";
+        $("#labelSolusi").text(fileName);
+        $("#DocSolusi").text(fileName);
     });
 </script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"></script>
 @endpush
 
 @endsection

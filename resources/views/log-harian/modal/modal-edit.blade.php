@@ -99,13 +99,13 @@
                             <div class="mb-3">
                                 <label class="form-label fw-bold text-muted">Lampiran Dokumen (Opsional)</label>
                                 <div>
-                                    <label for="fileInput{{$pk->id}}" class="custom-file-upload">
+                                    <label for="fileInputEdit{{$pk->id}}" class="custom-file-upload">
                                         <i class="bi bi-plus-circle"></i>
-                                        <span class="ms-2 fileLabel" id="fileLabel{{$pk->id}}">Pilih file</span>
+                                        <span class="ms-2 fileLabel" id="fileLabelEdit{{$pk->id}}">Pilih file</span>
                                     </label>
-                                    <input type="file" id="fileInput{{$pk->id}}" class="fileInput" name="lampiran">
+                                    <input type="file" id="fileInputEdit{{$pk->id}}" class="fileInputEdit" name="lampiran">
                                 </div>
-                                <div class="file-name fileName{{$pk->id}}"></div>
+                                <div class="file-name fileNameEdit{{$pk->id}}"></div>
                             </div>
                         </div>
                     </div>

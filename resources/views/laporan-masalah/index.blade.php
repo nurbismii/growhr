@@ -15,31 +15,41 @@
     </div>
 
     <!-- Basic Bootstrap Table -->
-    <div class="row mb-3">
-        <div class="col-md-3 mb-3">
-            <input class="form-control" type="search" placeholder="Search....">
+    <form id="search-form">
+        <div class="row g-2 d-flex flex-wrap mb-3">
+            @csrf
+            <div class="col-12 col-sm-6 col-md-3">
+                <select name="pekerjaan[]" class="form-control select-pekerjaan w-100">
+                    <option value="" disabled selected>Pekerjaan</option>
+                    @foreach($kategori_pekerjaan as $kp)
+                    <option value="{{ $kp->id }}">{{ $kp->kategori_pekerjaan }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-12 col-sm-6 col-md-3">
+                <select name="prioritas[]" class="form-control select-prioritas w-100">
+                    <option value="" disabled selected>Prioritas</option>
+                    @foreach($prioritas as $priorit)
+                    <option value="{{ $priorit->id }}">{{ $priorit->prioritas }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-12 col-sm-6 col-md-3">
+                <select name="pic[]" class="form-control select-pic w-100">
+                    <option value="" disabled selected>Person in Charge</option>
+                    @foreach($user as $user)
+                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="input-group w-100">
+                    <span class="input-group-text"><i class="bx bx-calendar"></i></span>
+                    <input type="text" name="tanggal" class="form-control daterange" />
+                </div>
+            </div>
         </div>
-        <div class="col-md-2 mb-3">
-            <select id="defaultSelect" class="form-select">
-                <option>PIC</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
-            </select>
-        </div>
-        <div class="col-md-2 mb-3">
-            <select id="defaultSelect" class="form-select">
-                <option>Prioritas</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
-            </select>
-        </div>
-        <div class="col-md-2 mb-3">
-            <input class="form-control" type="month">
-        </div>
-        
-    </div>
+    </form>
 
 
     <div class="card">
@@ -47,17 +57,21 @@
             <table class="table">
                 <thead class="table-primary">
                     <tr>
-                        <th>No</th>
-                        <th>Pekerjaan</th>
-                        <th>PIC</th>
-                        <th>Deskripsi Kendala</th>
-                        <th>Kategori Kendala</th>
-                        <th>Tingkat Dampak</th>
-                        <th>Status Penyelesaian</th>
-                        <th>Solusi</th>
-                        <th>Lampiran</th>
-                        <th>Feedback Atasan</th>
-                        <th>Aksi</th>
+                        <th class="text-center text-white">No</th>
+                        <th class="text-center text-white">Tanggal Pengaduan</th>
+                        <th class="text-center text-white">PIC</th>
+                        <th class="text-center text-white">Deskripsi Pekerjaan</th>
+                        <th class="text-center text-white">Deskripsi Kendala</th>
+                        <th class="text-center text-white">Status Penyelesaian</th>
+                        <th class="text-center text-white">Kategori Kendala</th>
+                        <th class="text-center text-white">Tingkat Dampak</th>
+                        <th class="text-center text-white">Alasan Tingkat Dampak</th>
+                        <th class="text-center text-white">Divisi</th>
+                        <th class="text-center text-white">Langkah Penyelesaian</th>
+                        <th class="text-center text-white">Doc Permasalahan</th>
+                        <th class="text-center text-white">Doc Analisa</th>
+                        <th class="text-center text-white">Doc Solusi</th>
+                        <th class="text-center text-white">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="table-border-bottom-0">
@@ -123,4 +137,59 @@
     </div>
 </div>
 <!--/ Bootstrap Dark Table -->
+
+@push('script')
+<script>
+    $(document).ready(function() {
+        function getCurrentMonthRange() {
+            let start = moment().startOf('month'); // Hari pertama bulan ini
+            let end = moment().endOf('month'); // Hari terakhir bulan ini
+
+            return {
+                start,
+                end
+            };
+        }
+
+        let {
+            start,
+            end
+        } = getCurrentMonthRange();
+
+        $('.daterange').daterangepicker({
+            startDate: start,
+            endDate: end,
+            locale: {
+                format: 'DD-MM-YYYY'
+            }
+        });
+    });
+
+    $(document).ready(function() {
+        $('.select-pekerjaan').select2({
+            theme: 'bootstrap-5',
+            placeholder: "Pekerjaan",
+            allowClear: true // Memungkinkan pengguna menghapus pilihan
+        });
+    });
+
+    $(document).ready(function() {
+        $('.select-prioritas').select2({
+            theme: 'bootstrap-5',
+            placeholder: "Prioritas",
+            allowClear: true // Memungkinkan pengguna menghapus pilihan
+        });
+    });
+
+    $(document).ready(function() {
+        $('.select-pic').select2({
+            theme: 'bootstrap-5',
+            placeholder: "PIC",
+            allowClear: true // Memungkinkan pengguna menghapus pilihan
+        });
+    });
+</script>
+@endpush
+
+
 @endsection

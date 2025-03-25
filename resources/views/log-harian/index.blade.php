@@ -401,13 +401,13 @@
                             <div class="mb-3">
                                 <label class="form-label fw-bold text-muted">Lampiran Dokumen (Opsional)</label>
                                 <div>
-                                    <label for="fileInput{{$subpk->id}}" class="custom-file-upload">
+                                    <label for="fileInputSubEdit{{$subpk->id}}" class="custom-file-upload">
                                         <i class="bi bi-plus-circle"></i>
-                                        <span class="ms-2 fileLabel" id="fileLabel{{$subpk->id}}">Pilih file</span>
+                                        <span class="ms-2 fileLabel" id="fileLabelSubEdit{{$subpk->id}}">Pilih file</span>
                                     </label>
-                                    <input type="file" id="fileInput{{$subpk->id}}" class="fileInput" name="lampiran">
+                                    <input type="file" id="fileInputSubEdit{{$subpk->id}}" class="fileInputSubEdit" name="lampiran">
                                 </div>
-                                <div class="file-name fileName{{$subpk->id}}"></div>
+                                <div class="file-name fileNameSubEdit{{$subpk->id}}"></div>
                             </div>
                         </div>
                     </div>
@@ -1012,6 +1012,24 @@
         // Ubah label & nama file berdasarkan ID yang sesuai
         $("#fileLabel" + fileId.replace("fileInput", "")).text(fileName);
         $("#fileName" + fileId.replace("fileInput", "")).text(fileName);
+    });
+
+    $(document).on("change", ".fileInputEdit", function() {
+        let fileId = $(this).attr("id"); // Dapatkan ID input file (misal: fileInput1)
+        let fileName = this.files[0] ? this.files[0].name : "Pilih File";
+
+        // Ubah label & nama file berdasarkan ID yang sesuai
+        $("#fileLabelEdit" + fileId.replace("fileInputEdit", "")).text(fileName);
+        $("#fileNameEdit" + fileId.replace("fileInputEdit", "")).text(fileName);
+    });
+
+    $(document).on("change", ".fileInputSubEdit", function() {
+        let fileId = $(this).attr("id"); // Dapatkan ID input file (misal: fileInput1)
+        let fileName = this.files[0] ? this.files[0].name : "Pilih File";
+
+        // Ubah label & nama file berdasarkan ID yang sesuai
+        $("#fileLabelSubEdit" + fileId.replace("fileInputSubEdit", "")).text(fileName);
+        $("#fileNameSubEditSub" + fileId.replace("fileInputSubEdit", "")).text(fileName);
     });
 
     document.addEventListener("DOMContentLoaded", function() {
