@@ -22,6 +22,8 @@ Route::group(['middleware' => 'auth'], function () {
     
     Route::post('log-harian/update-status-pekerjaan/{id}', [App\Http\Controllers\LogharianController::class, 'updateStatusPekerjaan']);
     Route::post('log-harian/sub/update-status-pekerjaan/{id}', [App\Http\Controllers\LogharianController::class, 'updateSubStatusPekerjaan']);
+
+    Route::post('laporan-masalah/update-status-pekerjaan/{id}', [App\Http\Controllers\LaporanmasalahController::class, 'updateStatusPekerjaan']);
     
     Route::resource('laporan-masalah', 'App\Http\Controllers\LaporanmasalahController');
     Route::resource('laporan-hasil', 'App\Http\Controllers\LaporanhasilController');

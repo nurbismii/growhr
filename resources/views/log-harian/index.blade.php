@@ -447,13 +447,13 @@
                     select.classList.add("text-primary", "bg-label-primary");
                     break;
                 case "3":
-                    select.classList.add("text-success", "bg-label-success");
+                    select.classList.add("text-warning", "bg-label-warning");
                     break;
                 case "4":
                     select.classList.add("text-secondary", "bg-label-secondary");
                     break;
                 case "5":
-                    select.classList.add("text-warning", "bg-label-warning");
+                    select.classList.add("text-success", "bg-label-success");
                     break;
             }
         };

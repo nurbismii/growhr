@@ -44,6 +44,7 @@
         <div class="card mb-2">
             <div class="card-body">
                 <form action="{{ route('laporan-masalah.store') }}" method="post" enctype="multipart/form-data">
+                    @csrf
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div class="card text-white bg-primary shadow-lg px-3 py-2" style="max-width: 22rem; height: 3rem;">
                             <div class="card-body p-0">
@@ -73,8 +74,13 @@
                             <label for="divisi" class="form-label">Kategori Kendala</label>
                             <select id="divisi" name="kategori_kendala" class="form-select" required>
                                 <option value="">-- Pilih Kategori Kendala --</option>
-                                <option value="Man">Man (Manusia)</option>
-                                <option value="Method">Metode</option>
+                                <option value="manusia">Manusia</option>
+                                <option value="metode">Metode</option>
+                                <option value="mesin">Mesin</option>
+                                <option value="material">Material</option>
+                                <option value="pengukuran">Pengukuran</option>
+                                <option value="lingkungan">Lingkungan</option>
+                                <option value="lainnya">Lingkungan</option>
                             </select>
                         </div>
                         <div class="col-md-4 mb-3">
@@ -101,7 +107,7 @@
                         </div>
                         <div class="col-md-12 mb-3">
                             <label for="deskripsiTugas" class="form-label">Deskripsi Kendala</label>
-                            <textarea class="form-control" name="deskripsi_kendala" id="deskripsiTugas" placeholder="Isi deksripsi" rows="2" required></textarea>
+                            <textarea class="form-control" name="deskripsi_pengaduan" id="deskripsiTugas" placeholder="Isi deksripsi" rows="2" required></textarea>
                         </div>
                         <div class="col-md-12 mb-3">
                             <label for="langkahPenyelesaian" class="form-label">Langkah Penyelesaian</label>
@@ -115,7 +121,7 @@
                                         <i class="bi bi-plus-circle"></i>
                                         <span id="labelPermasalahan" class="ms-2">Pilih file</span>
                                     </label>
-                                    <input type="file" id="InputPermasalahan" name="doc_permasalahan">
+                                    <input type="file" id="InputPermasalahan" name="doc_permasalahan" required>
                                 </div>
                                 <div id="DocPermasalahan" class="file-name"></div>
                             </div>
@@ -129,7 +135,7 @@
                                         <i class="bi bi-plus-circle"></i>
                                         <span id="labelAnalisa" class="ms-2">Pilih file</span>
                                     </label>
-                                    <input type="file" id="InputAnalisa" name="doc_analisa">
+                                    <input type="file" id="InputAnalisa" name="doc_analisa" required>
                                 </div>
                                 <div id="DocAnalisa" class="file-name"></div>
                             </div>
@@ -160,17 +166,21 @@
 
 @push('script')
 <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let today = new Date().toISOString().split('T')[0];
+
+        // Pilih semua elemen dengan class 'tanggalPelaporan' (gunakan class untuk multiple elements)
+        document.querySelectorAll(".tanggalPelaporan").forEach(function(input) {
+            input.value = today;
+        });
+    });
+
     $(document).ready(function() {
         $('.select-pekerjaan').select2({
             theme: 'bootstrap-5',
             placeholder: "Pekerjaan",
             allowClear: true // Memungkinkan pengguna menghapus pilihan
         });
-    });
-
-    document.addEventListener("DOMContentLoaded", function() {
-        let today = new Date().toISOString().split('T')[0];
-        document.getElementById("tanggalPelaporan").value = today;
     });
 </script>
 

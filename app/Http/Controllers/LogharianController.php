@@ -183,15 +183,27 @@ class LogharianController extends Controller
         $pekerjaan = Pekerjaan::with('getSubPekerjaan')->where('id', $id)->first();
 
         if ($pekerjaan) {
-            // Hapus semua sub pekerjaan terlebih dahulu
+            // Hapus file yang terkait dengan pekerjaan utama
+            $filePathPekerjaan = public_path('lampiran/pekerjaan/' . $pekerjaan->lampiran);
+            if (File::exists($filePathPekerjaan)) {
+                File::delete($filePathPekerjaan);
+            }
+
+            // Hapus semua sub pekerjaan dan file terkait
             $pekerjaan->getSubPekerjaan()->each(function ($subPekerjaan) {
+                $filePathSub = public_path('lampiran/sub/pekerjaan/' . $subPekerjaan->lampiran);
+                if (File::exists($filePathSub)) {
+                    File::delete($filePathSub);
+                }
+
+                // Hapus data sub pekerjaan dari database
                 $subPekerjaan->delete();
             });
 
-            // Hapus pekerjaan utama
+            // Hapus pekerjaan utama dari database
             $pekerjaan->delete();
 
-            Alert::success('Berhasil', 'Data pekerjaan berhasil dihapus');
+            Alert::success('Berhasil', 'Data pekerjaan dan lampiran berhasil dihapus');
             return back();
         }
     }
