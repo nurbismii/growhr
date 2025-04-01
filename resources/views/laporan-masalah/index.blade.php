@@ -167,11 +167,15 @@
         <div class="row g-2 d-flex flex-wrap mb-3">
             @csrf
             <div class="col-12 col-sm-6 col-md-3">
-                <select name="pekerjaan[]" class="form-control select-pekerjaan w-100">
-                    <option value="" disabled selected>Pekerjaan</option>
-                    @foreach($kategori_pekerjaan as $kp)
-                    <option value="{{ $kp->id }}">{{ $kp->kategori_pekerjaan }}</option>
-                    @endforeach
+                <select id="kategori_kendala[]" name="kategori_kendala" class="form-control select-kendala">
+                    <option value="" disabled selected>Kendala</option>
+                    <option value="manusia">Manusia</option>
+                    <option value="metode">Metode</option>
+                    <option value="mesin">Mesin</option>
+                    <option value="material">Material</option>
+                    <option value="pengukuran">Pengukuran</option>
+                    <option value="lingkungan">Lingkungan</option>
+                    <option value="lainnya">Lingkungan</option>
                 </select>
             </div>
             <div class="col-12 col-sm-6 col-md-3">
@@ -366,7 +370,7 @@
                         </div>
                         <div class="col-md-12 mb-3">
                             <label for="langkahPenyelesaian" class="form-label">Langkah Penyelesaian</label>
-                            <textarea class="form-control" name="langkah_penyelesaian" id="langkahPenyelesaian" placeholder="Langkah penyelesaian" rows="2" required></textarea>
+                            <textarea class="form-control" name="langkah_penyelesaian" id="langkahPenyelesaian" placeholder="Langkah penyelesaian" rows="2" required>{{ $p_modal->langkah_penyelesaian }}</textarea>
                         </div>
                         <div class="col-md-4 mb-3">
                             <div class="mb-3">
@@ -519,9 +523,9 @@
     });
 
     $(document).ready(function() {
-        $('.select-pekerjaan').select2({
+        $('.select-kendala').select2({
             theme: 'bootstrap-5',
-            placeholder: "Pekerjaan",
+            placeholder: "Tipe Kendala",
             allowClear: true // Memungkinkan pengguna menghapus pilihan
         });
     });

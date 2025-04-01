@@ -32,20 +32,20 @@ class LaporanmasalahController extends Controller
         $user = User::where('nik', '!=', null)->get();
         $pekerjaan = Pekerjaan::where('user_id', Auth::user()->id)->get();
 
-        $pengaduan = Pengaduan::with(['pekerjaan', 'pic', 'statusPekerjaan', 'prioritas'])->where('user_id', Auth::user()->id);
+        $pengaduan = Pengaduan::with('pekerjaan', 'pic', 'statusPekerjaan', 'prioritas')->where('user_id', Auth::user()->id);
 
         $pengaduan_modal = Pengaduan::with(['pekerjaan', 'pic', 'statusPekerjaan', 'prioritas'])->where('user_id', Auth::user()->id)->get();
         $pekerjaan_modal = Pekerjaan::where('user_id', Auth::user()->id)->orderBy('id', 'desc')->get();
 
         if ($request->ajax()) {
-            if ($request->has('pekerjaan')) {
-                $pengaduan->whereIn('pekerjaan_id', $request->pekerjaan);
+            if ($request->has('kategori_kendala')) {
+                $pengaduan->where('kategori_kendala', $request->kategori_kendala);
             }
             if ($request->has('prioritas')) {
-                $pengaduan->whereIn('prioritas_id', $request->prioritas);
+                $pengaduan->where('prioritas_id', $request->prioritas);
             }
             if ($request->has('pic')) {
-                $pengaduan->whereIn('user_id', $request->pic);
+                $pengaduan->where('user_id', $request->pic);
             }
             if ($request->has('tanggal')) {
                 $dates = explode(" - ", $request->tanggal);
@@ -261,7 +261,7 @@ class LaporanmasalahController extends Controller
         if ($request->status_pekerjaan_id == $belum_mulai) {
             return response()->json([
                 'success' => false,
-                'message' => 'Update ditolak! laporan masalah tidak dapat dianulir.'
+                'message' => 'Update ditolak! Status masalah tidak dapat dianulir.'
             ], 400);
         }
 
