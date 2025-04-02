@@ -374,45 +374,46 @@
                         </div>
                         <div class="col-md-4 mb-3">
                             <div class="mb-3">
-                                <label class="form-label fw-bold text-muted">Dokumen Bukti Permasalahan</label>
+                                <label class="form-label fw-bold text-muted">Dokumen Permasalahan</label>
                                 <div>
-                                    <label for="InputPermasalahan" class="custom-file-upload">
+                                    <label for="fileInputEditPermasahalah{{$p_modal->id}}" class="custom-file-upload">
                                         <i class="bi bi-plus-circle"></i>
-                                        <span id="labelPermasalahan" class="ms-2">Pilih file</span>
+                                        <span class="ms-2 fileLabel" id="fileLabelEditPermasalahan{{$p_modal->id}}">Pilih file</span>
                                     </label>
-                                    <input type="file" id="InputPermasalahan" name="doc_permasalahan">
+                                    <input type="file" id="fileInputEditPermasahalah{{$p_modal->id}}" class="fileInputEditPermasahalah" name="doc_permasalahan">
                                 </div>
-                                <div id="DocPermasalahan" class="file-name"></div>
+                                <div class="file-name fileInputEditPermasahalah{{$p_modal->id}}"></div>
                             </div>
                         </div>
 
                         <div class="col-md-4 mb-3">
                             <div class="mb-3">
-                                <label class="form-label fw-bold text-muted">Dokumen Analisis Risiko</label>
+                                <label class="form-label fw-bold text-muted">Dokumen Analisa</label>
                                 <div>
-                                    <label for="InputAnalisa" class="custom-file-upload">
+                                    <label for="fileInputEditAnalisa{{$p_modal->id}}" class="custom-file-upload">
                                         <i class="bi bi-plus-circle"></i>
-                                        <span id="labelAnalisa" class="ms-2">Pilih file</span>
+                                        <span class="ms-2 fileLabel" id="fileLabelEditAnalisa{{$p_modal->id}}">Pilih file</span>
                                     </label>
-                                    <input type="file" id="InputAnalisa" name="doc_analisa">
+                                    <input type="file" id="fileInputEditAnalisa{{$p_modal->id}}" class="fileInputEditAnalisa" name="doc_analisa">
                                 </div>
-                                <div id="DocAnalisa" class="file-name"></div>
+                                <div class="file-name fileInputEditAnalisa{{$p_modal->id}}"></div>
                             </div>
                         </div>
 
                         <div class="col-md-4 mb-3">
                             <div class="mb-3">
-                                <label class="form-label fw-bold text-muted">Dokumen Solusi (Opsional)</label>
+                                <label class="form-label fw-bold text-muted">Dokumen Solusi</label>
                                 <div>
-                                    <label for="InputSolusi" class="custom-file-upload">
+                                    <label for="fileInputEditSolusi{{$p_modal->id}}" class="custom-file-upload">
                                         <i class="bi bi-plus-circle"></i>
-                                        <span id="labelSolusi" class="ms-2">Pilih file</span>
+                                        <span class="ms-2 fileLabel" id="fileLabelEditSolusi{{$p_modal->id}}">Pilih file</span>
                                     </label>
-                                    <input type="file" id="InputSolusi" name="doc_solusi">
+                                    <input type="file" id="fileInputEditSolusi{{$p_modal->id}}" class="fileInputEditSolusi" name="doc_solusi">
                                 </div>
-                                <div id="DocSolusi" class="file-name"></div>
+                                <div class="file-name fileInputEditSolusi{{$p_modal->id}}"></div>
                             </div>
                         </div>
+s
                     </div>
                     <button type="submit" class="btn btn-primary text-white float-end">
                         Kirim &nbsp;<span class="tf-icons bx bx-send"></span>
@@ -426,6 +427,33 @@
 
 @push('script')
 <script>
+    $(document).on("change", ".fileInputEditPermasahalah", function() {
+        let fileId = $(this).attr("id"); // Dapatkan ID input file (misal: fileInput1)
+        let fileName = this.files[0] ? this.files[0].name : "Pilih File";
+
+        // Ubah label & nama file berdasarkan ID yang sesuai
+        $("#fileLabelEditPermasalahan" + fileId.replace("fileInputEditPermasahalah", "")).text(fileName);
+        $("#fileNameEdit" + fileId.replace("fileInputEditPermasahalah", "")).text(fileName);
+    });
+
+    $(document).on("change", ".fileInputEditAnalisa", function() {
+        let fileId = $(this).attr("id"); // Dapatkan ID input file (misal: fileInput1)
+        let fileName = this.files[0] ? this.files[0].name : "Pilih File";
+
+        // Ubah label & nama file berdasarkan ID yang sesuai
+        $("#fileLabelEditAnalisa" + fileId.replace("fileInputEditAnalisa", "")).text(fileName);
+        $("#fileNameEdit" + fileId.replace("fileInputEditAnalisa", "")).text(fileName);
+    });
+
+    $(document).on("change", ".fileInputEditSolusi", function() {
+        let fileId = $(this).attr("id"); // Dapatkan ID input file (misal: fileInput1)
+        let fileName = this.files[0] ? this.files[0].name : "Pilih File";
+
+        // Ubah label & nama file berdasarkan ID yang sesuai
+        $("#fileLabelEditSolusi" + fileId.replace("fileInputEditSolusi", "")).text(fileName);
+        $("#fileNameEdit" + fileId.replace("fileInputEditSolusi", "")).text(fileName);
+    });
+
     document.addEventListener("DOMContentLoaded", function() {
         let today = new Date().toISOString().split('T')[0];
 

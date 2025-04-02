@@ -43,7 +43,7 @@
     <div class="col-md-12">
         <div class="card mb-2">
             <div class="card-body">
-                <form action="{{ route('laporan-masalah.store') }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('laporan-masalah.store') }}" method="post" enctype="multipart/form-data" id="uploadForm">
                     @csrf
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div class="card text-white bg-primary shadow-lg px-3 py-2" style="max-width: 22rem; height: 3rem;">
@@ -121,7 +121,7 @@
                                         <i class="bi bi-plus-circle"></i>
                                         <span id="labelPermasalahan" class="ms-2">Pilih file</span>
                                     </label>
-                                    <input type="file" id="InputPermasalahan" name="doc_permasalahan" required>
+                                    <input type="file" id="InputPermasalahan" name="doc_permasalahan">
                                 </div>
                                 <div id="DocPermasalahan" class="file-name"></div>
                             </div>
@@ -135,7 +135,7 @@
                                         <i class="bi bi-plus-circle"></i>
                                         <span id="labelAnalisa" class="ms-2">Pilih file</span>
                                     </label>
-                                    <input type="file" id="InputAnalisa" name="doc_analisa" required>
+                                    <input type="file" id="InputAnalisa" name="doc_analisa">
                                 </div>
                                 <div id="DocAnalisa" class="file-name"></div>
                             </div>
@@ -165,7 +165,33 @@
 </div>
 
 @push('script')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    document.getElementById("uploadForm").addEventListener("submit", function(event) {
+        let fileInputPermasalahan = document.getElementById("InputPermasalahan");
+        let fileInputAnalisa = document.getElementById("InputAnalisa");
+        let errorMessage = '';
+
+        // Cek apakah file tidak dipilih
+        if (!fileInputPermasalahan.files.length) {
+            errorMessage = 'Harap pilih dokumen bukti permasalahan!';
+        } else if (!fileInputAnalisa.files.length) {
+            errorMessage = 'Harap pilih dokumen analisa!';
+        }
+
+        // Jika ada error, munculkan SweetAlert dan hentikan form submission
+        if (errorMessage) {
+            event.preventDefault(); // Mencegah form dikirim
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: errorMessage,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+
     document.addEventListener("DOMContentLoaded", function() {
         let today = new Date().toISOString().split('T')[0];
 

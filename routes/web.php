@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 Route::post('user.daftar', [App\Http\Controllers\UserController::class, 'daftar'])->name('user.daftar');
 
@@ -19,12 +19,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('log-harian/store/sub-pekerjaan', [App\Http\Controllers\LogharianController::class, 'subPekerjaanStore'])->name('log-harian.store.sub');
     Route::patch('/log-harian/sub/update/{id}', [App\Http\Controllers\LogharianController::class, 'subPekerjaanUpdate'])->name('log-harian.update.sub');
     Route::delete('/log-harian/sub/destroy/{id}', [App\Http\Controllers\LogharianController::class, 'subPekerjaanDestroy'])->name('log-harian.destroy.sub');
-    
+
     Route::post('log-harian/update-status-pekerjaan/{id}', [App\Http\Controllers\LogharianController::class, 'updateStatusPekerjaan']);
     Route::post('log-harian/sub/update-status-pekerjaan/{id}', [App\Http\Controllers\LogharianController::class, 'updateSubStatusPekerjaan']);
 
     Route::post('laporan-masalah/update-status-pekerjaan/{id}', [App\Http\Controllers\LaporanmasalahController::class, 'updateStatusPekerjaan']);
-    
+    Route::post('laporan-hasil/update-status-laporan/{id}', [App\Http\Controllers\LaporanhasilController::class, 'updateStatusLaporan']);
+
     Route::resource('laporan-masalah', 'App\Http\Controllers\LaporanmasalahController');
     Route::resource('laporan-hasil', 'App\Http\Controllers\LaporanhasilController');
     Route::resource('profile', 'App\Http\Controllers\AccountController');
