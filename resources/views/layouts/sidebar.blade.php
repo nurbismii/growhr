@@ -95,7 +95,7 @@
         <li class="menu-item">
             <a href="{{ route('laporan-masalah.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-error"></i>
-                <div data-i18n="Analytics">Lapor Masalah</div>
+                <div data-i18n="Analytics">Laporan Masalah</div>
             </a>
         </li>
 
@@ -107,14 +107,14 @@
         </li>
 
         <li class="menu-item">
-            <a href="index.html" class="menu-link">
+            <a href="{{ route('laporan-pelayanan.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-support"></i>
                 <div data-i18n="Analytics">Pelayanan</div>
             </a>
         </li>
 
         <li class="menu-item">
-            <a href="index.html" class="menu-link">
+            <a href="javascript:void(0)" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-star"></i>
                 <div data-i18n="Analytics">Penilaian</div>
             </a>

@@ -16,4 +16,9 @@ class SubKategoriPelayanan extends Model
     {
         return $this->hasOne(kategoriPelayanan::class, 'id', 'kategori_pelayanan_id');
     }
+
+    public function kategori()
+    {
+        return $this->belongsTo(KategoriPelayanan::class, 'kategori_pelayanan_id');
+    }
 }

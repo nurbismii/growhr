@@ -11,4 +11,9 @@ class KategoriPelayanan extends Model
 
     protected $table = 'kategori_pelayanan';
     protected $guarded = [];
+
+    public function subKategoris()
+    {
+        return $this->hasMany(SubKategoriPelayanan::class, 'kategori_pelayanan_id');
+    }
 }

@@ -25,9 +25,12 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('laporan-masalah/update-status-pekerjaan/{id}', [App\Http\Controllers\LaporanmasalahController::class, 'updateStatusPekerjaan']);
     Route::post('laporan-hasil/update-status-laporan/{id}', [App\Http\Controllers\LaporanhasilController::class, 'updateStatusLaporan']);
-
+    Route::post('/get-subkategori', [App\Http\Controllers\PelayananController::class, 'getSubKategori'])->name('get.subkategori');
+    Route::get('/get-karyawan/{nik}', [App\Http\Controllers\PelayananController::class, 'getNamaKaryawan']);
+    
     Route::resource('laporan-masalah', 'App\Http\Controllers\LaporanmasalahController');
     Route::resource('laporan-hasil', 'App\Http\Controllers\LaporanhasilController');
+    Route::resource('laporan-pelayanan', 'App\Http\Controllers\PelayananController');
     Route::resource('profile', 'App\Http\Controllers\AccountController');
     Route::resource('user', 'App\Http\Controllers\UserController');
 

@@ -413,7 +413,6 @@
                                 <div class="file-name fileInputEditSolusi{{$p_modal->id}}"></div>
                             </div>
                         </div>
-s
                     </div>
                     <button type="submit" class="btn btn-primary text-white float-end">
                         Kirim &nbsp;<span class="tf-icons bx bx-send"></span>
