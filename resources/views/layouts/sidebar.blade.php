@@ -170,8 +170,14 @@
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="forms-input-groups.html" class="menu-link">
-                        <div data-i18n="Input groups">Layanan</div>
+                    <a href="{{ route('kategori-pelayanan.index') }}" class="menu-link">
+                        <div data-i18n="Input groups">Kategori Pelayanan</div>
+                    </a>
+                </li>
+
+                <li class="menu-item">
+                    <a href="{{ route('sub-kategori-pelayanan.index') }}" class="menu-link">
+                        <div data-i18n="Input groups">Sub Kategori Pelayanan</div>
                     </a>
                 </li>
             </ul>

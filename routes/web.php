@@ -37,5 +37,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::resource('jenis-pekerjaan', 'App\Http\Controllers\Dropdown\JenispekerjaanController');
         Route::resource('divisi', 'App\Http\Controllers\Dropdown\DivisiController');
         Route::resource('prioritas', 'App\Http\Controllers\Dropdown\PrioritasController');
+        Route::resource('kategori-pelayanan', 'App\Http\Controllers\Dropdown\KategoriPelayananController');
+        Route::resource('sub-kategori-pelayanan', 'App\Http\Controllers\Dropdown\SubKategoriPelayananController');
     });
 });
