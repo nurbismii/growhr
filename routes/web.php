@@ -13,6 +13,11 @@ Auth::routes();
 Route::group(['middleware' => 'auth'], function () {
 
     Route::get('home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+    Route::group(['prefix' => 'insight'], function () {
+        Route::get('papan-kerja', [\App\Http\Controllers\HomeController::class, 'index'])->name('papan-kerja');
+    });
+
     Route::resource('log-harian', 'App\Http\Controllers\LogharianController');
 
     Route::get('/log-harian/sub/{id}', [App\Http\Controllers\LogharianController::class, 'getSubPekerjaan']);
@@ -27,7 +32,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('laporan-hasil/update-status-laporan/{id}', [App\Http\Controllers\LaporanhasilController::class, 'updateStatusLaporan']);
     Route::post('/get-subkategori', [App\Http\Controllers\PelayananController::class, 'getSubKategori'])->name('get.subkategori');
     Route::get('/get-karyawan/{nik}', [App\Http\Controllers\PelayananController::class, 'getNamaKaryawan']);
-    
+
     Route::resource('laporan-masalah', 'App\Http\Controllers\LaporanmasalahController');
     Route::resource('laporan-hasil', 'App\Http\Controllers\LaporanhasilController');
     Route::resource('laporan-pelayanan', 'App\Http\Controllers\PelayananController');

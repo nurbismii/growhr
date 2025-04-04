@@ -232,7 +232,7 @@
                         <td>{{ ++$no }}</td>
                         <td>{{ date('Y-m-d', strtotime($pengaduan->created_at)) }}</td>
                         <td>{{ $pengaduan->pic->name }}</td>
-                        <td>{{ $pengaduan->pekerjaan->deskripsi_pekerjaan }}</td>
+                        <td>{{ $pengaduan->pekerjaan != null ? $pengaduan->pekerjaan->deskripsi : '-'}}</td>
                         <td>
                             <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $pengaduan->deskripsi_pengaduan }}">
                                 {{ substr($pengaduan->deskripsi_pengaduan, 0, 25) }}
@@ -323,7 +323,7 @@
                         <div class="col-md-8 mb-3">
                             <label for="jenisKegiatan" class="form-label">Jenis Pekerjaan</label>
                             <select id="jenisKegiatan" name="jenis_pekerjaan_id" class="form-select" required>
-                                <option value="{{ $p_modal->pekerjaan_id }}">{{ $p_modal->pekerjaan->deskripsi_pekerjaan }}</option>
+                                <option value="{{ $p_modal->pekerjaan_id }}">{{ $pengaduan->pekerjaan != null ? $pengaduan->pekerjaan->deskripsi : '-'}}</option>
                                 @foreach($pekerjaan_modal as $pk_modal)
                                 <option value="{{ $pk_modal->id }}">{{ $pk_modal->deskripsi_pekerjaan }} | {{ $pk_modal->tanggal_mulai }}</option>
                                 @endforeach
