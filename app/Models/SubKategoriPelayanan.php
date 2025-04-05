@@ -14,7 +14,7 @@ class SubKategoriPelayanan extends Model
 
     public function kategoriPelayanan()
     {
-        return $this->hasOne(kategoriPelayanan::class, 'id', 'kategori_pelayanan_id');
+        return $this->hasOne(KategoriPelayanan::class, 'id', 'kategori_pelayanan_id');
     }
 
     public function kategori()
