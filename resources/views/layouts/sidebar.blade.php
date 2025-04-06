@@ -78,11 +78,13 @@
                         <div data-i18n="Input groups">Kalender Kerja</div>
                     </a>
                 </li>
+                @if(Auth::user()->role == 'ADMIN')
                 <li class="menu-item">
-                    <a href="" class="menu-link">
+                    <a href="{{ route('tugas') }}" class="menu-link">
                         <div data-i18n="Input groups">Tugas</div>
                     </a>
                 </li>
+                @endif
             </ul>
         </li>
 
@@ -97,7 +99,6 @@
             </a>
         </li>
 
-        <!-- Layouts -->
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Pages</span>
         </li>
@@ -153,6 +154,7 @@
             </a>
         </li>
 
+        @if(Auth::user()->role == 'ADMIN')
         <li class="menu-header small text-uppercase"><span class="menu-header-text">Widget</span></li>
         <!-- Cards -->
         <li class="menu-item">
@@ -199,5 +201,6 @@
                 </li>
             </ul>
         </li>
+        @endif
     </ul>
 </aside>

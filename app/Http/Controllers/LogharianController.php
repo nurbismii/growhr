@@ -99,24 +99,42 @@ class LogharianController extends Controller
             $lampiran->move($path, $lampiranName);
         }
 
-        Pekerjaan::create([
-            'user_id' => Auth::user()->id,
-            'sifat_pekerjaan_id' => $request->sifat_pekerjaan,
-            'kategori_pekerjaan_id' => $request->kategori_pekerjaan_id,
-            'pj_pekerjaan_id' => $request->pj_pekerjaan_id,
-            'prioritas_id' => $request->prioritas_id,
-            'status_pekerjaan_id' => $request->status_pekerjaan_id,
-            'deskripsi_pekerjaan' => $request->deskripsi_pekerjaan,
-            'tanggal_mulai' => $request->tanggal_mulai,
-            'tanggal_selesai' => $request->tanggal_selesai,
-            'durasi' => $request->durasi,
-            'tingkat_kesulitan' => $request->tingkat_kesulitan,
-            'alasan' => $request->alasan,
-            'lampiran' => $lampiranName,
-        ]);
+        try {
+            DB::beginTransaction();
+            $kerjaan = Pekerjaan::create([
+                'user_id' => Auth::user()->id,
+                'sifat_pekerjaan_id' => $request->sifat_pekerjaan,
+                'kategori_pekerjaan_id' => $request->kategori_pekerjaan_id,
+                'pj_pekerjaan_id' => $request->pj_pekerjaan_id,
+                'prioritas_id' => $request->prioritas_id,
+                'status_pekerjaan_id' => $request->status_pekerjaan_id,
+                'deskripsi_pekerjaan' => $request->deskripsi_pekerjaan,
+                'tanggal_mulai' => $request->tanggal_mulai,
+                'tanggal_selesai' => $request->tanggal_selesai,
+                'durasi' => $request->durasi,
+                'tingkat_kesulitan' => $request->tingkat_kesulitan,
+                'alasan' => $request->alasan,
+                'lampiran' => $lampiranName,
+            ]);
 
-        Alert::success('Berhasil', 'Pekerjan baru berhasil ditambahkan!');
-        return redirect('log-harian');
+            $status = StatusPekerjaan::where('id', $kerjaan->status_pekerjaan_id)->first();
+
+            RiwayatPembaruanStatusPekerjaan::create([
+                'pekerjaan_id' => $kerjaan->id,
+                'pembaruan' => date('Y-m-d H:i:s'),
+                'status_pembaruan' => $status->status_pekerjaan
+            ]);
+
+            DB::commit();
+
+            Alert::success('Berhasil', 'Pekerjan baru berhasil ditambahkan!');
+            return redirect('log-harian');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Alert::success('Error', 'Terjadi kesalahan');
+            return redirect('log-harian');
+        }
     }
 
     public function update(Request $request, $id)
@@ -354,11 +372,13 @@ class LogharianController extends Controller
 
         DB::beginTransaction();
 
+        $status = StatusPekerjaan::where('id',  $request->status_pekerjaan_id)->first();
+
         try {
             RiwayatPembaruanStatusPekerjaan::create([
                 'pekerjaan_id' => $kerjaan->id,
                 'pembaruan' => date('Y-m-d H:i:s'),
-                'status_pembaruan' => $kerjaan->getStatusPekerjaan->status_pekerjaan,
+                'status_pembaruan' => $status->status_pekerjaan
             ]);
 
             // Jika tidak ada sub pekerjaan atau update bukan ke status 3, izinkan update
@@ -388,11 +408,13 @@ class LogharianController extends Controller
 
         DB::beginTransaction();
 
+        $status = StatusPekerjaan::where('id',  $request->status_pekerjaan_id)->first();
+
         try {
             RiwayatPembaruanStatusPekerjaan::create([
                 'sub_pekerjaan_id' => $subPekerjaan->id,
                 'pembaruan' => date('Y-m-d H:i:s'),
-                'status_pembaruan' => $subPekerjaan->getStatusPekerjaan->status_pekerjaan,
+                'status_pembaruan' => $status->status_pekerjaan,
             ]);
 
             $subPekerjaan->status_pekerjaan_id = $request->status_pekerjaan_id;

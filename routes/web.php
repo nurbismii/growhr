@@ -17,6 +17,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group(['prefix' => 'insight'], function () {
         Route::get('papan-kerja', [\App\Http\Controllers\HomeController::class, 'index'])->name('papan-kerja');
         Route::get('kalender-kerja', [\App\Http\Controllers\HomeController::class, 'kalender'])->name('kalender-kerja');
+        Route::get('tugas', [\App\Http\Controllers\HomeController::class, 'tugas'])->name('tugas');
     });
 
     Route::resource('log-harian', 'App\Http\Controllers\LogharianController');
@@ -40,7 +41,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('profile', 'App\Http\Controllers\AccountController');
     Route::resource('user', 'App\Http\Controllers\UserController');
 
-    Route::group(['prefix' => 'dropdown'], function () {
+    Route::group(['prefix' => 'dropdown', 'middleware' => ['role:ADMIN']], function () {
         Route::resource('status-pekerjaan', 'App\Http\Controllers\Dropdown\StatuspekerjaanController');
         Route::resource('kategori-pekerjaan', 'App\Http\Controllers\Dropdown\KategoripekerjaanController');
         Route::resource('jenis-pekerjaan', 'App\Http\Controllers\Dropdown\JenispekerjaanController');

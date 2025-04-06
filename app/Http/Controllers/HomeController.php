@@ -3,9 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Divisi;
+use App\Models\KategoriPekerjaan;
 use App\Models\Pekerjaan;
+use App\Models\Prioritas;
+use App\Models\RiwayatPembaruanStatusPekerjaan;
+use App\Models\SifatPekerjaan;
+use App\Models\StatusPekerjaan;
+use App\Models\User;
 use Illuminate\Console\Scheduling\Event;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -78,5 +85,89 @@ class HomeController extends Controller
         }
 
         return view('kalender-kerja');
+    }
+
+    public function tugas(Request $request)
+    {
+        $title = 'Hapus data!';
+        $text = 'Kamu yakin ingin menghapus data ini ?';
+        confirmDelete($title, $text);
+
+        // Data pendukung dropdown filter
+        $prioritas = Prioritas::all();
+        $status_pekerjaan = StatusPekerjaan::all();
+        $pekerjaan = Pekerjaan::all();
+        $user = User::all();
+
+        // Query dasar
+        $riwayatQuery = RiwayatPembaruanStatusPekerjaan::with([
+            'pekerjaan' => function ($query) {
+                $query->select('id', 'deskripsi_pekerjaan', 'tanggal_mulai', 'status_pekerjaan_id', 'prioritas_id', 'user_id')
+                    ->whereNotNull('deskripsi_pekerjaan')
+                    ->whereNotNull('status_pekerjaan_id')
+                    ->where('status_pekerjaan_id', '!=', 5)
+                    ->whereHas('getStatusPekerjaan')
+                    ->whereHas('getPrioritas')
+                    ->whereHas('getUser');
+            },
+            'pekerjaan.getStatusPekerjaan',
+            'pekerjaan.getPrioritas',
+            'pekerjaan.getUser'
+        ])
+            ->whereHas('pekerjaan', function ($query) {
+                $query->whereNotNull('id')
+                    ->whereNotNull('deskripsi_pekerjaan')
+                    ->whereNotNull('status_pekerjaan_id')
+                    ->where('status_pekerjaan_id', '!=', 5)
+                    ->whereNotNull('user_id');
+            });
+
+        // Filter untuk request AJAX
+        if ($request->ajax()) {
+            // Filter berdasarkan pekerjaan
+            if ($request->filled('pekerjaan')) {
+                $riwayatQuery->whereIn('pekerjaan_id', $request->pekerjaan);
+            }
+
+            // Filter berdasarkan prioritas pekerjaan
+            if ($request->filled('prioritas')) {
+                $riwayatQuery->whereHas('pekerjaan', function ($query) use ($request) {
+                    $query->whereIn('prioritas_id', $request->prioritas);
+                });
+            }
+
+            // Filter berdasarkan PIC (user_id pada pekerjaan)
+            if ($request->filled('pic')) {
+                $riwayatQuery->whereHas('pekerjaan', function ($query) use ($request) {
+                    $query->whereIn('user_id', $request->pic);
+                });
+            }
+
+            // Filter berdasarkan tanggal pembaruan
+            if ($request->filled('tanggal')) {
+                $dates = explode(" - ", $request->tanggal);
+                if (count($dates) === 2) {
+                    $startDate = date('Y-m-d', strtotime(trim($dates[0])));
+                    $endDate = date('Y-m-d', strtotime(trim($dates[1])));
+                    $riwayatQuery->whereBetween('pembaruan', [$startDate, $endDate]);
+                }
+            }
+
+            return response()->json([
+                'riwayat' => $riwayatQuery->get(),
+                'status_pekerjaan' => $status_pekerjaan
+            ]);
+        }
+
+        // Jika bukan AJAX, ambil semua riwayat
+        $riwayat = $riwayatQuery->get();
+
+        return view('tugas', compact(
+            'riwayat',
+            'pekerjaan',
+            'user',
+            'prioritas',
+            'status_pekerjaan'
+        ));
     }
 }
