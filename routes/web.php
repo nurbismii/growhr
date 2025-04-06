@@ -16,6 +16,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::group(['prefix' => 'insight'], function () {
         Route::get('papan-kerja', [\App\Http\Controllers\HomeController::class, 'index'])->name('papan-kerja');
+        Route::get('kalender-kerja', [\App\Http\Controllers\HomeController::class, 'kalender'])->name('kalender-kerja');
     });
 
     Route::resource('log-harian', 'App\Http\Controllers\LogharianController');
