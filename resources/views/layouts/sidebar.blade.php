@@ -106,7 +106,7 @@
         <li class="menu-item">
             <a href="{{ route('log-harian.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-compass"></i>
-                <div data-i18n="Analytics">Log Harian</div>
+                <div data-i18n="Analytics">Pekerjaan Harian</div>
             </a>
         </li>
 

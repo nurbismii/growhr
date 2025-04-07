@@ -81,7 +81,7 @@
                         <!-- Card Form Kegiatan (Lebih Besar) -->
                         <div class="card text-white bg-primary shadow-lg px-2 py-1" style="max-width: 22rem; height: 2.5rem;">
                             <div class="card-body p-0">
-                                <h6 class="card-title text-white fw-bold m-2 text-center">Form Kegiatan</h6>
+                                <h6 class="card-title text-white fw-bold m-2 text-center">Form Pekerjaan Harian</h6>
                             </div>
                         </div>
                         <!-- Tombol Kembali (Lebih Kecil) -->
@@ -155,7 +155,7 @@
                             <label for="deskripsiTugas" class="form-label">Deskripsi Tugas
                                 <span class="text-danger">*</span>
                             </label>
-                            <textarea class="form-control" maxlength="128" name="deskripsi_pekerjaan" id="deskripsiTugas" placeholder="Isi Tugas" rows="3" required></textarea>
+                            <textarea class="form-control" maxlength="45" name="deskripsi_pekerjaan" id="deskripsiTugas" placeholder="Isi Tugas" rows="3" required></textarea>
                         </div>
 
                         <div class="col-md-4 mb-3">

@@ -64,11 +64,11 @@
 
                         <div class="col-md-4 mb-3">
                             <label for="tanggalMulai" class="form-label">Tanggal Mulai</label>
-                            <input type="date" class="form-control tanggalMulai" name="tanggal_mulai" id="tanggalMulai" value="{{ $pk->tanggal_mulai }}" required>
+                            <input type="date" class="form-control tanggalMulai" name="tanggal_mulai" id="tanggalMulai" value="{{ $pk->tanggal_mulai }}" required readonly>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="tanggalSelesai" class="form-label">Tanggal Selesai</label>
-                            <input type="date" class="form-control tanggalSelesai" name="tanggal_selesai" id="tanggalSelesai" value="{{ $pk->tanggal_selesai }}" required>
+                            <input type="date" class="form-control tanggalSelesai" name="tanggal_selesai" id="tanggalSelesai" value="{{ $pk->tanggal_selesai }}" required readonly>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="duration" class="form-label">Durasi</label>

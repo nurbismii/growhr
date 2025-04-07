@@ -339,7 +339,7 @@ class LogharianController extends Controller
     public function updateStatusPekerjaan(Request $request, $id)
     {
         $belum_mulai = 1;
-        $selesai = 3;
+        $selesai = 5;
 
         $kerjaan = Pekerjaan::with('getStatusPekerjaan')->where('id', $id)->first();
 
@@ -350,10 +350,17 @@ class LogharianController extends Controller
         // Ambil semua SubPekerjaan terkait
         $subPekerjaan = SubPekerjaan::where('pekerjaan_id', $kerjaan->id)->get();
 
-        // Cek apakah masih ada SubPekerjaan yang belum selesai (status_pekerjaan_id != 3)
+        // Cek apakah masih ada SubPekerjaan yang belum selesai (status_pekerjaan_id != 5)
         $adaBelumSelesai = $subPekerjaan->contains(function ($sub) {
-            return $sub->status_pekerjaan_id != 3;
+            return $sub->status_pekerjaan_id != 5;
         });
+
+        if ($request->status_pekerjaan_id == $selesai) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Update ditolak! status selesai tidak dapat dianulir'
+            ], 400);
+        }
 
         if ($request->status_pekerjaan_id == $belum_mulai) {
             return response()->json([
@@ -416,6 +423,13 @@ class LogharianController extends Controller
                 'pembaruan' => date('Y-m-d H:i:s'),
                 'status_pembaruan' => $status->status_pekerjaan,
             ]);
+
+            if ($request->status_pekerjaan_id == 5) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Update ditolak! status selesai tidak dapat dianulir'
+                ], 400);
+            }
 
             $subPekerjaan->status_pekerjaan_id = $request->status_pekerjaan_id;
             $subPekerjaan->save();

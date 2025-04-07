@@ -153,7 +153,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div class="card text-white bg-primary shadow-lg px-2 py-1" style="max-width: 26rem; height: 2.5rem;">
             <div class="card-body p-0">
-                <h6 class="card-title text-white fw-bold m-2 text-center">Log Harian</h6>
+                <h6 class="card-title text-white fw-bold m-2 text-center">Pekerjaan Harian</h6>
             </div>
         </div>
 
@@ -235,7 +235,7 @@
                             </button>
                         </td>
                         <td>{{ $kerjaan->getUser ->name }}</td>
-                        <td>{{ date_format($kerjaan->created_at, 'Y-m-d') }}</td>
+                        <td>{{ date_format($kerjaan->created_at, 'd-m-Y') }}</td>
                         <td>{{ $kerjaan->getSifatPekerjaan->pekerjaan }}</td>
                         <td>
                             <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $kerjaan->deskripsi_pekerjaan }}">
@@ -254,8 +254,8 @@
                             </select>
                         </td>
                         <td>{{ $kerjaan->getKategoriPekerjaan->kategori_pekerjaan }}</td>
-                        <td>{{ $kerjaan->tanggal_mulai }}</td>
-                        <td class="tanggal-selesai">{{ $kerjaan->tanggal_selesai }}</td>
+                        <td>{{ date('d-m-Y', strtotime($kerjaan->tanggal_mulai)) }}</td>
+                        <td class="tanggal-selesai">{{ date('d-m-Y', strtotime($kerjaan->tanggal_selesai)) }}</td>
                         <td>{{ $kerjaan->durasi }}</td>
                         <td class="deadline"></td>
                         <td>{{ $kerjaan->getPjPekerjaan->name }}</td>
@@ -366,11 +366,11 @@
 
                         <div class="col-md-4 mb-3">
                             <label for="tanggalMulai" class="form-label">Tanggal Mulai</label>
-                            <input type="date" class="form-control tanggalMulai" name="tanggal_mulai" id="tanggalMulai" value="{{ $subpk->tanggal_mulai }}" required>
+                            <input type="date" class="form-control tanggalMulai" name="tanggal_mulai" id="tanggalMulai" value="{{ $subpk->tanggal_mulai }}" required readonly>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="tanggalSelesai" class="form-label">Tanggal Selesai</label>
-                            <input type="date" class="form-control tanggalSelesai" name="tanggal_selesai" id="tanggalSelesai" value="{{ $subpk->tanggal_selesai }}" required>
+                            <input type="date" class="form-control tanggalSelesai" name="tanggal_selesai" id="tanggalSelesai" value="{{ $subpk->tanggal_selesai }}" required readonly>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="duration" class="form-label">Durasi</label>
@@ -475,35 +475,37 @@
     });
 
     function updateRowColors() {
-        let today = new Date(); // Ambil tanggal hari ini
+        let today = new Date();
         today.setHours(0, 0, 0, 0);
 
         document.querySelectorAll("tr").forEach(row => {
-            let cellTanggal = row.querySelector(".tanggal-selesai"); // Ambil elemen tanggal selesai
-            let selectStatus = row.querySelector(".status-pekerjaan"); // Ambil elemen select status pekerjaan
+            let cellTanggal = row.querySelector(".tanggal-selesai");
+            let selectStatus = row.querySelector(".status-pekerjaan");
 
-            if (!cellTanggal || !selectStatus) return; // Jika tidak ada, lewati
+            if (!cellTanggal || !selectStatus) return;
 
             let statusPekerjaan = selectStatus.options[selectStatus.selectedIndex].text.trim().toLowerCase();
             if (statusPekerjaan === "selesai") {
-                row.classList.remove("table-danger", "table-warning", "table-success"); // Hapus semua warna jika selesai
-                return; // Tidak lanjutkan pengecekan warna
+                row.classList.remove("table-danger", "table-warning", "table-success");
+                return;
             }
 
-            let tanggalSelesai = new Date(cellTanggal.innerText.trim());
+            // Ambil teks tanggal dan ubah ke Date object
+            let tanggalText = cellTanggal.innerText.trim(); // Contoh: "07-04-2025"
+            let [day, month, year] = tanggalText.split("-"); // Pisah berdasarkan '-'
+            let tanggalSelesai = new Date(year, month - 1, day); // Format: YYYY, MM (0-based), DD
             tanggalSelesai.setHours(0, 0, 0, 0);
 
             let selisihHari = Math.ceil((tanggalSelesai - today) / (1000 * 60 * 60 * 24));
 
-            // Reset semua warna
             row.classList.remove("table-danger", "table-warning", "table-success");
 
             if (selisihHari <= 0) {
-                row.classList.add("table-danger"); // Lewat deadline
+                row.classList.add("table-danger");
             } else if (selisihHari <= 1) {
-                row.classList.add("table-warning"); // 1 hari sebelum deadline
+                row.classList.add("table-warning");
             } else if (selisihHari <= 3) {
-                row.classList.add("table-success"); // 3 hari sebelum deadline
+                row.classList.add("table-success");
             }
         });
     }
@@ -590,7 +592,7 @@
         const mi = String(date.getMinutes()).padStart(2, '0');
         const ss = String(date.getSeconds()).padStart(2, '0');
 
-        return `${yyyy}-${mm}-${dd}`;
+        return `${dd}-${mm}-${yyyy}`;
     }
 
     function escapeHtml(text) {
@@ -641,6 +643,8 @@
                 type: "GET",
                 data: formData,
                 success: function(response) {
+                    console.log(response);
+
                     table.clear().draw();
 
                     response.pekerjaan.forEach(function(kerjaan, index) {
@@ -752,6 +756,8 @@
                         timer: 1500,
                         showConfirmButton: false
                     });
+
+                    fetchData();
                 },
                 error: function(xhr) {
                     let response = xhr.responseJSON;
@@ -760,6 +766,8 @@
                         text: response ? response.message : "Terjadi kesalahan.",
                         icon: "error"
                     });
+
+                    fetchData();
                 }
             });
         });
@@ -802,6 +810,8 @@
                         timer: 1500,
                         showConfirmButton: false
                     });
+
+                    fetchData();
                 },
                 error: function(xhr) {
                     Swal.fire({
@@ -810,7 +820,8 @@
                         icon: "error",
                         confirmButtonText: "Coba Lagi"
                     });
-                    console.error("Gagal memperbarui status sub pekerjaan:", xhr.responseText);
+
+                    fetchData();
                 }
             });
         });
@@ -873,8 +884,8 @@
                             </select>
                         </td>
                         <td>${escapeHtml(sub.get_kategori_pekerjaan.kategori_pekerjaan)}</td>
-                        <td>${escapeHtml(sub.tanggal_mulai)}</td>
-                        <td class="tanggal-selesai">${escapeHtml(sub.tanggal_selesai)}</td>
+                        <td>${formatTimestamp(sub.tanggal_mulai)}</td>
+                        <td class="tanggal-selesai">${formatTimestamp(sub.tanggal_selesai)}</td>
                         <td>${escapeHtml(sub.durasi)}</td>
                         <td class="deadline">${escapeHtml(sub.deadline)}</td>
                         <td>${escapeHtml(sub.get_pj_pekerjaan.name)}</td>
@@ -931,8 +942,6 @@
                 });
             }
         });
-
-
     });
 
     function calculateDays(event) {
@@ -1089,52 +1098,45 @@
         updateDeadline();
     });
 
+    function parseDMY(dateStr) {
+        if (!dateStr || !dateStr.includes("-")) return new Date("Invalid");
+        const [day, month, year] = dateStr.split("-");
+        return new Date(year, month - 1, day);
+    }
+
     // Fungsi untuk mengupdate deadline di tabel utama dan sub-tabel
     function updateDeadline() {
         let today = new Date();
         today.setHours(0, 0, 0, 0); // Reset waktu agar lebih akurat
 
-        // Update deadline di tabel utama
-        document.querySelectorAll("#log-harian tbody tr").forEach(row => {
-            let cellTanggalSelesai = row.querySelector("td:nth-child(11)"); // Tanggal Selesai
-            let cellDeadline = row.querySelector("td:nth-child(13)"); // Deadline
+        function processRow(row) {
+            let cellTanggalSelesai = row.querySelector("td:nth-child(11)");
+            let cellDeadline = row.querySelector("td:nth-child(13)");
 
             if (!cellTanggalSelesai || !cellDeadline) return;
 
-            let tanggalSelesai = new Date(cellTanggalSelesai.innerText.trim());
-            tanggalSelesai.setHours(0, 0, 0, 0);
+            let tanggalText = cellTanggalSelesai.innerText.trim();
+            let tanggalSelesai = parseDMY(tanggalText);
+            if (isNaN(tanggalSelesai)) {
+                cellDeadline.innerText = "H-0"; // fallback jika format salah
+                return;
+            }
 
+            tanggalSelesai.setHours(0, 0, 0, 0);
             let selisihHari = Math.ceil((tanggalSelesai - today) / (1000 * 60 * 60 * 24));
 
-            // Jika selisih -1 atau lebih kecil, ubah menjadi 0 (H-0)
             if (selisihHari <= -1) {
                 selisihHari = 0;
             }
 
-            // Update nilai deadline
             cellDeadline.innerText = `H-${selisihHari}`;
-        });
+        }
 
-        // Update deadline di sub-tabel
-        document.querySelectorAll("#log-harian tbody tr.sub-row").forEach(row => {
-            let cellTanggalSelesai = row.querySelector("td:nth-child(11)"); // Tanggal Selesai sub
-            let cellDeadline = row.querySelector("td:nth-child(13)"); // Deadline sub
+        // Tabel utama
+        document.querySelectorAll("#log-harian tbody tr:not(.sub-row)").forEach(processRow);
 
-            if (!cellTanggalSelesai || !cellDeadline) return;
-
-            let tanggalSelesai = new Date(cellTanggalSelesai.innerText.trim());
-            tanggalSelesai.setHours(0, 0, 0, 0);
-
-            let selisihHari = Math.ceil((tanggalSelesai - today) / (1000 * 60 * 60 * 24));
-
-            // Jika selisih -1 atau lebih kecil, ubah menjadi 0 (H-0)
-            if (selisihHari <= -1) {
-                selisihHari = 0;
-            }
-
-            // Update nilai deadline
-            cellDeadline.innerText = `H-${selisihHari}`;
-        });
+        // Sub-tabel
+        document.querySelectorAll("#log-harian tbody tr.sub-row").forEach(processRow);
     }
 </script>
 @endpush
