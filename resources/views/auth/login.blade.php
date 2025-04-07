@@ -16,12 +16,12 @@
                                 class="form-control"
                                 id="email"
                                 name="email"
-                                placeholder="Enter your email or username"
+                                placeholder="Masukan email kamu.."
                                 autofocus />
                         </div>
                         <div class="mb-3 form-password-toggle">
                             <div class="d-flex justify-content-between">
-                                <label class="form-label" for="password">Password</label>
+                                <label class="form-label" for="password">Kata Sandi</label>
 
                             </div>
                             <div class="input-group input-group-merge">

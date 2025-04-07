@@ -25,10 +25,10 @@ class LaporanmasalahController extends Controller
         $text = 'Kamu yakin ingin menghapus data ini ?';
         confirmDelete($title, $text);
 
-        $sifat_pekerjaan = SifatPekerjaan::all();
-        $kategori_pekerjaan = KategoriPekerjaan::all();
-        $prioritas = Prioritas::all();
-        $status_pekerjaan = StatusPekerjaan::all();
+        $sifat_pekerjaan = SifatPekerjaan::orderBy('pekerjaan', 'asc')->get();;
+        $kategori_pekerjaan = KategoriPekerjaan::orderBy('kategori_pekerjaan', 'asc')->get();;
+        $prioritas = Prioritas::orderBy('prioritas', 'asc')->get();;
+        $status_pekerjaan = StatusPekerjaan::orderBy('status_pekerjaan', 'asc')->get();;
         $user = User::where('nik', '!=', null)->get();
         $pekerjaan = Pekerjaan::where('user_id', Auth::user()->id)->get();
 

@@ -167,7 +167,7 @@
             @csrf
             <div class="col-12 col-sm-6 col-md-3">
                 <select name="pekerjaan[]" class="form-control select-pekerjaan w-100">
-                    <option value="" disabled selected>Pekerjaan</option>
+                    <option value="" disabled selected>Kategori</option>
                     @foreach($kategori_pekerjaan as $kp)
                     <option value="{{ $kp->id }}">{{ $kp->kategori_pekerjaan }}</option>
                     @endforeach
@@ -205,8 +205,8 @@
                     <tr>
                         <th class="text-center text-white">No</th>
                         <td class="text-center text-white"></td>
-                        <th class="text-center text-white">PIC</th>
                         <th class="text-center text-white">Tanggal Pencatatan</th>
+                        <th class="text-center text-white">PIC</th>
                         <th class="text-center text-white">Sifat Pekerjaan</th>
                         <th class="text-center text-white">Deskripsi Pekerjaan</th>
                         <th class="text-center text-white">Prioritas</th>
@@ -234,8 +234,8 @@
                                 {{ $kerjaan->getSubPekerjaan->isEmpty() ? '-' : '+' }}
                             </button>
                         </td>
-                        <td>{{ $kerjaan->getUser ->name }}</td>
                         <td>{{ date_format($kerjaan->created_at, 'd-m-Y') }}</td>
+                        <td>{{ $kerjaan->getUser->name }}</td>
                         <td>{{ $kerjaan->getSifatPekerjaan->pekerjaan }}</td>
                         <td>
                             <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $kerjaan->deskripsi_pekerjaan }}">
@@ -561,7 +561,7 @@
     $(document).ready(function() {
         $('.select-pekerjaan').select2({
             theme: 'bootstrap-5',
-            placeholder: "Pekerjaan",
+            placeholder: "Kategori",
             allowClear: true // Memungkinkan pengguna menghapus pilihan
         });
     });
@@ -660,8 +660,8 @@
                         table.row.add([
                             index + 1,
                             toggleIcon,
-                            kerjaan.get_user.name,
                             formatTimestamp(kerjaan.created_at),
+                            kerjaan.get_user.name,
                             kerjaan.get_sifat_pekerjaan.pekerjaan,
                             `<span data-bs-toggle="tooltip" data-bs-placement="top" title="${escapeHtml(kerjaan.deskripsi_pekerjaan)}">
                                 ${escapeHtml(kerjaan.deskripsi_pekerjaan.substring(0, 25))}...
@@ -868,8 +868,8 @@
                     <tr class="sub-row table-hover">
                         <td></td>
                         <td>${index + 1}</td>
-                        <td>${escapeHtml(sub.get_user.name)}</td>
                         <td>${formatTimestamp(sub.created_at)}</td>
+                        <td>${escapeHtml(sub.get_user.name)}</td>
                         <td>${escapeHtml(sub.get_sifat_pekerjaan.pekerjaan)}</td>
                         <td>
                             <span data-bs-toggle="tooltip" data-bs-placement="top" title="${escapeHtml(sub.deskripsi_pekerjaan)}">

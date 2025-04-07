@@ -62,24 +62,25 @@
 
     <ul class="menu-inner py-1">
 
-        <li class="menu-item">
+        {{-- INSIGHT --}}
+        <li class="menu-item {{ request()->routeIs('papan-kerja', 'kalender-kerja', 'tugas') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
                 <div data-i18n="Form Elements">Insight</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item">
+                <li class="menu-item {{ request()->routeIs('papan-kerja') ? 'active' : '' }}">
                     <a href="{{ route('papan-kerja') }}" class="menu-link">
                         <div data-i18n="Basic Inputs">Papan Kerja</div>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item {{ request()->routeIs('kalender-kerja') ? 'active' : '' }}">
                     <a href="{{ route('kalender-kerja') }}" class="menu-link">
                         <div data-i18n="Input groups">Kalender Kerja</div>
                     </a>
                 </li>
                 @if(Auth::user()->role == 'ADMIN')
-                <li class="menu-item">
+                <li class="menu-item {{ request()->routeIs('tugas') ? 'active' : '' }}">
                     <a href="{{ route('tugas') }}" class="menu-link">
                         <div data-i18n="Input groups">Tugas</div>
                     </a>
@@ -88,113 +89,112 @@
             </ul>
         </li>
 
-        <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">Core</span>
-        </li>
+        {{-- CORE --}}
+        <li class="menu-header small text-uppercase"><span class="menu-header-text">Core</span></li>
 
-        <li class="menu-item">
+        <li class="menu-item {{ request()->routeIs('user.index') ? 'active' : '' }}">
             <a href="{{ route('user.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-user "></i>
+                <i class="menu-icon tf-icons bx bx-user"></i>
                 <div data-i18n="Analytics">Pengguna</div>
             </a>
         </li>
 
-        <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">Pages</span>
-        </li>
+        {{-- PAGES --}}
+        <li class="menu-header small text-uppercase"><span class="menu-header-text">Pages</span></li>
 
-        <li class="menu-item">
+        <li class="menu-item {{ request()->routeIs('log-harian.index') ? 'active' : '' }}">
             <a href="{{ route('log-harian.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-compass"></i>
                 <div data-i18n="Analytics">Pekerjaan Harian</div>
             </a>
         </li>
 
-        <li class="menu-item">
+        <li class="menu-item {{ request()->routeIs('laporan-masalah.index') ? 'active' : '' }}">
             <a href="{{ route('laporan-masalah.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-error"></i>
                 <div data-i18n="Analytics">Laporan Masalah</div>
             </a>
         </li>
 
-        <li class="menu-item">
+        <li class="menu-item {{ request()->routeIs('laporan-hasil.index') ? 'active' : '' }}">
             <a href="{{ route('laporan-hasil.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-check-circle"></i>
                 <div data-i18n="Analytics">Laporan Hasil</div>
             </a>
         </li>
 
-        <li class="menu-item">
+        <li class="menu-item {{ request()->routeIs('laporan-pelayanan.index') ? 'active' : '' }}">
             <a href="{{ route('laporan-pelayanan.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-support"></i>
                 <div data-i18n="Analytics">Pelayanan</div>
             </a>
         </li>
 
-        <li class="menu-item">
+        <li class="menu-item {{ request()->is('penilaian*') ? 'active' : '' }}">
             <a href="javascript:void(0)" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-star"></i>
                 <div data-i18n="Analytics">Penilaian</div>
             </a>
         </li>
 
-        <!-- Components -->
+        {{-- ACCOUNT --}}
         <li class="menu-header small text-uppercase"><span class="menu-header-text">Account</span></li>
-        <!-- Cards -->
-        <li class="menu-item">
-            <a href="{{route('profile.index')}}" class="menu-link">
+
+        <li class="menu-item {{ request()->routeIs('profile.index') ? 'active' : '' }}">
+            <a href="{{ route('profile.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-user-check"></i>
                 <div data-i18n="Basic">My Profile</div>
             </a>
         </li>
-        <li class="menu-item">
+
+        <li class="menu-item {{ request()->is('setting*') ? 'active' : '' }}">
             <a href="cards-basic.html" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-cog"></i>
                 <div data-i18n="Basic">Setting</div>
             </a>
         </li>
 
+        {{-- WIDGET --}}
         @if(Auth::user()->role == 'ADMIN')
         <li class="menu-header small text-uppercase"><span class="menu-header-text">Widget</span></li>
-        <!-- Cards -->
-        <li class="menu-item">
+
+        <li class="menu-item {{ request()->routeIs('status-pekerjaan.index', 'jenis-pekerjaan.index', 'kategori-pekerjaan.index', 'divisi.index', 'prioritas.index', 'kategori-pelayanan.index', 'sub-kategori-pelayanan.index') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-menu-alt-right"></i>
                 <div data-i18n="Form Elements">Dropdown</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item">
+                <li class="menu-item {{ request()->routeIs('status-pekerjaan.index') ? 'active' : '' }}">
                     <a href="{{ route('status-pekerjaan.index') }}" class="menu-link">
                         <div data-i18n="Basic Inputs">Status Pekerjaan</div>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item {{ request()->routeIs('jenis-pekerjaan.index') ? 'active' : '' }}">
                     <a href="{{ route('jenis-pekerjaan.index') }}" class="menu-link">
                         <div data-i18n="Input groups">Jenis Pekerjaan</div>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item {{ request()->routeIs('kategori-pekerjaan.index') ? 'active' : '' }}">
                     <a href="{{ route('kategori-pekerjaan.index') }}" class="menu-link">
                         <div data-i18n="Input groups">Kategori Pekerjaan</div>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item {{ request()->routeIs('divisi.index') ? 'active' : '' }}">
                     <a href="{{ route('divisi.index') }}" class="menu-link">
                         <div data-i18n="Input groups">Divisi</div>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item {{ request()->routeIs('prioritas.index') ? 'active' : '' }}">
                     <a href="{{ route('prioritas.index') }}" class="menu-link">
                         <div data-i18n="Input groups">Prioritas</div>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item {{ request()->routeIs('kategori-pelayanan.index') ? 'active' : '' }}">
                     <a href="{{ route('kategori-pelayanan.index') }}" class="menu-link">
                         <div data-i18n="Input groups">Kategori Pelayanan</div>
                     </a>
                 </li>
-
-                <li class="menu-item">
+                <li class="menu-item {{ request()->routeIs('sub-kategori-pelayanan.index') ? 'active' : '' }}">
                     <a href="{{ route('sub-kategori-pelayanan.index') }}" class="menu-link">
                         <div data-i18n="Input groups">Sub Kategori Pelayanan</div>
                     </a>
@@ -202,5 +202,7 @@
             </ul>
         </li>
         @endif
+
     </ul>
+
 </aside>

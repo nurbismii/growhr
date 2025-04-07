@@ -51,7 +51,7 @@
                                 <h6 class="card-title text-white fw-bold m-2 text-center">Form Pelayanan</h6>
                             </div>
                         </div>
-                        <a href="{{ route('laporan-masalah.index') }}" class="btn btn-primary">
+                        <a href="{{ route('laporan-pelayanan.index') }}" class="btn btn-primary">
                             <span class="tf-icons bx bx-arrow-back"></span>&nbsp; Kembali
                         </a>
                     </div>
@@ -82,7 +82,7 @@
                         </div>
                         <div class="col">
                             <label for="sub_kategori_pelayanan" class="form-label">Sub Kategori Pelayanan</label>
-                            <select id="sub_kategori_pelayanan" name="sub_kategori_pelayanan_id" class="form-select select-sub-kategori" required>
+                            <select id="sub_kategori_pelayanan" name="sub_kategori_pelayanan_id" class="form-select select-sub-kategori">
                                 <option value="">Pilih Sub Kategori</option>
                             </select>
                         </div>
@@ -126,11 +126,11 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-secondary btn-sm text-white mt-2 btn-mulai">
-                        Mulai </br> Pelayanan
+                    <button type="submit" class="btn btn-secondary btn-sm text-white mt-2 btn-mulai" style="white-space: normal; width: 120px;">
+                        Mulai <br> Pelayanan
                     </button>
-                    <button type="submit" class="btn btn-secondary btn-sm  btn text-white mt-2 btn-selesai">
-                        Selesai </br> Pelayanan
+                    <button type="submit" class="btn btn-secondary btn-sm text-white mt-2 btn-selesai text-center" style="white-space: normal; width: 120px;">
+                        Selesai<br>Pelayanan
                     </button>
 
                     <div class="col mt-3">

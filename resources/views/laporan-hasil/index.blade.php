@@ -228,7 +228,7 @@
                         <td>{{ ++$no }}</td>
                         <td>{{ date('Y-m-d', strtotime(($hasil->created_at))) }}</td>
                         <td>{{ $hasil->pic->name }}</td>
-                        <td>{{ $hasil->pekerjaan->deskripsi_pekerjaan }}</td>
+                        <td>{{ $hasil->pekerjaan != null ? $hasil->pekerjaan->deskripsi_pekerjaan : '-'}}</td>
                         <td>
                             <a class="nav-link" target="_blank" href="{{ asset('storage/' . $hasil->doc_laporan) }}">
                                 <i class="bx bx-link-alt me-1"></i> {{ $hasil->doc_laporan ?? '---' }}

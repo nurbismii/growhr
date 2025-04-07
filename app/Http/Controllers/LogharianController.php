@@ -25,12 +25,12 @@ class LogharianController extends Controller
         $text = 'Kamu yakin ingin menghapus data ini ?';
         confirmDelete($title, $text);
 
-        $sifat_pekerjaan = SifatPekerjaan::all();
-        $kategori_pekerjaan = KategoriPekerjaan::all();
-        $prioritas = Prioritas::all();
-        $status_pekerjaan = StatusPekerjaan::all();
-        $user = User::where('nik', '!=', null)->get();
-        $user_modal = User::where('nik', '!=', null)->get();
+        $sifat_pekerjaan = SifatPekerjaan::orderBy('pekerjaan', 'asc')->get();
+        $kategori_pekerjaan = KategoriPekerjaan::orderBy('kategori_pekerjaan', 'asc')->get();
+        $prioritas = Prioritas::orderBy('prioritas', 'asc')->get();
+        $status_pekerjaan = StatusPekerjaan::orderBy('status_pekerjaan', 'asc')->get();
+        $user = User::where('nik', '!=', null)->orderBy('name', 'asc')->get();
+        $user_modal = User::where('nik', '!=', null)->orderBy('name', 'asc')->get();
 
         $pekerjaan = Pekerjaan::with(['getUser', 'getKategoriPekerjaan', 'getSifatPekerjaan', 'getPrioritas', 'getStatusPekerjaan', 'getPjPekerjaan', 'getSubPekerjaan'])
             ->where('user_id', Auth::user()->id)
@@ -80,10 +80,10 @@ class LogharianController extends Controller
 
     public function create()
     {
-        $sifat_pekerjaan = SifatPekerjaan::all();
-        $kategori_pekerjaan = KategoriPekerjaan::all();
-        $prioritas = Prioritas::all();
-        $status_pekerjaan = StatusPekerjaan::all();
+        $sifat_pekerjaan = SifatPekerjaan::orderBy('pekerjaan', 'asc')->get();
+        $kategori_pekerjaan = KategoriPekerjaan::orderBy('kategori_pekerjaan', 'asc')->get();
+        $prioritas = Prioritas::orderBy('prioritas', 'asc')->get();
+        $status_pekerjaan = StatusPekerjaan::orderBy('status_pekerjaan', 'asc')->get();
         $user = User::where('nik', '!=', null)->get();
 
         return view('log-harian.create', compact('sifat_pekerjaan', 'kategori_pekerjaan', 'user', 'prioritas', 'status_pekerjaan'));

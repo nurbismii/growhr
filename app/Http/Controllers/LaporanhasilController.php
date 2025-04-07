@@ -25,8 +25,8 @@ class LaporanhasilController extends Controller
         confirmDelete($title, $text);
 
         $sifat_pekerjaan = SifatPekerjaan::all();
-        $kategori_pekerjaan = KategoriPekerjaan::all();
-        $prioritas = Prioritas::all();
+        $kategori_pekerjaan = KategoriPekerjaan::orderBy('kategori_pekerjaan', 'asc')->get();
+        $prioritas = Prioritas::orderBy('prioritas', 'asc')->get();
         $pekerjaan = Pekerjaan::orderBy('created_at', 'desc')->where('user_id', Auth::user()->id)->get();
         $user = User::where('nik', '!=', null)->get();
 

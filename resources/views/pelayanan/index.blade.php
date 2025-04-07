@@ -221,7 +221,7 @@
                         <td>{{ date('d-m-Y', strtotime($layanan->created_at)) }}</td>
                         <td>{{ $layanan->divisi->divisi }}</td>
                         <td>{{ $layanan->kategoriPelayanan->pelayanan }}</td>
-                        <td>{{ $layanan->subKategoriPelayanan->sub_pelayanan }}</td>
+                        <td>{{ $layanan->subKategoriPelayanan != null ? $layanan->subKategoriPelayanan->sub_pelayanan : '-' }}</td>
                         <td>{{ $layanan->waktu_mulai }}</td>
                         <td>{{ $layanan->waktu_selesai }}</td>
                         <td>{{ $layanan->durasi }}</td>
@@ -290,7 +290,7 @@
                             <div class="col">
                                 <label for="subKategoriPelayanan" class="form-label">Sub Kategori Pelayanan</label>
                                 <select id="subKategoriPelayanan" name="sub_kategori_pelayanan_id" class="form-select select-sub-kategori-modal" required>
-                                    <option value="{{ $layanan->sub_kategori_pelayanan_id }}">{{ $layanan->subKategoriPelayanan->sub_pelayanan }}</option>
+                                    <option value="{{ $layanan->sub_kategori_pelayanan_id }}">{{ $layanan->subKategoriPelayanan != null ? $layanan->subKategoriPelayanan->sub_pelayanan : '-' }}</option>
                                 </select>
                             </div>
                         </div>

@@ -199,7 +199,7 @@
                             <label for="alasanPemilihan" class="form-label">Alasan pemilihan tingkat kesulitan
                                 <span class="text-danger">*</span>
                             </label>
-                            <input type="text" class="form-control" name="alasan" id="alasanPemilihan" required>
+                            <input type="text" class="form-control" name="alasan" id="alasanPemilihan" placeholder="Isi alasan..." required>
                         </div>
                         <div class="col-md-12 mb-3">
                             <div class="mb-3">

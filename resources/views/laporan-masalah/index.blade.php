@@ -210,7 +210,7 @@
                 <thead class="table-primary">
                     <tr>
                         <th class="text-center text-white">No</th>
-                        <th class="text-center text-white">Tanggal Pengaduan</th>
+                        <th class="text-center text-white">Tanggal Pelaporan</th>
                         <th class="text-center text-white">PIC</th>
                         <th class="text-center text-white">Deskripsi Pekerjaan</th>
                         <th class="text-center text-white">Deskripsi Kendala</th>
@@ -232,7 +232,7 @@
                         <td>{{ ++$no }}</td>
                         <td>{{ date('Y-m-d', strtotime($pengaduan->created_at)) }}</td>
                         <td>{{ $pengaduan->pic->name }}</td>
-                        <td>{{ $pengaduan->pekerjaan != null ? $pengaduan->pekerjaan->deskripsi : '-'}}</td>
+                        <td>{{ $pengaduan->pekerjaan != null ? $pengaduan->pekerjaan->deskripsi_pekerjaan : '-'}}</td>
                         <td>
                             <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $pengaduan->deskripsi_pengaduan }}">
                                 {{ substr($pengaduan->deskripsi_pengaduan, 0, 25) }}
@@ -317,7 +317,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="tanggalPelaporan" class="form-label">Tanggal</label>
+                            <label for="tanggalPelaporan" class="form-label">Tanggal Pelaporan</label>
                             <input type="text" class="form-control" name="tanggal_pelaporan" id="tanggalPelaporan" value="{{ date('d/m/Y', strtotime($pengaduan->created_at)) }}" readonly>
                         </div>
                         <div class="col-md-8 mb-3">

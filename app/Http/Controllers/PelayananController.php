@@ -21,8 +21,8 @@ class PelayananController extends Controller
         confirmDelete($title, $text);
 
         $pelayanan = Pelayanan::with('divisi', 'kategoriPelayanan', 'subKategoriPelayanan', 'pic');
-        $kategori_pelayanan = KategoriPelayanan::all();
-        $sub_kategori_pelayanan = SubKategoriPelayanan::all();
+        $kategori_pelayanan = KategoriPelayanan::orderBy('pelayanan', 'asc')->get();
+        $sub_kategori_pelayanan = SubKategoriPelayanan::orderBy('sub_pelayanan', 'asc')->get();
         $user = User::all();
         $divisi = Divisi::all();
         $divisi_modal = Divisi::all();
@@ -70,8 +70,8 @@ class PelayananController extends Controller
     public function create()
     {
         $divisi = Divisi::all();
-        $kategori_pelayanan = KategoriPelayanan::all();
-        $sub_kategori_pelayanan = SubKategoriPelayanan::all();
+        $kategori_pelayanan = KategoriPelayanan::orderBy('pelayanan', 'asc')->get();
+        $sub_kategori_pelayanan = SubKategoriPelayanan::orderBy('sub_pelayanan', 'asc')->get();
         $employee_hris = EmployeeHris::select('nik', 'nama_karyawan')->where('status_resign', '!=', null)->get();
 
         return view('pelayanan.create', compact(
@@ -131,7 +131,7 @@ class PelayananController extends Controller
 
     public function getSubKategori(Request $request)
     {
-        $subKategoris = SubKategoriPelayanan::where('kategori_pelayanan_id', $request->kategori_pelayanan_id)->get();
+        $subKategoris = SubKategoriPelayanan::where('kategori_pelayanan_id', $request->kategori_pelayanan_id)->orderBy('sub_pelayanan', 'asc')->get();
         return response()->json($subKategoris);
     }
 
