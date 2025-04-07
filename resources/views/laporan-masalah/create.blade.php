@@ -95,10 +95,9 @@
                         <div class="col-md-4 mb-3">
                             <label for="statusKegiatan" class="form-label">Status Penyelesaian</label>
                             <select id="statusKegiatan" name="status_pekerjaan_id" class="form-select" required>
-                                <option value="">-- Pilih Status Pekerjaan --</option>
-                                @foreach($status_pekerjaan as $sk)
-                                <option value="{{ $sk->id }}">{{ $sk->status_pekerjaan }}</option>
-                                @endforeach
+                                <option value="">-- Pilih Status Penyelesaian --</option>
+                                <option value="sedang-ditangani">Sedang Ditangani</option>
+                                <option value="terselesaikan">Terselesaikan</option>
                             </select>
                         </div>
                         <div class="col-md-12 mb-3">

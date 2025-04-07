@@ -61,6 +61,10 @@ class LaporanmasalahController extends Controller
             return response()->json([
                 'pengaduan' => $pengaduan->get(),
                 'status_pekerjaan' => $status_pekerjaan,
+                'status_kendala' => [
+                    'sedang-ditangani',
+                    'terselesaikan'
+                ],
             ]);
         }
 
@@ -144,7 +148,7 @@ class LaporanmasalahController extends Controller
             'user_id' => Auth::user()->id,
             'prioritas_id' => $request->prioritas_id,
             'kategori_kendala' => $request->kategori_kendala,
-            'status_pekerjaan_id' => $request->status_pekerjaan_id,
+            'status_kendala' => $request->status_pekerjaan_id,
             'alasan_tingkat_dampak_pengaduan' => $request->alasan_tingkat_dampak_pengaduan,
             'deskripsi_pengaduan' => $request->deskripsi_pengaduan,
             'langkah_penyelesaian' => $request->langkah_penyelesaian,
@@ -254,27 +258,25 @@ class LaporanmasalahController extends Controller
 
     public function updateStatusPekerjaan(Request $request, $id)
     {
-        $belum_mulai = 1;
-
         $pengaduan = Pengaduan::with('statusPekerjaan')->where('id', $id)->first();
 
-        if ($request->status_pekerjaan_id == $belum_mulai) {
+        if ($pengaduan->status_kendala == 'terselesaikan') {
             return response()->json([
                 'success' => false,
-                'message' => 'Update ditolak! Status masalah tidak dapat dianulir.'
+                'message' => 'Update ditolak! Status kendala tidak dapat dianulir.'
             ], 400);
         }
 
-        DB::beginTransaction();
-
         try {
+            DB::beginTransaction();
+
             RiwayatPembaruanStatusPekerjaan::create([
                 'pengaduan_id' => $pengaduan->id,
                 'pembaruan' => date('Y-m-d H:i:s'),
-                'status_pembaruan' => $pengaduan->statusPekerjaan->status_pekerjaan,
+                'status_pembaruan' => $request->status_pekerjaan_id,
             ]);
 
-            $pengaduan->status_pekerjaan_id = $request->status_pekerjaan_id;
+            $pengaduan->status_kendala = $request->status_pekerjaan_id;
             $pengaduan->save();
 
             DB::commit();
@@ -282,7 +284,10 @@ class LaporanmasalahController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return response()->json(['message' => 'Terjadi kesalahan']);
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan'
+            ], 400);
         }
     }
 }

@@ -226,7 +226,7 @@
 
                     <tr data-id="{{ $hasil->id }}">
                         <td>{{ ++$no }}</td>
-                        <td>{{ date('Y-m-d', strtotime(($hasil->created_at))) }}</td>
+                        <td>{{ date('d-m-Y', strtotime(($hasil->created_at))) }}</td>
                         <td>{{ $hasil->pic->name }}</td>
                         <td>{{ $hasil->pekerjaan != null ? $hasil->pekerjaan->deskripsi_pekerjaan : '-'}}</td>
                         <td>
@@ -389,7 +389,7 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
         const mi = String(date.getMinutes()).padStart(2, '0');
         const ss = String(date.getSeconds()).padStart(2, '0');
 
-        return `${yyyy}-${mm}-${dd}`;
+        return `${dd}-${mm}-${yyyy}`;
     }
 
     function ucfirst(str) {

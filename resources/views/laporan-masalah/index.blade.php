@@ -154,11 +154,11 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div class="card text-white bg-primary shadow-lg px-3 py-2" style="max-width: 22rem; height: 3rem;">
             <div class="card-body p-0">
-                <h6 class="card-title text-white fw-bold m-2 text-center">Laporan Masalah</h6>
+                <h6 class="card-title text-white fw-bold m-2 text-center">Laporan Kendala</h6>
             </div>
         </div>
         <a href="{{ route('laporan-masalah.create') }}" class="btn btn-primary">
-            <span class="tf-icons bx bx-plus-circle"></span>&nbsp; Masalah
+            <span class="tf-icons bx bx-plus-circle"></span>&nbsp; Kendala
         </a>
     </div>
 
@@ -168,7 +168,7 @@
             @csrf
             <div class="col-12 col-sm-6 col-md-3">
                 <select id="kategori_kendala[]" name="kategori_kendala" class="form-control select-kendala">
-                    <option value="" disabled selected>Kendala</option>
+                    <option value="" disabled selected>Kategori</option>
                     <option value="manusia">Manusia</option>
                     <option value="metode">Metode</option>
                     <option value="mesin">Mesin</option>
@@ -228,9 +228,16 @@
                 </thead>
                 <tbody class="table-border-bottom-0">
                     @foreach($pengaduan as $pengaduan)
+
+                    @php
+                    $statusOptions = ['sedang-ditangani', 'terselesaikan'];
+                    $selectedStatus = $pengaduan->status_kendala;
+                    $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang sudah ada
+                    @endphp
+
                     <tr data-id="{{ $pengaduan->id }}">
                         <td>{{ ++$no }}</td>
-                        <td>{{ date('Y-m-d', strtotime($pengaduan->created_at)) }}</td>
+                        <td>{{ date('d-m-Y', strtotime($pengaduan->created_at)) }}</td>
                         <td>{{ $pengaduan->pic->name }}</td>
                         <td>{{ $pengaduan->pekerjaan != null ? $pengaduan->pekerjaan->deskripsi_pekerjaan : '-'}}</td>
                         <td>
@@ -240,11 +247,9 @@
                         </td>
                         <td>
                             <select class="form-select form-select-sm main-status status-pekerjaan">
-                                <option value="{{ $pengaduan->statusPekerjaan->id }}">{{ $pengaduan->statusPekerjaan->status_pekerjaan }}</option>
-                                @foreach($status_pekerjaan as $sp)
-                                @if($pengaduan->statusPekerjaan->id != $sp->id)
-                                <option value="{{ $sp->id }}">{{ $sp->status_pekerjaan }}</option>
-                                @endif
+                                <option value="{{ $selectedStatus }}">{{ ucfirst($selectedStatus) }}</option> <!-- Tampilkan yang dipilih -->
+                                @foreach ($filteredOptions as $option)
+                                <option option value="{{ $option }}">{{ ucfirst($option) }}</option> <!-- Hanya opsi yang belum ditampilkan -->
                                 @endforeach
                             </select>
                         </td>
@@ -297,11 +302,19 @@
 </div>
 
 @foreach($pengaduan_modal as $p_modal)
+
+@php
+$statusOptions = ['sedang-ditangani', 'terselesaikan'];
+$selectedStatus = $pengaduan->status_kendala;
+$filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang sudah ada
+@endphp
+
+
 <div class="modal fade" id="edit{{$p_modal->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Laporan Masalah</h1>
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Laporan Kendala</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -354,9 +367,9 @@
                         <div class="col-md-4 mb-3">
                             <label for="statusKegiatan" class="form-label">Status Penyelesaian</label>
                             <select id="statusKegiatan" name="status_pekerjaan_id" class="form-select" required>
-                                <option value="{{ $p_modal->status_pekerjaan_id }}">{{ $p_modal->statusPekerjaan->status_pekerjaan }}</option>
-                                @foreach($status_pekerjaan as $sk)
-                                <option value="{{ $sk->id }}">{{ $sk->status_pekerjaan }}</option>
+                                <option value="{{ $selectedStatus }}">{{ ucfirst($selectedStatus) }}</option> <!-- Tampilkan yang dipilih -->
+                                @foreach ($filteredOptions as $option)
+                                <option option value="{{ $option }}">{{ ucfirst($option) }}</option> <!-- Hanya opsi yang belum ditampilkan -->
                                 @endforeach
                             </select>
                         </div>
@@ -472,7 +485,7 @@
         const mi = String(date.getMinutes()).padStart(2, '0');
         const ss = String(date.getSeconds()).padStart(2, '0');
 
-        return `${yyyy}-${mm}-${dd}`;
+        return `${dd}-${mm}-${yyyy}`;
     }
 
     document.addEventListener("DOMContentLoaded", function() {
@@ -483,26 +496,15 @@
             // Reset semua class warna
             select.classList.remove(
                 "text-danger", "text-primary", "text-success",
-                "text-secondary", "text-warning",
                 "bg-label-danger", "bg-label-primary",
-                "bg-label-success", "bg-label-secondary", "bg-label-warning"
             );
 
             // Tambahkan class warna sesuai status
             switch (selectedValue) {
-                case "1":
-                    select.classList.add("text-danger", "bg-label-danger");
-                    break;
-                case "2":
+                case "sedang-ditangani":
                     select.classList.add("text-primary", "bg-label-primary");
                     break;
-                case "3":
-                    select.classList.add("text-warning", "bg-label-warning");
-                    break;
-                case "4":
-                    select.classList.add("text-secondary", "bg-label-secondary");
-                    break;
-                case "5":
+                case "terselesaikan":
                     select.classList.add("text-success", "bg-label-success");
                     break;
             }
@@ -552,7 +554,7 @@
     $(document).ready(function() {
         $('.select-kendala').select2({
             theme: 'bootstrap-5',
-            placeholder: "Tipe Kendala",
+            placeholder: "Kategori",
             allowClear: true // Memungkinkan pengguna menghapus pilihan
         });
     });
@@ -571,21 +573,6 @@
             placeholder: "PIC",
             allowClear: true // Memungkinkan pengguna menghapus pilihan
         });
-    });
-
-    $.ajax({
-        url: "/laporan-masalah",
-        type: "GET",
-        success: function(response) {
-            let statusOptions = "";
-
-            response.status_pekerjaan.forEach(function(status) {
-                statusOptions += `<option value="${status.id}">${status.status_pekerjaan}</option>`;
-            });
-
-            // Simpan ke variabel global agar bisa dipakai di sub-table
-            window.statusOptions = statusOptions;
-        }
     });
 
     function escapeHtml(text) {
@@ -630,8 +617,8 @@
                     console.log(response)
 
                     response.pengaduan.forEach(function(pengaduan, index) {
-                        let statusOptions = response.status_pekerjaan.map(sp =>
-                            `<option value="${sp.id}" ${pengaduan.status_pekerjaan && pengaduan.status_pekerjaan.id === sp.id ? "selected" : ""}>${sp.status_pekerjaan}</option>`
+                        let statusOptions = response.status_kendala.map(status =>
+                            `<option value="${status}" ${pengaduan.status_kendala === status ? "selected" : ""}>${ucfirst(status)}</option>`
                         ).join("");
 
                         table.row.add([
@@ -726,8 +713,10 @@
                         text: response.message,
                         icon: "success",
                         timer: 1500,
-                        showConfirmButton: false
+                        showConfirmButton: true
                     });
+
+                    fetchData();
                 },
                 error: function(xhr) {
                     let response = xhr.responseJSON;
@@ -736,6 +725,8 @@
                         text: response ? response.message : "Terjadi kesalahan.",
                         icon: "error"
                     });
+
+                    fetchData();
                 }
             });
         });
