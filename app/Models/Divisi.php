@@ -11,4 +11,9 @@ class Divisi extends Model
 
     protected $table = 'divisi';
     protected $guarded = [];
+
+    public function kategoriPelayanan()
+    {
+        return $this->hasMany(KategoriPelayanan::class);
+    }
 }

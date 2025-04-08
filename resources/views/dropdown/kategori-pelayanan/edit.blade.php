@@ -13,7 +13,16 @@
                         <span class="tf-icons bx bx-arrow-back"></span>&nbsp; Kembali
                     </a>
                     <div class="row">
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label for="divisiId" class="form-label">Bidang</label>
+                            <select name="divisi_id" class="form-select" id="divisiId">
+                                <option value="{{ $kategori_pelayanan->divisi_id }}" selected>{{ $kategori_pelayanan->divisi ? $kategori_pelayanan->divisi->divisi : '' }}</option>
+                                @foreach($bidang as $bidang)
+                                <option value="{{ $bidang->id }}">{{ $bidang->divisi }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
                             <label for="kategoriPelayanan" class="form-label">Kategori Pelayanan</label>
                             <input type="text" name="kategori_pelayanan" value="{{ $kategori_pelayanan->pelayanan }}" class="form-control">
                         </div>

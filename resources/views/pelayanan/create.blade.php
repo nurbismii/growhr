@@ -59,11 +59,15 @@
                     <!-- Informasi Pengaduan -->
                     <div class="row row-cols-1 row-cols-md-2 g-3">
                         <div class="col">
-                            <label for="tanggalPelaporan" class="form-label">Tanggal</label>
+                            <label for="tanggalPelaporan" class="form-label">Tanggal
+                                <span class="text-danger">*</span>
+                            </label>
                             <input type="date" class="form-control tanggalPelaporan" name="tanggal_pelaporan" id="tanggalPelaporan" readonly>
                         </div>
                         <div class="col">
-                            <label for="divisiId" class="form-label">Bidang Pelayanan</label>
+                            <label for="divisiId" class="form-label">Bidang Pelayanan
+                                <span class="text-danger">*</span>
+                            </label>
                             <select id="divisiId" name="divisi_id" class="form-select select-bidang" required>
                                 <option value="">-- Pilih Kategori Pekerjaan --</option>
                                 @foreach($divisi as $div)
@@ -72,16 +76,17 @@
                             </select>
                         </div>
                         <div class="col">
-                            <label for="kategori_pelayanan" class="form-label">Kategori Pelayanan</label>
+                            <label for="kategori_pelayanan" class="form-label">Kategori Pelayanan
+                                <span class="text-danger">*</span>
+                            </label>
                             <select id="kategori_pelayanan" name="kategori_pelayanan_id" class="form-select select-kategori" required>
-                                <option value="">Pilih Kategori</option>
-                                @foreach($kategori_pelayanan as $kategori)
-                                <option value="{{ $kategori->id }}">{{ $kategori->pelayanan }}</option>
-                                @endforeach
+                                <option value="">-- Pilih Kategori --</option>
                             </select>
                         </div>
                         <div class="col">
-                            <label for="sub_kategori_pelayanan" class="form-label">Sub Kategori Pelayanan</label>
+                            <label for="sub_kategori_pelayanan" class="form-label">Sub Kategori Pelayanan
+                                <span class="text-danger">*</span>
+                            </label>
                             <select id="sub_kategori_pelayanan" name="sub_kategori_pelayanan_id" class="form-select select-sub-kategori">
                                 <option value="">Pilih Sub Kategori</option>
                             </select>
@@ -94,7 +99,9 @@
                     <h5 class="text-primary mb-3">Data Karyawan</h5>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label for="nik_karyawan" class="form-label">NIK Karyawan</label>
+                            <label for="nik_karyawan" class="form-label">NIK Karyawan
+                                <span class="text-danger">*</span>
+                            </label>
                             <select id="nik_karyawan" name="nik_karyawan" class="form-select select-karyawan" required>
                                 <option value="">Pilih Karyawan</option>
                                 @foreach($employee_hris as $emp)
@@ -103,8 +110,23 @@
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label for="nama_karyawan" class="form-label">Nama Karyawan</label>
+                            <label for="nama_karyawan" class="form-label">Nama Karyawan
+                                <span class="text-danger">*</span>
+                            </label>
                             <input type="text" id="nama_karyawan" name="nama_karyawan" class="form-control" required readonly>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="departemen" class="form-label">Departemen
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" id="departemen" name="departemen" class="form-control" required readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="divisi" class="form-label">Divisi
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" id="divisi" name="divisi" class="form-control" required readonly>
                         </div>
                     </div>
                 </div>
@@ -113,15 +135,21 @@
                     <h5 class="text-primary mb-3">Waktu Pelayanan</h5>
                     <div class="row g-3">
                         <div class="col">
-                            <label for="waktuMulai" class="form-label">Waktu Mulai</label>
+                            <label for="waktuMulai" class="form-label">Waktu Mulai
+                                <span class="text-danger">*</span>
+                            </label>
                             <input type="text" class="form-control" name="waktu_mulai" id="waktuMulai" readonly required>
                         </div>
                         <div class="col">
-                            <label for="waktuSelesai" class="form-label">Waktu Selesai</label>
+                            <label for="waktuSelesai" class="form-label">Waktu Selesai
+                                <span class="text-danger">*</span>
+                            </label>
                             <input type="text" class="form-control" name="waktu_selesai" id="waktuSelesai" readonly required>
                         </div>
                         <div class="col">
-                            <label for="durasi" class="form-label">Durasi</label>
+                            <label for="durasi" class="form-label">Durasi
+                                <span class="text-danger">*</span>
+                            </label>
                             <input type="text" class="form-control" name="durasi" id="durasi" readonly required>
                         </div>
                     </div>
@@ -133,10 +161,29 @@
                         Selesai<br>Pelayanan
                     </button>
 
-                    <div class="col mt-3">
-                        <label for="durasi" class="form-label">Keterangan</label>
-                        <textarea type="text" class="form-control" name="keterangan" required></textarea>
+                    <div class="row">
+                        <div class="col-6 mt-3">
+                            <label for="durasi" class="form-label">Keterangan
+                                <span class="text-danger">*</span>
+                            </label>
+                            <textarea type="text" class="form-control" name="keterangan" required></textarea>
+                        </div>
+
+                        <div class="col-6 mt-3">
+                            <label class="form-label">Dokumen Laporan
+
+                            </label>
+                            <div>
+                                <label for="fileInput" class="custom-file-upload">
+                                    <i class="bi bi-plus-circle"></i>
+                                    <span id="fileLabel" class="ms-2">Pilih file</span>
+                                </label>
+                                <input type="file" id="fileInput" name="doc_pendukung">
+                            </div>
+                            <div id="fileName" class="file-name"></div>
+                        </div>
                     </div>
+
 
                 </div>
 
@@ -153,6 +200,12 @@
 @push('script')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    $("#fileInput").change(function() {
+        let fileName = this.files[0] ? this.files[0].name : "Pilih File";
+        $("#fileLabel").text(fileName);
+        $("#fileName").text(fileName);
+    });
+
     document.addEventListener("DOMContentLoaded", function() {
         let today = new Date().toISOString().split('T')[0];
 
@@ -165,7 +218,7 @@
     $(document).ready(function() {
         $('.select-bidang').select2({
             theme: 'bootstrap-5',
-            placeholder: "Bidang",
+            placeholder: "-- Bidang --",
             allowClear: true, // Memungkinkan pengguna menghapus pilihan
             width: '100%' // Menyesuaikan dengan lebar container
         });
@@ -173,7 +226,7 @@
         $(window).on('resize', function() {
             $('.select-bidang').select2({
                 theme: 'bootstrap-5',
-                placeholder: "Bidang",
+                placeholder: "-- Bidang --",
                 allowClear: true,
                 width: '100%'
             });
@@ -183,7 +236,7 @@
     $(document).ready(function() {
         $('.select-kategori').select2({
             theme: 'bootstrap-5',
-            placeholder: "Pilih kategori",
+            placeholder: "-- Pilih kategori --",
             allowClear: true, // Memungkinkan pengguna menghapus pilihan3
             width: '100%'
         });
@@ -191,7 +244,7 @@
         $(window).on('resize', function() {
             $('.select-kategori').select2({
                 theme: 'bootstrap-5',
-                placeholder: "Pilih kategori",
+                placeholder: "-- Pilih kategori --",
                 allowClear: true,
                 width: '100%'
             });
@@ -201,7 +254,7 @@
     $(document).ready(function() {
         $('.select-sub-kategori').select2({
             theme: 'bootstrap-5',
-            placeholder: "Pilih sub kategori",
+            placeholder: "-- Pilih sub kategori --",
             allowClear: true, // Memungkinkan pengguna menghapus pilihan
             width: '100%'
         });
@@ -209,7 +262,7 @@
         $(window).on('resize', function() {
             $('.select-sub-kategori').select2({
                 theme: 'bootstrap-5',
-                placeholder: "Pilih sub kategori",
+                placeholder: "-- Pilih sub kategori --",
                 allowClear: true,
                 width: '100%'
             });
@@ -219,7 +272,7 @@
     $(document).ready(function() {
         $('.select-karyawan').select2({
             theme: 'bootstrap-5',
-            placeholder: "Pilih Karyawan",
+            placeholder: "-- Pilih Karyawan --",
             allowClear: true, // Memungkinkan pengguna menghapus pilihan
             width: '100%'
         });
@@ -227,7 +280,7 @@
         $(window).on('resize', function() {
             $('.select-karyawan').select2({
                 theme: 'bootstrap-5',
-                placeholder: "Pilih Karyawan",
+                placeholder: "-- Pilih Karyawan --",
                 allowClear: true,
                 width: '100%'
             });
@@ -235,26 +288,31 @@
     });
 
     $(document).ready(function() {
-        $('#kategori_pelayanan').on('change', function() {
-            var kategoriID = $(this).val();
-            if (kategoriID) {
-                $.ajax({
-                    url: '{{ route("get.subkategori") }}',
-                    type: 'POST',
-                    data: {
-                        kategori_pelayanan_id: kategoriID,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    dataType: 'json',
-                    success: function(data) {
-                        $('#sub_kategori_pelayanan').empty().append('<option value="">Pilih Sub Kategori</option>');
-                        $.each(data, function(key, value) {
-                            $('#sub_kategori_pelayanan').append('<option value="' + value.id + '">' + value.sub_pelayanan + '</option>');
-                        });
-                    }
+        $('#divisiId').on('change', function() {
+            var divisiId = $(this).val();
+
+            $('#kategori_pelayanan').html('<option value="">-- Pilih Kategori --</option>');
+            $('#sub_kategori_pelayanan').html('<option value="">Pilih Sub Kategori</option>');
+
+            if (divisiId) {
+                $.get('/get-kategori/' + divisiId, function(data) {
+                    $.each(data, function(index, value) {
+                        $('#kategori_pelayanan').append('<option value="' + value.id + '">' + value.pelayanan + '</option>');
+                    });
                 });
-            } else {
-                $('#sub_kategori_pelayanan').empty().append('<option value="">Pilih Sub Kategori</option>');
+            }
+        });
+
+        $('#kategori_pelayanan').on('change', function() {
+            var kategoriId = $(this).val();
+            $('#sub_kategori_pelayanan').html('<option value="">Pilih Sub Kategori</option>');
+
+            if (kategoriId) {
+                $.get('/get-sub-kategori/' + kategoriId, function(data) {
+                    $.each(data, function(index, value) {
+                        $('#sub_kategori_pelayanan').append('<option value="' + value.id + '">' + value.sub_pelayanan + '</option>');
+                    });
+                });
             }
         });
     });
@@ -269,14 +327,20 @@
                     dataType: 'json',
                     success: function(data) {
                         if (data) {
-                            $('#nama_karyawan').val(data.nama_karyawan); // Sesuaikan field "nama"
+                            $('#nama_karyawan').val(data.nama_karyawan);
+                            $('#departemen').val(data.get_divisi.get_departemen.departemen);
+                            $('#divisi').val(data.get_divisi.nama_divisi);
                         } else {
                             $('#nama_karyawan').val('');
+                            $('#departemen').val('');
+                            $('#divisi').val('');
                         }
                     }
                 });
             } else {
                 $('#nama_karyawan').val('');
+                $('#departemen').val('');
+                $('#divisi').val('');
             }
         });
     });

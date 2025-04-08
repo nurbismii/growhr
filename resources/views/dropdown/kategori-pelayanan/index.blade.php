@@ -9,10 +9,11 @@
 
     <div class="card">
         <div class="table-responsive text-nowrap">
-            <table class="table">
+            <table class="table" id="table-pelayanan">
                 <thead class="table-primary">
                     <tr>
                         <th class="text-white">No</th>
+                        <th class="text-white">Bidang</th>
                         <th class="text-white">Pelayanan</th>
                         <th class="text-white">Aksi</th>
                     </tr>
@@ -21,6 +22,7 @@
                     @foreach($kategori_pelayanan as $kp)
                     <tr>
                         <td>{{ ++$no }}</td>
+                        <td>{{ $kp->divisi ? $kp->divisi->divisi : '-' }}</td>
                         <td>{{ $kp->pelayanan }}</td>
                         <td>
                             <div class="dropdown">
@@ -41,4 +43,18 @@
     </div>
 </div>
 <!--/ Bootstrap Dark Table -->
+
+@push('script')
+<script>
+    $(document).ready(function() {
+        let table = $('#table-pelayanan').DataTable({
+            responsive: true,
+            paging: true,
+            searching: true,
+            ordering: true,
+            scrollCollapse: true
+        });
+    });
+</script>
+@endpush
 @endsection

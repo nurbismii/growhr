@@ -12,7 +12,7 @@ class Pelayanan extends Model
     protected $table = 'pelayanan';
     protected $guarded = [];
 
-    public function divisi()
+    public function getDivisi()
     {
         return $this->hasOne(Divisi::class, 'id', 'divisi_id');
     }

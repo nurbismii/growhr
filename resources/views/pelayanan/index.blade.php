@@ -165,7 +165,7 @@
             @csrf
             <div class="col-12 col-sm-6 col-md-3">
                 <select id="divisiId-f" name="divisi_id[]" class="form-control select-bidang">
-                    <option value="" disabled selected>Bidang</option>
+                    <option value="" disabled selected>-- Bidang --</option>
                     @foreach($divisi as $div)
                     <option value="{{ $div->id }}">{{ $div->divisi }}</option>
                     @endforeach
@@ -173,7 +173,7 @@
             </div>
             <div class="col-12 col-sm-6 col-md-3">
                 <select name="kategori_pelayanan_id[]" class="form-control select-kategori w-100">
-                    <option value="" disabled selected>Kategori</option>
+                    <option value="" disabled selected>-- Kategori --</option>
                     @foreach($kategori_pelayanan as $kp)
                     <option value="{{ $kp->id }}">{{ $kp->pelayanan }}</option>
                     @endforeach
@@ -181,7 +181,7 @@
             </div>
             <div class="col-12 col-sm-6 col-md-3">
                 <select name="pic[]" class="form-control select-pic w-100">
-                    <option value="" disabled selected>Person in Charge</option>
+                    <option value="" disabled selected>-- PIC --</option>
                     @foreach($user as $user)
                     <option value="{{ $user->id }}">{{ $user->name }}</option>
                     @endforeach
@@ -211,6 +211,7 @@
                         <th class="text-center text-white">Durasi Pelayanan</th>
                         <th class="text-center text-white">Keterangan</th>
                         <th class="text-center text-white">PIC</th>
+                        <th class="text-center text-white">Dokumen Pendukung</th>
                         <th class="text-center text-white">Aksi</th>
                     </tr>
                 </thead>
@@ -219,7 +220,7 @@
                     <tr>
                         <td>{{ ++$no }}</td>
                         <td>{{ date('d-m-Y', strtotime($layanan->created_at)) }}</td>
-                        <td>{{ $layanan->divisi->divisi }}</td>
+                        <td>{{ $layanan->getDivisi->divisi  }}</td>
                         <td>{{ $layanan->kategoriPelayanan->pelayanan }}</td>
                         <td>{{ $layanan->subKategoriPelayanan != null ? $layanan->subKategoriPelayanan->sub_pelayanan : '-' }}</td>
                         <td>{{ $layanan->waktu_mulai }}</td>
@@ -231,6 +232,11 @@
                             </span>
                         </td>
                         <td>{{ $layanan->pic->name }}</td>
+                        <td>
+                            <a class="nav-link" target="_blank" href="{{ asset('storage/' . $layanan->doc_pendukung) }}">
+                                <i class="bx bx-link-alt me-1"></i> {{ basename($layanan->doc_pendukung) }}
+                            </a>
+                        </td>
                         <td>
                             <div class="dropdown">
                                 <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
@@ -272,7 +278,7 @@
                             <div class="col">
                                 <label for="divisiIdModal" class="form-label">Bidang Pelayanan</label>
                                 <select id="divisiIdModal" name="divisi_id" class="form-select select-bidang-modal" required>
-                                    <option value="{{ $layanan->divisi_id }}">{{ $layanan->divisi->divisi }}</option>
+                                    <option value="{{ $layanan->divisi_id }}">{{ $layanan->getDivisi ? $layanan->getDivisi->divisi : '-' }}</option>
                                     @foreach($divisi_modal as $div_m)
                                     <option value="{{ $div_m->id }}">{{ $div_m->divisi }}</option>
                                     @endforeach
@@ -302,16 +308,20 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label for="nik_karyawan" class="form-label">NIK Karyawan</label>
-                                <select id="nik_karyawan" name="nik_karyawan" class="form-select select-karyawan-modal" required>
-                                    <option value="{{ $layanan->nik_karyawan }}">{{ $layanan->nik_karyawan }}</option>
-                                    @foreach($employee_hris as $emp)
-                                    <option value="{{ $emp->nik }}">{{ $emp->nik }}</option>
-                                    @endforeach
-                                </select>
+                                <input type="text" id="nik_karyawan" name="nama_karyawan" class="form-control nama-karyawan-modal" value="{{ $layanan->nik_karyawan }}" required readonly>
                             </div>
                             <div class="col-md-6">
                                 <label for="nama_karyawan" class="form-label">Nama Karyawan</label>
                                 <input type="text" id="nama_karyawan" name="nama_karyawan" class="form-control nama-karyawan-modal" value="{{ $layanan->nama_karyawan }}" required readonly>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="departemen" class="form-label">Departemen</label>
+                                <input type="text" id="departemen" name="departemen" class="form-control departemen-modal" value="{{ $layanan->departemen }}" required readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="divisi" class="form-label">Divisi</label>
+                                <input type="text" id="divisi" name="divisi" class="form-control divisi-modal" value="{{ $layanan->divisi }}" required readonly>
                             </div>
                         </div>
                     </div>
@@ -333,11 +343,24 @@
                             </div>
                         </div>
 
-                        <div class="col mt-3">
-                            <label for="durasi" class="form-label">Keterangan</label>
-                            <textarea type="text" class="form-control" name="keterangan" required>{{ $layanan->keterangan }}</textarea>
-                        </div>
+                        <div class="row">
+                            <div class="col-6 mt-3">
+                                <label for="durasi" class="form-label">Keterangan</label>
+                                <textarea type="text" class="form-control" name="keterangan" required>{{ $layanan->keterangan }}</textarea>
+                            </div>
 
+                            <div class="col-6 mt-3">
+                                <label class="form-label">Dokumen Laporan</label>
+                                <div>
+                                    <label for="fileInputEditLaporan{{$layanan->id}}" class="custom-file-upload">
+                                        <i class="bi bi-plus-circle"></i>
+                                        <span class="ms-2 fileLabel" id="fileLabelEditLaporan{{$layanan->id}}">Pilih file</span>
+                                    </label>
+                                    <input type="file" id="fileInputEditLaporan{{$layanan->id}}" class="fileInputEditLaporan" name="doc_laporan">
+                                </div>
+                                <div class="file-name fileInputEditLaporan{{$layanan->id}}"></div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="text-end m-3">
@@ -354,6 +377,15 @@
 
 @push('script')
 <script>
+    $(document).on("change", ".fileInputEditLaporan", function() {
+        let fileId = $(this).attr("id"); // Dapatkan ID input file (misal: fileInput1)
+        let fileName = this.files[0] ? this.files[0].name : "Pilih File";
+
+        // Ubah label & nama file berdasarkan ID yang sesuai
+        $("#fileLabelEditLaporan" + fileId.replace("fileInputEditLaporan", "")).text(fileName);
+        $("#fileNameEdit" + fileId.replace("fileInputEditLaporan", "")).text(fileName);
+    });
+
     $(document).ready(function() {
         function getCurrentMonthRange() {
             let start = moment().startOf('month'); // Hari pertama bulan ini
@@ -391,7 +423,8 @@
         }
 
         // Inisialisasi saat modal terbuka
-        $('#edit{{$layanan->id}}').on('shown.bs.modal', function() {
+        $('#edit{{$layanan->id ?? '
+            '}}').on('shown.bs.modal', function() {
             initSelect2(this);
         });
 
@@ -410,9 +443,9 @@
         }
 
         // Inisialisasi Select2 untuk semua dropdown yang diperlukan
-        initSelect2('.select-bidang', 'Bidang');
-        initSelect2('.select-kategori', 'Kategori');
-        initSelect2('.select-pic', 'Person in Charge');
+        initSelect2('.select-bidang', '-- Bidang --');
+        initSelect2('.select-kategori', '-- Kategori --');
+        initSelect2('.select-pic', '-- PIC --');
 
         // Re-inisialisasi Select2 saat jendela diubah ukurannya
         $(window).on('resize', function() {
@@ -446,6 +479,11 @@
         });
     }
 
+    function getBasename(path) {
+        return path.split('/').pop();
+    }
+
+
     function formatTimestamp(timestamp) {
         const date = new Date(timestamp);
 
@@ -460,73 +498,45 @@
     }
 
     $(document).ready(function() {
-        $(document).on('change', '.select-kategori-modal', function() {
-            var kategoriID = $(this).val();
-            var $modal = $(this).closest('.modal'); // Cari modal terdekat
-            var $subKategoriSelect = $modal.find('.select-sub-kategori-modal');
+        // Saat modal dibuka
+        $('.modal').on('shown.bs.modal', function() {
+            const $modal = $(this);
 
-            if (kategoriID) {
-                $.ajax({
-                    url: '{{ route("get.subkategori") }}',
-                    type: 'POST',
-                    data: {
-                        kategori_pelayanan_id: kategoriID,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    dataType: 'json',
-                    success: function(data) {
-                        $subKategoriSelect.empty().append('<option value="">Pilih Sub Kategori</option>');
-                        $.each(data, function(key, value) {
+            // Dropdown Divisi -> Kategori
+            $modal.find('.select-bidang-modal').on('change', function() {
+                let divisiId = $(this).val();
+                let $kategoriSelect = $modal.find('.select-kategori-modal');
+                let $subKategoriSelect = $modal.find('.select-sub-kategori-modal');
+
+                $kategoriSelect.html('<option value="">-- Pilih Kategori --</option>');
+                $subKategoriSelect.html('<option value="">-- Pilih Sub Kategori --</option>');
+
+                if (divisiId) {
+                    $.get('/get-kategori/' + divisiId, function(data) {
+                        $.each(data, function(index, value) {
+                            $kategoriSelect.append('<option value="' + value.id + '">' + value.pelayanan + '</option>');
+                        });
+                    });
+                }
+            });
+
+            // Dropdown Kategori -> Sub Kategori
+            $modal.find('.select-kategori-modal').on('change', function() {
+                let kategoriId = $(this).val();
+                let $subKategoriSelect = $modal.find('.select-sub-kategori-modal');
+
+                $subKategoriSelect.html('<option value="">-- Pilih Sub Kategori --</option>');
+
+                if (kategoriId) {
+                    $.get('/get-sub-kategori/' + kategoriId, function(data) {
+                        $.each(data, function(index, value) {
                             $subKategoriSelect.append('<option value="' + value.id + '">' + value.sub_pelayanan + '</option>');
                         });
-                    }
-                });
-            } else {
-                $subKategoriSelect.empty().append('<option value="">Pilih Sub Kategori</option>');
-            }
-        });
-    });
-
-    $(document).ready(function() {
-        function initSelect2(modal) {
-            $(modal).find('.select-karyawan-modal').select2({
-                theme: 'bootstrap-5',
-                placeholder: "Pilih Karyawan",
-                allowClear: true,
-                width: '100%',
-                dropdownParent: $(modal) // Mencegah modal tertutup saat memilih opsi
+                    });
+                }
             });
-        }
-
-        // Inisialisasi saat modal dibuka
-        $('.modal').on('shown.bs.modal', function() {
-            initSelect2(this);
-        });
-
-        // Event listener untuk pemilihan karyawan
-        $(document).on('change', '.select-karyawan-modal', function() {
-            var nik = $(this).val();
-            var modal = $(this).closest('.modal'); // Ambil modal terdekat dari elemen yang berubah
-
-            if (nik) {
-                $.ajax({
-                    url: '/get-karyawan/' + nik,
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(data) {
-                        if (data) {
-                            modal.find('.nama-karyawan-modal').val(data.nama_karyawan);
-                        } else {
-                            modal.find('.nama-karyawan-modal').val('');
-                        }
-                    }
-                });
-            } else {
-                modal.find('.nama-karyawan-modal').val('');
-            }
         });
     });
-
 
     $(document).ready(function() {
         let table = $('#laporan-pelayanan').DataTable({
@@ -556,11 +566,13 @@
 
                     table.clear().draw(); // Bersihkan tabel sebelum menambahkan data baru
 
+                    console.log(response)
+
                     response.pelayanan.forEach(function(layanan, index) {
                         table.row.add([
                             index + 1,
                             formatTimestamp(layanan.created_at || new Date()),
-                            layanan.divisi ? layanan.divisi.divisi : '-',
+                            layanan.get_divisi ? layanan.get_divisi.divisi : '-',
                             layanan.kategori_pelayanan ? layanan.kategori_pelayanan.pelayanan : '-',
                             layanan.sub_kategori_pelayanan ? layanan.sub_kategori_pelayanan.sub_pelayanan : '-',
                             layanan.waktu_mulai || '-',
@@ -570,6 +582,10 @@
                                 ${escapeHtml(layanan.keterangan.substring(0, 50))}...
                             </span>`,
                             layanan.pic ? layanan.pic.name : '-',
+                            layanan.doc_pendukung ?
+                            `<a class="nav-link" target="_blank" href="/storage/${layanan.doc_pendukung}">
+                                <i class="bx bx-link-alt me-1"></i> ${getBasename(layanan.doc_pendukung)}
+                            </a>` : '---',
                             `<div class="dropdown">
                             <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
                                 <i class="bx bx-edit text-primary"></i>

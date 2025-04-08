@@ -12,7 +12,16 @@
                         <span class="tf-icons bx bx-arrow-back"></span>&nbsp; Kembali
                     </a>
                     <div class="row">
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label for="divisiId" class="form-label">Bidang</label>
+                            <select name="divisi_id" class="form-select" id="divisiId">
+                                <option value="" disabled selected>-- Pilih bidang --</option>
+                                @foreach($bidang as $bidang)
+                                <option value="{{ $bidang->id }}">{{ $bidang->divisi }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
                             <label for="kategoriPelayanan" class="form-label">Nama Pelayanan</label>
                             <input type="text" name="kategori_pelayanan" id="kategoriPelayanan" class="form-control">
                         </div>

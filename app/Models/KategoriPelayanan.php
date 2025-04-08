@@ -16,4 +16,9 @@ class KategoriPelayanan extends Model
     {
         return $this->hasMany(SubKategoriPelayanan::class, 'kategori_pelayanan_id');
     }
+
+    public function divisi()
+    {
+        return $this->hasOne(Divisi::class, 'id', 'divisi_id');
+    }
 }
