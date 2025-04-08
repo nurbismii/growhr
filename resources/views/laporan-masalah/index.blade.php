@@ -221,7 +221,7 @@
                         <th class="text-center text-white">Divisi</th>
                         <th class="text-center text-white">Langkah Penyelesaian</th>
                         <th class="text-center text-white">Doc Permasalahan</th>
-                        <th class="text-center text-white">Doc Analisa</th>
+                        <th class="text-center text-white">Doc Analisa Risiko</th>
                         <th class="text-center text-white">Doc Solusi</th>
                         <th class="text-center text-white">Aksi</th>
                     </tr>
@@ -269,17 +269,17 @@
                         </td>
                         <td>
                             <a class="nav-link" target="_blank" href="{{ asset('storage/' . $pengaduan->doc_permasalahan) }}">
-                                <i class="bx bx-link-alt me-1"></i> {{ $pengaduan->doc_permasalahan }}
+                                <i class="bx bx-link-alt me-1"></i> {{ basename($pengaduan->doc_permasalahan) }}
                             </a>
                         </td>
                         <td>
                             <a class="nav-link" target="_blank" href="{{ asset('storage/' . $pengaduan->doc_analisis_risiko) }}">
-                                <i class="bx bx-link-alt me-1"></i> {{ $pengaduan->doc_analisis_risiko }}
+                                <i class="bx bx-link-alt me-1"></i> {{ basename($pengaduan->doc_analisis_risiko) }}
                             </a>
                         </td>
                         <td>
                             <a class="nav-link" target="_blank" href="{{ asset('storage/' . $pengaduan->doc_solusi) }}">
-                                <i class="bx bx-link-alt me-1"></i> {{ $pengaduan->doc_solusi ?? '---' }}
+                                <i class="bx bx-link-alt me-1"></i> {{ basename($pengaduan->doc_solusi) ?? '---' }}
                             </a>
                         </td>
                         <td>
@@ -309,7 +309,6 @@ $selectedStatus = $pengaduan->status_kendala;
 $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang sudah ada
 @endphp
 
-
 <div class="modal fade" id="edit{{$p_modal->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -324,26 +323,32 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div class="card text-white bg-primary shadow-lg px-3 py-2" style="max-width: 22rem; height: 3rem;">
                             <div class="card-body p-0">
-                                <h6 class="card-title text-white fw-bold m-2 text-center">Form Pengaduan</h6>
+                                <h6 class="card-title text-white fw-bold m-2 text-center">Form Kendala</h6>
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="tanggalPelaporan" class="form-label">Tanggal Pelaporan</label>
+                            <label for="tanggalPelaporan" class="form-label">Tanggal Pelaporan
+                                <span class="text-danger">*</span>
+                            </label>
                             <input type="text" class="form-control" name="tanggal_pelaporan" id="tanggalPelaporan" value="{{ date('d/m/Y', strtotime($pengaduan->created_at)) }}" readonly>
                         </div>
                         <div class="col-md-8 mb-3">
-                            <label for="jenisKegiatan" class="form-label">Jenis Pekerjaan</label>
+                            <label for="jenisKegiatan" class="form-label">Jenis Pekerjaan
+                                <span class="text-danger">*</span>
+                            </label>
                             <select id="jenisKegiatan" name="jenis_pekerjaan_id" class="form-select" required>
-                                <option value="{{ $p_modal->pekerjaan_id }}">{{ $pengaduan->pekerjaan != null ? $pengaduan->pekerjaan->deskripsi : '-'}}</option>
+                                <option value="{{ $p_modal->pekerjaan_id }}">{{ $pengaduan->pekerjaan != null ? $pengaduan->pekerjaan->deskripsi_pekerjaan : '-'}}</option>
                                 @foreach($pekerjaan_modal as $pk_modal)
                                 <option value="{{ $pk_modal->id }}">{{ $pk_modal->deskripsi_pekerjaan }} | {{ $pk_modal->tanggal_mulai }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="divisi" class="form-label">Kategori Kendala</label>
+                            <label for="divisi" class="form-label">Kategori Kendala
+                                <span class="text-danger">*</span>
+                            </label>
                             <select id="divisi" name="kategori_kendala" class="form-select" required>
                                 <option value="{{ $p_modal->kategori_kendala }}">{{ ucfirst($p_modal->kategori_kendala) }}</option>
                                 <option value="manusia">Manusia</option>
@@ -356,7 +361,9 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
                             </select>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="prioritas" class="form-label">Tingkat Dampak</label>
+                            <label for="prioritas" class="form-label">Tingkat Dampak
+                                <span class="text-danger">*</span>
+                            </label>
                             <select id="prioritas" name="prioritas_id" class="form-select" required>
                                 <option value="{{ $p_modal->prioritas_id }}">{{ $p_modal->prioritas->prioritas }}</option>
                                 @foreach($prioritas as $prioriti)
@@ -365,7 +372,9 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
                             </select>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="statusKegiatan" class="form-label">Status Penyelesaian</label>
+                            <label for="statusKegiatan" class="form-label">Status Penyelesaian3
+                                <span class="text-danger">*</span>
+                            </label>
                             <select id="statusKegiatan" name="status_pekerjaan_id" class="form-select" required>
                                 <option value="{{ $selectedStatus }}">{{ ucfirst($selectedStatus) }}</option> <!-- Tampilkan yang dipilih -->
                                 @foreach ($filteredOptions as $option)
@@ -374,20 +383,26 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
                             </select>
                         </div>
                         <div class="col-md-12 mb-3">
-                            <label for="alasanPenentuanTingkatDampak" class="form-label">Alasan Penentuan Tingkat Dampak</label>
+                            <label for="alasanPenentuanTingkatDampak" class="form-label">Alasan Penentuan Tingkat Dampak
+                                <span class="text-danger">*</span>
+                            </label>
                             <input class="form-control" name="alasan_tingkat_dampak_pengaduan" id="alasanPenentuanTingkatDampak" value="{{ $p_modal->alasan_tingkat_dampak_pengaduan }}" required></input>
                         </div>
                         <div class="col-md-12 mb-3">
-                            <label for="deskripsiTugas" class="form-label">Deskripsi Kendala</label>
+                            <label for="deskripsiTugas" class="form-label">Deskripsi Kendala
+                                <span class="text-danger">*</span>
+                            </label>
                             <textarea class="form-control" name="deskripsi_pengaduan" id="deskripsiTugas" placeholder="Isi deksripsi" rows="2" required>{{ $p_modal->deskripsi_pengaduan }}</textarea>
                         </div>
                         <div class="col-md-12 mb-3">
-                            <label for="langkahPenyelesaian" class="form-label">Langkah Penyelesaian</label>
+                            <label for="langkahPenyelesaian" class="form-label">Langkah Penyelesaian
+                                <span class="text-danger">*</span>
+                            </label>
                             <textarea class="form-control" name="langkah_penyelesaian" id="langkahPenyelesaian" placeholder="Langkah penyelesaian" rows="2" required>{{ $p_modal->langkah_penyelesaian }}</textarea>
                         </div>
                         <div class="col-md-4 mb-3">
                             <div class="mb-3">
-                                <label class="form-label fw-bold text-muted">Dokumen Permasalahan</label>
+                                <label class="form-label">Dokumen Permasalahan</label>
                                 <div>
                                     <label for="fileInputEditPermasahalah{{$p_modal->id}}" class="custom-file-upload">
                                         <i class="bi bi-plus-circle"></i>
@@ -401,7 +416,7 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
 
                         <div class="col-md-4 mb-3">
                             <div class="mb-3">
-                                <label class="form-label fw-bold text-muted">Dokumen Analisa</label>
+                                <label class="form-label">Dokumen Analisa Risiko</label>
                                 <div>
                                     <label for="fileInputEditAnalisa{{$p_modal->id}}" class="custom-file-upload">
                                         <i class="bi bi-plus-circle"></i>
@@ -415,7 +430,7 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
 
                         <div class="col-md-4 mb-3">
                             <div class="mb-3">
-                                <label class="form-label fw-bold text-muted">Dokumen Solusi</label>
+                                <label class="form-label">Dokumen Solusi</label>
                                 <div>
                                     <label for="fileInputEditSolusi{{$p_modal->id}}" class="custom-file-upload">
                                         <i class="bi bi-plus-circle"></i>

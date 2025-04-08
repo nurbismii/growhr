@@ -203,7 +203,7 @@
                         </div>
                         <div class="col-md-12 mb-3">
                             <div class="mb-3">
-                                <label class="form-label fw-bold text-muted">Lampiran Dokumen (Opsional)</label>
+                                <label class="form-label">Lampiran Dokumen (Opsional)</label>
                                 <div>
                                     <label for="fileInput" class="custom-file-upload">
                                         <i class="bi bi-plus-circle"></i>

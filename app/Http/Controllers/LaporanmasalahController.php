@@ -157,7 +157,7 @@ class LaporanmasalahController extends Controller
             'doc_solusi' => $doc_solusi_file
         ]);
 
-        Alert::success('Berhasil', 'Pengaduan berhasil ditambahkan!');
+        Alert::success('Berhasil', 'Kendala berhasil ditambahkan!');
         return redirect()->route('laporan-masalah.index');
     }
 
@@ -228,7 +228,7 @@ class LaporanmasalahController extends Controller
             'doc_solusi' => $doc_solusi_file
         ]);
 
-        Alert::success('Berhasil', 'Pengaduan berhasil diperbarui!');
+        Alert::success('Berhasil', 'Kendala berhasil diperbarui!');
         return redirect()->route('laporan-masalah.index');
     }
 

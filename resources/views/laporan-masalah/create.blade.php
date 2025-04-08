@@ -48,7 +48,7 @@
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div class="card text-white bg-primary shadow-lg px-3 py-2" style="max-width: 22rem; height: 3rem;">
                             <div class="card-body p-0">
-                                <h6 class="card-title text-white fw-bold m-2 text-center">Form Pengaduan</h6>
+                                <h6 class="card-title text-white fw-bold m-2 text-center">Form Laporan Kendala</h6>
                             </div>
                         </div>
 
@@ -58,11 +58,15 @@
                     </div>
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="tanggalPelaporan" class="form-label">Tanggal Pelaporan</label>
-                            <input type="date" class="form-control" name="tanggal_pelaporan" id="tanggalPelaporan" readonly>
+                            <label for="tanggalPelaporan" class="form-label">Tanggal Pelaporan
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="date" class="form-control tanggalPelaporan" name="tanggal_pelaporan" id="tanggalPelaporan" readonly>
                         </div>
                         <div class="col-md-8 mb-3">
-                            <label for="jenisKegiatan" class="form-label">Jenis Pekerjaan</label>
+                            <label for="jenisKegiatan" class="form-label">Jenis Pekerjaan
+                                <span class="text-danger">*</span>
+                            </label>
                             <select id="jenisKegiatan" name="jenis_pekerjaan_id" class="form-select select-pekerjaan" required>
                                 <option value="">-- Pilih Kategori Pekerjaan --</option>
                                 @foreach($pekerjaan as $pk)
@@ -71,7 +75,9 @@
                             </select>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="divisi" class="form-label">Kategori Kendala</label>
+                            <label for="divisi" class="form-label">Kategori Kendala
+                                <span class="text-danger">*</span>
+                            </label>
                             <select id="divisi" name="kategori_kendala" class="form-select" required>
                                 <option value="">-- Pilih Kategori Kendala --</option>
                                 <option value="manusia">Manusia</option>
@@ -84,7 +90,9 @@
                             </select>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="prioritas" class="form-label">Tingkat Dampak</label>
+                            <label for="prioritas" class="form-label">Tingkat Dampak
+                                <span class="text-danger">*</span>
+                            </label>
                             <select id="prioritas" name="prioritas_id" class="form-select" required>
                                 <option value="">-- Pilih Prioritas --</option>
                                 @foreach($prioritas as $prioriti)
@@ -93,7 +101,9 @@
                             </select>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="statusKegiatan" class="form-label">Status Penyelesaian</label>
+                            <label for="statusKegiatan" class="form-label">Status Penyelesaian
+                                <span class="text-danger">*</span>
+                            </label>
                             <select id="statusKegiatan" name="status_pekerjaan_id" class="form-select" required>
                                 <option value="">-- Pilih Status Penyelesaian --</option>
                                 <option value="sedang-ditangani">Sedang Ditangani</option>
@@ -101,20 +111,26 @@
                             </select>
                         </div>
                         <div class="col-md-12 mb-3">
-                            <label for="alasanPenentuanTingkatDampak" class="form-label">Alasan Penentuan Tingkat Dampak</label>
-                            <input class="form-control" name="alasan_tingkat_dampak_pengaduan" id="alasanPenentuanTingkatDampak" required></input>
+                            <label for="alasanPenentuanTingkatDampak" class="form-label">Alasan Penentuan Tingkat Dampak
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input class="form-control" name="alasan_tingkat_dampak_pengaduan" id="alasanPenentuanTingkatDampak" required placeholder="Isi alasan..."></input>
                         </div>
                         <div class="col-md-12 mb-3">
-                            <label for="deskripsiTugas" class="form-label">Deskripsi Kendala</label>
+                            <label for="deskripsiTugas" class="form-label">Deskripsi Kendala
+                                <span class="text-danger">*</span>
+                            </label>
                             <textarea class="form-control" name="deskripsi_pengaduan" id="deskripsiTugas" placeholder="Isi deksripsi" rows="2" required></textarea>
                         </div>
                         <div class="col-md-12 mb-3">
-                            <label for="langkahPenyelesaian" class="form-label">Langkah Penyelesaian</label>
-                            <textarea class="form-control" name="langkah_penyelesaian" id="langkahPenyelesaian" placeholder="Langkah penyelesaian" rows="2" required></textarea>
+                            <label for="langkahPenyelesaian" class="form-label">Langkah Penyelesaian
+                                <span class="text-danger">*</span>
+                            </label>
+                            <textarea class="form-control" name="langkah_penyelesaian" id="langkahPenyelesaian" placeholder="Isi langkah penyelesaian" rows="2" required></textarea>
                         </div>
                         <div class="col-md-4 mb-3">
                             <div class="mb-3">
-                                <label class="form-label fw-bold text-muted">Dokumen Bukti Permasalahan</label>
+                                <label class="form-label">Dokumen Bukti Permasalahan</label>
                                 <div>
                                     <label for="InputPermasalahan" class="custom-file-upload">
                                         <i class="bi bi-plus-circle"></i>
@@ -128,7 +144,7 @@
 
                         <div class="col-md-4 mb-3">
                             <div class="mb-3">
-                                <label class="form-label fw-bold text-muted">Dokumen Analisis Risiko</label>
+                                <label class="form-label">Dokumen Analisis Risiko</label>
                                 <div>
                                     <label for="InputAnalisa" class="custom-file-upload">
                                         <i class="bi bi-plus-circle"></i>
@@ -142,7 +158,7 @@
 
                         <div class="col-md-4 mb-3">
                             <div class="mb-3">
-                                <label class="form-label fw-bold text-muted">Dokumen Solusi (Opsional)</label>
+                                <label class="form-label">Dokumen Solusi</label>
                                 <div>
                                     <label for="InputSolusi" class="custom-file-upload">
                                         <i class="bi bi-plus-circle"></i>
@@ -166,30 +182,30 @@
 @push('script')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    document.getElementById("uploadForm").addEventListener("submit", function(event) {
-        let fileInputPermasalahan = document.getElementById("InputPermasalahan");
-        let fileInputAnalisa = document.getElementById("InputAnalisa");
-        let errorMessage = '';
+    // document.getElementById("uploadForm").addEventListener("submit", function(event) {
+    //     let fileInputPermasalahan = document.getElementById("InputPermasalahan");
+    //     let fileInputAnalisa = document.getElementById("InputAnalisa");
+    //     let errorMessage = '';
 
-        // Cek apakah file tidak dipilih
-        if (!fileInputPermasalahan.files.length) {
-            errorMessage = 'Harap pilih dokumen bukti permasalahan!';
-        } else if (!fileInputAnalisa.files.length) {
-            errorMessage = 'Harap pilih dokumen analisa!';
-        }
+    //     // Cek apakah file tidak dipilih
+    //     if (!fileInputPermasalahan.files.length) {
+    //         errorMessage = 'Harap pilih dokumen bukti permasalahan!';
+    //     } else if (!fileInputAnalisa.files.length) {
+    //         errorMessage = 'Harap pilih dokumen analisa!';
+    //     }
 
-        // Jika ada error, munculkan SweetAlert dan hentikan form submission
-        if (errorMessage) {
-            event.preventDefault(); // Mencegah form dikirim
-            Swal.fire({
-                icon: 'warning',
-                title: 'Oops...',
-                text: errorMessage,
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'OK'
-            });
-        }
-    });
+    //     // Jika ada error, munculkan SweetAlert dan hentikan form submission
+    //     if (errorMessage) {
+    //         event.preventDefault(); // Mencegah form dikirim
+    //         Swal.fire({
+    //             icon: 'warning',
+    //             title: 'Oops...',
+    //             text: errorMessage,
+    //             confirmButtonColor: '#3085d6',
+    //             confirmButtonText: 'OK'
+    //         });
+    //     }
+    // });
 
     document.addEventListener("DOMContentLoaded", function() {
         let today = new Date().toISOString().split('T')[0];
@@ -203,7 +219,7 @@
     $(document).ready(function() {
         $('.select-pekerjaan').select2({
             theme: 'bootstrap-5',
-            placeholder: "Pekerjaan",
+            placeholder: "-- Pilih Pekerjaan --",
             allowClear: true // Memungkinkan pengguna menghapus pilihan
         });
     });
