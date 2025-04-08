@@ -183,7 +183,7 @@
             </div>
             <div class="col-12 col-sm-6 col-md-3">
                 <select name="pic[]" class="form-control select-pic w-100">
-                    <option value="" disabled selected>Person in Charge</option>
+                    <option value="" disabled selected>PIC</option>
                     @foreach($user as $user)
                     <option value="{{ $user->id }}">{{ $user->name }}</option>
                     @endforeach
@@ -261,7 +261,7 @@
                         <td>{{ $kerjaan->getPjPekerjaan->name }}</td>
                         <td>{{ $kerjaan->tingkat_kesulitan }}/10</td>
                         <td>
-                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $kerjaan->deskripsi_pekerjaan }}">
+                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $kerjaan->alasan }}">
                                 {{ substr($kerjaan->alasan, 0, 25) }}...
                             </span>
                         <td>

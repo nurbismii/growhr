@@ -35,7 +35,6 @@ class LogharianController extends Controller
         $pekerjaan = Pekerjaan::with(['getUser', 'getKategoriPekerjaan', 'getSifatPekerjaan', 'getPrioritas', 'getStatusPekerjaan', 'getPjPekerjaan', 'getSubPekerjaan'])
             ->where('user_id', Auth::user()->id)
             ->orderBy('status_pekerjaan_id', 'ASC')
-            ->orderBy('tanggal_mulai', 'ASC')
             ->orderBy('tingkat_kesulitan', 'DESC');
 
         if ($request->ajax()) {
@@ -95,7 +94,7 @@ class LogharianController extends Controller
 
         if ($lampiran = $request->file('lampiran')) {
             $path = 'lampiran/pekerjaan';
-            $lampiranName = date('YmdHis') . '.' . $lampiran->getClientOriginalExtension();
+            $lampiranName = $lampiran->getClientOriginalName();
             $lampiran->move($path, $lampiranName);
         }
 
@@ -170,7 +169,7 @@ class LogharianController extends Controller
 
             // Simpan file baru
             $lampiran = $request->file('lampiran');
-            $lampiranName = date('YmdHis') . '.' . $lampiran->getClientOriginalExtension();
+            $lampiranName = $lampiran->getClientOriginalName();
             $lampiran->move($path, $lampiranName);
         }
 
@@ -236,7 +235,7 @@ class LogharianController extends Controller
 
         if ($lampiran = $request->file('lampiran')) {
             $path = 'lampiran/' . $pekerjaan->id . '/sub';
-            $lampiranName = date('YmdHis') . '.' . $lampiran->getClientOriginalExtension();
+            $lampiranName = $lampiran->getClientOriginalName();
             $lampiran->move($path, $lampiranName);
         }
 
@@ -294,7 +293,7 @@ class LogharianController extends Controller
 
             // Simpan file baru
             $lampiran = $request->file('lampiran');
-            $lampiranName = date('YmdHis') . '.' . $lampiran->getClientOriginalExtension();
+            $lampiranName = $lampiran->getClientOriginalName();
             $lampiran->move($path, $lampiranName);
         }
 

@@ -75,7 +75,7 @@
     <div class="col-md-12">
         <div class="card mb-2">
             <div class="card-body">
-                <form action="{{ route('log-harian.store') }}" method="post">
+                <form action="{{ route('log-harian.store') }}" method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <!-- Card Form Kegiatan (Lebih Besar) -->
