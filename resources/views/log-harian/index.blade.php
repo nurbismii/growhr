@@ -625,6 +625,10 @@
         }
     });
 
+    function getBasename(path) {
+        return path.split('/').pop();
+    }
+
     $(document).ready(function() {
         let table = $('#log-harian').DataTable({
             responsive: true,
@@ -682,7 +686,7 @@
                             </span>`,
                             kerjaan.lampiran ?
                             `<a class="nav-link" target="_blank" href="/lampiran/pekerjaan/${kerjaan.lampiran}">
-                                <i class="bx bx-link-alt me-1"></i> ${kerjaan.lampiran}
+                                <i class="bx bx-link-alt me-1"></i> ${getBasename(kerjaan.lampiran)}
                             </a>` :
                             `<a class="nav-link" target="_blank" href="#">
                                 <i class="bx bx-link-alt me-1"></i> ---

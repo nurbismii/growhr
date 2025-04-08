@@ -26,4 +26,10 @@ class Hasil extends Model
     {
         return $this->hasOne(Prioritas::class, 'id', 'prioritas_id');
     }
+
+    public function getNameDivisi()
+    {
+        $divisi = \App\Models\Divisi::find($this->divisi_id);
+        return $divisi ? $divisi->divisi : '-';
+    }
 }

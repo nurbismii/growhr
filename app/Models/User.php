@@ -54,4 +54,10 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Divisi::class, 'divisi_id');
     }
+
+    public function getNameDivisi()
+    {
+        $divisi = \App\Models\Divisi::find($this->divisi_id);
+        return $divisi ? $divisi->divisi : '-';
+    }
 }

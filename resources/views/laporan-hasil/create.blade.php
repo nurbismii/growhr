@@ -60,11 +60,15 @@
                     @csrf
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="tanggalPelaporan" class="form-label">Tanggal</label>
+                            <label for="tanggalPelaporan" class="form-label">Tanggal
+                                <span class="text-danger">*</span>
+                            </label>
                             <input type="date" class="form-control" name="tanggal_pelaporan" id="tanggalPelaporan" readonly>
                         </div>
                         <div class="col-md-8 mb-3">
-                            <label for="jenisKegiatan" class="form-label">Deskripsi Pekerjaan</label>
+                            <label for="jenisKegiatan" class="form-label">Deskripsi Pekerjaan
+                                <span class="text-danger">*</span>
+                            </label>
                             <select id="jenisKegiatan" name="pekerjaan_id" class="form-select" required>
                                 <option selected disabled>-- Pilih Deskripsi Pekerjaan --</option>
                                 @foreach($pekerjaan as $pk)
@@ -74,7 +78,9 @@
                         </div>
 
                         <div class="col-md-4 mb-3">
-                            <label for="statusLaporan" class="form-label">Status Laporan</label>
+                            <label for="statusLaporan" class="form-label">Status Laporan
+                                <span class="text-danger">*</span>
+                            </label>
                             <select id="statusLaporan" name="status_laporan" class="form-select" id="statusLaporan" required>
                                 <option value="">-- Pilih Status Laporan --</option>
                                 <option value="diajukan">Diajukan</option>
@@ -84,14 +90,18 @@
                         </div>
 
                         <div class="col-md-12 mb-4">
-                            <label class="form-label">Keterangan</label>
+                            <label class="form-label">Keterangan
+                                <span class="text-danger">*</span>
+                            </label>
                             <input type="hidden" name="keterangan" value="{{ old('keterangan') }}">
                             <div id="editor" style="min-height: 160px;">{!! old('keterangan') !!}</div>
                         </div>
 
                         <div class="col-md-12 mb-3 mt-5">
                             <div class="mb-3">
-                                <label class="form-label">Dokumen Laporan</label>
+                                <label class="form-label">Dokumen Laporan
+                                    <span class="text-danger">*</span>
+                                </label>
                                 <div>
                                     <label for="fileInput" class="custom-file-upload">
                                         <i class="bi bi-plus-circle"></i>

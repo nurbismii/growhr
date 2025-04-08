@@ -60,8 +60,9 @@ class LaporanhasilController extends Controller
                 'hasil' => $hasil->get(),
                 'status_laporan' => [
                     'diajukan',
+                    'ditolak',
                     'disetujui',
-                    'revisi',
+                    'revisi'
                 ],
                 'pekerjaan'
             ]);
@@ -141,10 +142,25 @@ class LaporanhasilController extends Controller
         $hasil->update([
             'status_laporan' => $request->status_laporan,
             'keterangan' => $request->keterangan,
-            'doc_laporan' => $doc_laporan ?? $hasil->doc_laporan
+            'doc_laporan' => $doc_laporan ?? $hasil->doc_laporan,
         ]);
 
         Alert::success('Berhasil', 'Laporan hasil berhasil diperbarui');
+        return back();
+    }
+
+    public function destroy($id)
+    {
+        $hasil = Hasil::where('id', $id)->first();
+
+        if ($hasil->doc_laporan) {
+            Storage::disk('public')->delete($hasil->doc_laporan);
+        }
+
+        // Hapus pekerjaan utama dari database
+        $hasil->delete();
+
+        Alert::success('Berhasil', 'Laporan hasil dan lampiran berhasil dihapus');
         return back();
     }
 
@@ -162,7 +178,9 @@ class LaporanhasilController extends Controller
         $hasil->status_laporan = $request->status_laporan;
         $hasil->save();
 
-        Alert::success('Berhasil', 'Status laporan berhasil diperbarui');
-        return back();
+        return response()->json([
+            'success' => true,
+            'message' => 'Status laporan berhasil diperbarui'
+        ], 200);
     }
 }

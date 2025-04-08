@@ -609,6 +609,10 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
         return str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
     }
 
+    function getBasename(path) {
+        return path.split('/').pop();
+    }
+
     $(document).ready(function() {
         let table = $('#laporan-masalah').DataTable({
             responsive: true,
@@ -658,15 +662,15 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
                             </span>`,
                             pengaduan.doc_permasalahan ?
                             `<a class="nav-link" target="_blank" href="/storage/${pengaduan.doc_permasalahan}">
-                                <i class="bx bx-link-alt me-1"></i> ${pengaduan.doc_permasalahan}
+                                <i class="bx bx-link-alt me-1"></i> ${getBasename(pengaduan.doc_permasalahan)}
                             </a>` : '---',
                             pengaduan.doc_analisis_risiko ?
                             `<a class="nav-link" target="_blank" href="/storage/${pengaduan.doc_analisis_risiko}">
-                                <i class="bx bx-link-alt me-1"></i> ${pengaduan.doc_analisis_risiko}
+                                <i class="bx bx-link-alt me-1"></i> ${getBasename(pengaduan.doc_analisis_risiko)}
                             </a>` : '---',
                             pengaduan.doc_solusi ?
                             `<a class="nav-link" target="_blank" href="/storage/${pengaduan.doc_solusi}">
-                                <i class="bx bx-link-alt me-1"></i> ${pengaduan.doc_solusi}
+                                <i class="bx bx-link-alt me-1"></i> ${getBasename(pengaduan.doc_solusi)}
                             </a>` : '---',
                             '<div class="dropdown">' +
                             '<button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">' +

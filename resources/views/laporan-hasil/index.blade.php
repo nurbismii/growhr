@@ -177,6 +177,7 @@
                 <select name="status_laporan[]" class="form-control select-prioritas w-100">
                     <option value="" disabled selected>Prioritas</option>
                     <option value="diajukan">Diajukan</option>
+                    <option value="ditolak">Diajukan</option>
                     <option value="disetujui">Disetujui</option>
                     <option value="revisi">Revisi</option>
                 </select>
@@ -219,7 +220,7 @@
                     @foreach($hasil as $hasil)
 
                     @php
-                    $statusOptions = ['diajukan', 'disetujui', 'revisi'];
+                    $statusOptions = ['diajukan', 'ditolak', 'disetujui', 'revisi'];
                     $selectedStatus = $hasil->status_laporan;
                     $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang sudah ada
                     @endphp
@@ -231,7 +232,7 @@
                         <td>{{ $hasil->pekerjaan != null ? $hasil->pekerjaan->deskripsi_pekerjaan : '-'}}</td>
                         <td>
                             <a class="nav-link" target="_blank" href="{{ asset('storage/' . $hasil->doc_laporan) }}">
-                                <i class="bx bx-link-alt me-1"></i> {{ $hasil->doc_laporan ?? '---' }}
+                                <i class="bx bx-link-alt me-1"></i> {{ basename($hasil->doc_laporan) ?? '---' }}
                             </a>
                         </td>
                         <td>
@@ -242,11 +243,83 @@
                                 @endforeach
                             </select>
                         </td>
-                        <td>-</td>
+                        <td>{{ optional($hasil->pic)->getNameDivisi() ?? '--' }}</td>
                         <td>
-                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="{!! substr($hasil->keterangan, 0, 125) !!}...">
-                                {!! substr($hasil->keterangan, 0, 25) !!}...
-                            </span>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#keteranganModal{{ $hasil->id }}">
+                                Detail Keterangan
+                            </a>
+
+                            <!-- Modal Detail -->
+                            <div class="modal fade" id="keteranganModal{{ $hasil->id }}" tabindex="-1" aria-labelledby="keteranganModal{{ $hasil->id }}" aria-hidden="true">
+                                <div class="modal-dialog modal-lg modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-primary">
+                                            <h5 class="modal-title text-white d-flex align-items-center gap-0">
+                                                <i class="bx bx-file"></i> Detail Laporan ID #{{ $hasil->id }}-{{ date('mY', strtotime($hasil->created_at)) }}
+                                            </h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                        </div>
+                                        <div class="modal-body px-4 py-3 text-center">
+                                            <div class="row g-3 mb-3 justify-content-center">
+                                                <div class="col-md-4">
+                                                    <i class="bx bx-calendar"></i>
+                                                    <strong>Tanggal Pelaporan :</strong><br>
+                                                    {{ date('d-m-Y', strtotime($hasil->created_at)) }}
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <i class="bx bx-user"></i>
+                                                    <strong>PIC :</strong><br>
+                                                    {{ $hasil->pic->name }}
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <i class="bx bx-briefcase"></i>
+                                                    <strong>Pekerjaan :</strong><br>
+                                                    {{ $hasil->pekerjaan->deskripsi_pekerjaan ?? '-' }}
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3 d-flex justify-content-between align-items-center flex-wrap">
+                                                <div>
+                                                    <i class="bx bx-file"></i>
+                                                    <strong>Dokumen :</strong>
+                                                    <a href="{{ asset('storage/' . $hasil->doc_laporan) }}" target="_blank" class="text-decoration-none text-primary fw-semibold">
+                                                        <i class="bx bx-link-alt"></i> {{ basename($hasil->doc_laporan) }}
+                                                    </a>
+                                                </div>
+                                                <div class="mt-2 mt-md-0">
+                                                    <i class="bx bx-check-circle"></i>
+                                                    <strong>Status Laporan :</strong>
+                                                    <span class="badge bg-success">{{ ucfirst($selectedStatus) }}</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="text-start">
+                                                <h6 class="d-flex align-items-center gap-2">
+                                                    <i class="bx bx-message-rounded-dots"></i> Keterangan :
+                                                </h6>
+                                                <div class="border rounded p-3 bg-light mb-3">
+                                                    {!! $hasil->keterangan !!}
+                                                </div>
+
+                                                <h6 class="d-flex align-items-center gap-2">
+                                                    <i class="bx bx-comment-dots"></i> Feedback :
+                                                </h6>
+                                                <div class="text-muted fst-italic mb-3">
+                                                    {{ $hasil->feedback ?? 'Belum ada feedback.' }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="modal-footer justify-content-between">
+                                            <span class="text-muted small">Ditampilkan pada: {{ now()->format('d-m-Y H:i') }}</span>
+                                            <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">
+                                                <i class="bx bx-x"></i> Tutup
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </td>
                         <td>{{ $hasil->feedback ?? '---' }}</td>
                         <td>
@@ -255,6 +328,9 @@
                                     <i class="bx bx-edit text-primary"></i>
                                 </button>
                                 <div class="dropdown-menu">
+                                    @if(Auth::user()->role == 'ASMEN')
+                                    <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#feeback{{$hasil->id}}" data-id="{{ $hasil->id }}" data-keterangan="{{ $hasil->keterangan }}"><i class="bx text-primary btn-edit bx-plus-circle me-2"></i> Feedback </a>
+                                    @endif
                                     <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#edit{{$hasil->id}}" data-id="{{ $hasil->id }}" data-keterangan="{{ $hasil->keterangan }}"><i class="bx text-primary btn-edit bx-edit-alt me-2"></i> Edit</a>
                                     <a class="dropdown-item" href="{{ route('laporan-hasil.destroy', $hasil->id) }}" data-confirm-delete="true"><i class="bx text-primary bx-trash me-2"></i> Delete</a>
                                 </div>
@@ -268,10 +344,51 @@
     </div>
 </div>
 
+<!-- Tambah feedback modal laporan hasil -->
 @foreach($modal_hasil as $m_hasil)
 
 @php
-$statusOptions = ['diajukan', 'disetujui', 'revisi'];
+$statusOptions = ['diajukan', 'ditolak', 'disetujui', 'revisi'];
+$selectedStatus = $m_hasil->status_laporan;
+$filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang sudah ada
+@endphp
+
+<div class="modal fade" id="feeback{{$m_hasil->id}}" tabindex="-1" aria-labelledby="feeback{{$m_hasil->id}}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="feeback{{$m_hasil->id}}">Tambahkan Feedback</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('laporan-hasil.update', $m_hasil->id) }}" method="post" enctype="multipart/form-data">
+                    @csrf
+                    {{ method_field('patch') }}
+                    <div class="row mb-4">
+                        <div class="col-md-12 mb-4">
+                            <label class="form-label">Feedback
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="hidden" name="feedback" value="{{ old('feedback') }}">
+                            <div id="editor-feedback" style="min-height: 160px;">{!! old('feedback') !!}</div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary text-white float-end mt-5">
+                        Kirim &nbsp;<span class="tf-icons bx bx-send"></span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endforeach
+<!-- Tambah feedback modal laporan hasil end -->
+
+<!-- Edit modal laporan hasil -->
+@foreach($modal_hasil as $m_hasil)
+
+@php
+$statusOptions = ['diajukan', 'ditolak', 'disetujui', 'revisi'];
 $selectedStatus = $m_hasil->status_laporan;
 $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang sudah ada
 @endphp
@@ -338,6 +455,7 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
     </div>
 </div>
 @endforeach
+<!-- Edit modal laporan hasil end -->
 
 @push('script')
 <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
@@ -510,6 +628,10 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
         });
     });
 
+    function getBasename(path) {
+        return path.split('/').pop();
+    }
+
     $(document).ready(function() {
         let table = $('#laporan-hasil').DataTable({
             responsive: true,
@@ -544,7 +666,7 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
                             escapeHtml(hasil.pekerjaan.deskripsi_pekerjaan),
                             hasil.doc_laporan ?
                             `<a class="nav-link" target="_blank" href="/storage/${hasil.doc_laporan}">
-                        <i class="bx bx-link-alt me-1"></i> ${hasil.doc_laporan}
+                        <i class="bx bx-link-alt me-1"></i> ${getBasename(hasil.doc_laporan)}
                     </a>` : '---',
                             `<select class="form-select form-select-sm main-status status-pekerjaan">
                         ${statusOptions}
@@ -613,8 +735,7 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
                         title: "Berhasil!",
                         text: response.message,
                         icon: "success",
-                        timer: 1500,
-                        showConfirmButton: false
+                        showConfirmButton: true
                     });
 
                     // Update warna select setelah perubahan status
@@ -672,6 +793,13 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
             $(inputId).val(keterangan);
         });
     });
+
+    var quill = new Quill('#editor-feedback', {
+        theme: 'snow'
+    });
+    quill.on('text-change', function(delta, oldDelta, source) {
+        document.querySelector("input[name='feedback']").value = quill.root.innerHTML;
+    })
 </script>
 @endpush
 <!--/ Bootstrap Dark Table -->
