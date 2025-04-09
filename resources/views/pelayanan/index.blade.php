@@ -206,6 +206,10 @@
                         <th class="text-center text-white">Bidang Pelayanan</th>
                         <th class="text-center text-white">Kategori Pelayanan</th>
                         <th class="text-center text-white">Sub Kategori Pelayanan</th>
+                        <th class="text-center text-white">NIK</th>
+                        <th class="text-center text-white">Nama</th>
+                        <th class="text-center text-white">Departemen</th>
+                        <th class="text-center text-white">Divisi</th>
                         <th class="text-center text-white">Waktu Mulai</th>
                         <th class="text-center text-white">Waktu Selesai</th>
                         <th class="text-center text-white">Durasi Pelayanan</th>
@@ -221,8 +225,12 @@
                         <td>{{ ++$no }}</td>
                         <td>{{ date('d-m-Y', strtotime($layanan->created_at)) }}</td>
                         <td>{{ $layanan->getDivisi->divisi  }}</td>
-                        <td>{{ $layanan->kategoriPelayanan->pelayanan }}</td>
+                        <td>{{ optional($layanan->kategoriPelayanan)->pelayanan }}</td>
                         <td>{{ $layanan->subKategoriPelayanan != null ? $layanan->subKategoriPelayanan->sub_pelayanan : '-' }}</td>
+                        <td>{{ $layanan->nik_karyawan }}</td>
+                        <td>{{ $layanan->nama_karyawan }}</td>
+                        <td>{{ $layanan->departemen }}</td>
+                        <td>{{ $layanan->divisi }}</td>
                         <td>{{ $layanan->waktu_mulai }}</td>
                         <td>{{ $layanan->waktu_selesai }}</td>
                         <td>{{ $layanan->durasi }}</td>
@@ -287,7 +295,7 @@
                             <div class="col">
                                 <label for="kategoriPelayanan" class="form-label">Kategori Pelayanan</label>
                                 <select id="kategoriPelayanan" name="kategori_pelayanan_id" class="form-select select-kategori-modal" required>
-                                    <option value="{{ $layanan->kategori_pelayanan_id }}">{{$layanan->kategoriPelayanan->pelayanan}}</option>
+                                    <option value="{{ $layanan->kategori_pelayanan_id }}">{{ optional($layanan->kategoriPelayanan)->pelayanan }}</option>
                                     @foreach($kategori_pelayanan as $kategori)
                                     <option value="{{ $kategori->id }}">{{ $kategori->pelayanan }}</option>
                                     @endforeach
@@ -443,9 +451,9 @@
         }
 
         // Inisialisasi Select2 untuk semua dropdown yang diperlukan
-        initSelect2('.select-bidang', '-- Bidang --');
-        initSelect2('.select-kategori', '-- Kategori --');
-        initSelect2('.select-pic', '-- PIC --');
+        initSelect2('.select-bidang', 'Bidang');
+        initSelect2('.select-kategori', 'Kategori');
+        initSelect2('.select-pic', 'PIC');
 
         // Re-inisialisasi Select2 saat jendela diubah ukurannya
         $(window).on('resize', function() {

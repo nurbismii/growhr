@@ -32,6 +32,9 @@ class LogharianController extends Controller
         $user = User::where('nik', '!=', null)->orderBy('name', 'asc')->get();
         $user_modal = User::where('nik', '!=', null)->orderBy('name', 'asc')->get();
 
+        $startDate = date('Y-m-01');
+        $endDate = date('Y-m-t');    // Hari terakhir bulan ini
+
         if (Auth::user()->role == 'ASMEN') {
             $pekerjaan = Pekerjaan::with(['getUser', 'getKategoriPekerjaan', 'getSifatPekerjaan', 'getPrioritas', 'getStatusPekerjaan', 'getPjPekerjaan', 'getSubPekerjaan'])
                 ->orderBy('status_pekerjaan_id', 'ASC')
@@ -70,7 +73,7 @@ class LogharianController extends Controller
             ]);
         }
 
-        $pekerjaan = $pekerjaan->get();
+        $pekerjaan = $pekerjaan->whereBetween('tanggal_mulai', array($startDate, $endDate))->get();
 
         return view('log-harian.index', compact(
             'pekerjaan',

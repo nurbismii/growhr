@@ -22,7 +22,7 @@
                     @foreach($sub_kategori_pelayanan as $skp)
                     <tr>
                         <td>{{ ++$no }}</td>
-                        <td>{{ $skp->kategoriPelayanan->pelayanan }}</td>
+                        <td>{{ optional($skp->kategoriPelayanan)->pelayanan ?? '-' }}</td>
                         <td>{{ $skp->sub_pelayanan }}</td>
                         <td>
                             <div class="dropdown">
