@@ -636,8 +636,19 @@
             searching: true,
             ordering: true,
             scrollY: '60vh',
-            scrollCollapse: true
+            scrollCollapse: true,
+            columnDefs: [{
+                targets: 14, // kolom tingkat kesulitan
+                type: 'num', // pastikan dianggap sebagai numerik
+                render: function(data, type, row) {
+                    if (type === 'sort') {
+                        return parseInt(data.split('/')[0], 10); // ambil angka sebelum "/"
+                    }
+                    return data; // tampilkan nilai asli
+                }
+            }]
         });
+
 
         function fetchData() {
             let formData = $('#search-form').serialize();
