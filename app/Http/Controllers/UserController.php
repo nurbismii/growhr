@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Hris\EmployeeHris;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Alert;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class UserController extends Controller
 {
@@ -44,7 +44,8 @@ class UserController extends Controller
                     'name' => ucwords($request->name),
                     'nik' => $request->nik,
                     'email' => $request->email,
-                    'password' => bcrypt($request->password)
+                    'password' => bcrypt($request->password),
+                    'role' => 'STAFF'
                 ]);
                 Alert::success('Berhasil', 'Silahkan login menggunakan email yang telah terdaftar');
                 return redirect()->route('login');
