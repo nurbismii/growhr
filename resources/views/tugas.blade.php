@@ -193,6 +193,7 @@
         </div>
     </form>
 
+
     <div class="card">
         <div class="table-responsive text-nowrap">
             <table class="table" id="tugas">
@@ -207,23 +208,144 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($riwayat as $riwayat)
-                    <tr>
-                        <td>{{ $riwayat->pekerjaan->tanggal_mulai }}</td>
-                        <td>{{ $riwayat->pekerjaan->getUser->name }}</td>
-                        <td>{{ $riwayat->pekerjaan->deskripsi_pekerjaan }}</td>
-                        <td>{{ $riwayat->pekerjaan->getPrioritas->prioritas }}</td>
-                        <td>{{ $riwayat->pekerjaan->getStatusPekerjaan->status_pekerjaan }}</td>
-                        <td>{{ $riwayat->pembaruan }}</td>
-                    </tr>
-                    @endforeach
                 </tbody>
             </table>
         </div>
     </div>
+
+    <canvas id="statusChart" height="150" class="mt-5"></canvas>
 </div>
 
 @push('script')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const statusMap = {
+        'Belum Dimulai': 0,
+        'Sedang Dikerjakan': 1,
+        'Revisi': 2,
+        'Laporan': 3,
+        'Selesai': 4
+    };
+
+    let chartInstance;
+
+    function getRandomColor() {
+        const r = Math.floor(Math.random() * 200);
+        const g = Math.floor(Math.random() * 200);
+        const b = Math.floor(Math.random() * 200);
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    function generateChart(riwayatData) {
+
+        const groupedData = {};
+
+        riwayatData.forEach(item => {
+            const pekerjaan = item.pekerjaan;
+            if (!pekerjaan || !pekerjaan.id) return;
+
+            const pekerjaanId = pekerjaan.id;
+            const pekerjaanName = pekerjaan.deskripsi_pekerjaan;
+
+            if (!groupedData[pekerjaanId]) {
+                groupedData[pekerjaanId] = {
+                    label: pekerjaanName,
+                    data: []
+                };
+            }
+
+            groupedData[pekerjaanId].data.push({
+                tgl: item.pembaruan.split(' ')[0],
+                status: statusMap[item.status_pembaruan]
+            });
+        });
+
+        const allDates = [...new Set(riwayatData.map(d => d.pembaruan.split(' ')[0]))].sort();
+
+        const datasets = Object.values(groupedData).map(group => {
+            const dataByDate = {};
+            group.data.forEach(entry => {
+                dataByDate[entry.tgl] = entry.status;
+            });
+
+            const filledData = allDates.map(tgl => dataByDate[tgl] ?? null);
+
+            return {
+                label: group.label,
+                data: filledData,
+                borderColor: getRandomColor(),
+                borderWidth: 2,
+                tension: 0.3,
+                pointRadius: 4,
+                fill: false
+            };
+        });
+
+        // destroy chart lama kalau ada
+        if (chartInstance) chartInstance.destroy();
+
+        const ctx = document.getElementById('statusChart').getContext('2d');
+        chartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: allDates,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                interaction: {
+                    mode: 'nearest',
+                    axis: 'x',
+                    intersect: false
+                },
+                scales: {
+                    y: {
+                        ticks: {
+                            stepSize: 1,
+                            callback: function(value) {
+                                return Object.keys(statusMap).find(k => statusMap[k] === value);
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                }
+            }
+        });
+    }
+
+    // Initial load saat DOM siap
+    document.addEventListener('DOMContentLoaded', function() {
+        let rawRiwayat = @json($riwayat_chart);
+        const riwayatData = Array.isArray(rawRiwayat) ? rawRiwayat : [rawRiwayat];
+        generateChart(riwayatData);
+    });
+
+    // Filter by PIC via AJAX
+    document.getElementById('filter-pic').addEventListener('change', function() {
+        const selectedPic = this.value;
+
+        $.ajax({
+            url: "{{ route('tugas') }}",
+            method: "GET",
+            data: {
+                pic: selectedPic ? [selectedPic] : null
+            },
+            success: function(response) {
+                console.log("Response dari server:", response);
+                generateChart(response.riwayat);
+            },
+            error: function(err) {
+                console.error("Gagal ambil data filter:", err);
+            }
+        });
+    });
+</script>
+
 <script>
     $(document).ready(function() {
         function getCurrentMonthRange() {
@@ -281,7 +403,11 @@
             searching: true,
             ordering: true,
             scrollY: '60vh',
-            scrollCollapse: true
+            scrollCollapse: true,
+            "columnDefs": [{
+                "className": "dt-center",
+                "targets": "_all"
+            }],
         });
 
         function fetchData() {
@@ -300,10 +426,12 @@
                             riwayat.pekerjaan?.get_user?.name ?? '-',
                             riwayat.pekerjaan?.deskripsi_pekerjaan ?? '-',
                             riwayat.pekerjaan?.get_prioritas?.prioritas ?? '-',
-                            riwayat.pekerjaan?.get_status_pekerjaan?.status_pekerjaan ?? '-',
+                            riwayat.status_pembaruan,
                             riwayat.pembaruan ?? '-'
                         ]).draw(false);
                     });
+
+                    generateChart(response.riwayat);
                 },
                 error: function(xhr) {
                     console.log(xhr.responseText);

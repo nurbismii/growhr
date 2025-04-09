@@ -103,6 +103,7 @@ class HomeController extends Controller
         $prioritas = Prioritas::all();
         $status_pekerjaan = StatusPekerjaan::all();
         $pekerjaan = Pekerjaan::all();
+        $user_chart = User::all();
         $user = User::all();
 
         // Query dasar
@@ -111,7 +112,6 @@ class HomeController extends Controller
                 $query->select('id', 'deskripsi_pekerjaan', 'tanggal_mulai', 'status_pekerjaan_id', 'prioritas_id', 'user_id')
                     ->whereNotNull('deskripsi_pekerjaan')
                     ->whereNotNull('status_pekerjaan_id')
-                    ->where('status_pekerjaan_id', '!=', 5)
                     ->whereHas('getStatusPekerjaan')
                     ->whereHas('getPrioritas')
                     ->whereHas('getUser');
@@ -124,28 +124,29 @@ class HomeController extends Controller
                 $query->whereNotNull('id')
                     ->whereNotNull('deskripsi_pekerjaan')
                     ->whereNotNull('status_pekerjaan_id')
-                    ->where('status_pekerjaan_id', '!=', 5)
                     ->whereNotNull('user_id');
             });
 
         // Filter untuk request AJAX
         if ($request->ajax()) {
             // Filter berdasarkan pekerjaan
-            if ($request->filled('pekerjaan')) {
-                $riwayatQuery->whereIn('pekerjaan_id', $request->pekerjaan);
+            if ($request->filled('pekerjaan_id')) {
+                $riwayatQuery->whereIn('pekerjaan_id', $request->pekerjaan_id);
             }
 
             // Filter berdasarkan prioritas pekerjaan
             if ($request->filled('prioritas')) {
-                $riwayatQuery->whereHas('pekerjaan', function ($query) use ($request) {
+                $riwayatQuery->whereHas('prioritas_id', function ($query) use ($request) {
                     $query->whereIn('prioritas_id', $request->prioritas);
                 });
             }
 
             // Filter berdasarkan PIC (user_id pada pekerjaan)
             if ($request->filled('pic')) {
-                $riwayatQuery->whereHas('pekerjaan', function ($query) use ($request) {
-                    $query->whereIn('user_id', $request->pic);
+                $pic = is_array($request->pic) ? $request->pic : [$request->pic];
+
+                $riwayatQuery->whereHas('pekerjaan', function ($query) use ($pic) {
+                    $query->whereIn('user_id', $pic);
                 });
             }
 
@@ -161,19 +162,23 @@ class HomeController extends Controller
 
             return response()->json([
                 'riwayat' => $riwayatQuery->get(),
+                'riwayat_chart' => $riwayatQuery->limit(10)->get(),
                 'status_pekerjaan' => $status_pekerjaan
             ]);
         }
 
         // Jika bukan AJAX, ambil semua riwayat
         $riwayat = $riwayatQuery->get();
+        $riwayat_chart = $riwayatQuery->limit(10)->get();
 
         return view('tugas', compact(
             'riwayat',
+            'riwayat_chart',
             'pekerjaan',
             'user',
             'prioritas',
-            'status_pekerjaan'
+            'status_pekerjaan',
+            'user_chart'
         ));
     }
 
