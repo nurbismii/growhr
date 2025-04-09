@@ -32,10 +32,14 @@ class LaporanmasalahController extends Controller
         $user = User::where('nik', '!=', null)->get();
         $pekerjaan = Pekerjaan::where('user_id', Auth::user()->id)->get();
 
-        $pengaduan = Pengaduan::with('pekerjaan', 'pic', 'statusPekerjaan', 'prioritas')->where('user_id', Auth::user()->id);
-
         $pengaduan_modal = Pengaduan::with(['pekerjaan', 'pic', 'statusPekerjaan', 'prioritas'])->where('user_id', Auth::user()->id)->get();
         $pekerjaan_modal = Pekerjaan::where('user_id', Auth::user()->id)->orderBy('id', 'desc')->get();
+
+        if (Auth::user()->role == 'ASMEN') {
+            $pengaduan = Pengaduan::with('pekerjaan', 'pic', 'statusPekerjaan', 'prioritas');
+        } else {
+            $pengaduan = Pengaduan::with('pekerjaan', 'pic', 'statusPekerjaan', 'prioritas')->where('user_id', Auth::user()->id);
+        }
 
         if ($request->ajax()) {
             if ($request->has('kategori_kendala')) {

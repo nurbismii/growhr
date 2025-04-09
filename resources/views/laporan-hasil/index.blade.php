@@ -220,7 +220,7 @@
                     @foreach($hasil as $hasil)
 
                     @php
-                    $statusOptions = ['diajukan', 'ditolak', 'disetujui', 'revisi'];
+                    $statusOptions = ['diajukan', 'revisi', 'ditolak', 'disetujui'];
                     $selectedStatus = $hasil->status_laporan;
                     $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang sudah ada
                     @endphp
@@ -348,7 +348,7 @@
 @foreach($modal_hasil as $m_hasil)
 
 @php
-$statusOptions = ['diajukan', 'ditolak', 'disetujui', 'revisi'];
+$statusOptions = ['diajukan', 'revisi', 'ditolak', 'disetujui'];
 $selectedStatus = $m_hasil->status_laporan;
 $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang sudah ada
 @endphp
@@ -388,7 +388,7 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
 @foreach($modal_hasil as $m_hasil)
 
 @php
-$statusOptions = ['diajukan', 'ditolak', 'disetujui', 'revisi'];
+$statusOptions = ['diajukan', 'revisi', 'ditolak', 'disetujui'];
 $selectedStatus = $m_hasil->status_laporan;
 $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang sudah ada
 @endphp
@@ -536,8 +536,8 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
 
             // Reset semua class warna
             select.classList.remove(
-                "text-primary", "text-success", "text-warning",
-                "bg-label-success", "bg-label-warning", "bg-label-primary"
+                "text-primary", "text-success", "text-warning", "text-danger",
+                "bg-label-success", "bg-label-warning", "bg-label-primary", "bg-label-danger", 
             );
 
             // Tambahkan class warna sesuai status
@@ -550,6 +550,9 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
                     break;
                 case "revisi":
                     select.classList.add("text-warning", "bg-label-warning");
+                    break;
+                case "ditolak":
+                    select.classList.add("text-danger", "bg-label-danger");
                     break;
             }
         };

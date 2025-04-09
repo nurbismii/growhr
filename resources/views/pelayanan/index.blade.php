@@ -217,7 +217,7 @@
                 </thead>
                 <tbody>
                     @foreach($pelayanan as $layanan)
-                    <tr>
+                    <tr class="text-center">
                         <td>{{ ++$no }}</td>
                         <td>{{ date('d-m-Y', strtotime($layanan->created_at)) }}</td>
                         <td>{{ $layanan->getDivisi->divisi  }}</td>

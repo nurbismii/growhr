@@ -42,7 +42,7 @@
                                 </div>
                                 <div class="flex-grow-1">
                                     <span class="fw-semibold d-block">{{ Auth::user()->name }}</span>
-                                    <small class="text-muted">{{ Auth::user()->name }}</small>
+                                    <small class="text-muted">{{ Auth::user()->getNameDivisi() }}</small>
                                 </div>
                             </div>
                         </a>

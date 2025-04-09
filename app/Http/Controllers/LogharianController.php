@@ -32,10 +32,16 @@ class LogharianController extends Controller
         $user = User::where('nik', '!=', null)->orderBy('name', 'asc')->get();
         $user_modal = User::where('nik', '!=', null)->orderBy('name', 'asc')->get();
 
-        $pekerjaan = Pekerjaan::with(['getUser', 'getKategoriPekerjaan', 'getSifatPekerjaan', 'getPrioritas', 'getStatusPekerjaan', 'getPjPekerjaan', 'getSubPekerjaan'])
-            ->where('user_id', Auth::user()->id)
-            ->orderBy('status_pekerjaan_id', 'ASC')
-            ->orderBy('tingkat_kesulitan', 'DESC');
+        if (Auth::user()->role == 'ASMEN') {
+            $pekerjaan = Pekerjaan::with(['getUser', 'getKategoriPekerjaan', 'getSifatPekerjaan', 'getPrioritas', 'getStatusPekerjaan', 'getPjPekerjaan', 'getSubPekerjaan'])
+                ->orderBy('status_pekerjaan_id', 'ASC')
+                ->orderBy('tingkat_kesulitan', 'DESC');
+        } else {
+            $pekerjaan = Pekerjaan::with(['getUser', 'getKategoriPekerjaan', 'getSifatPekerjaan', 'getPrioritas', 'getStatusPekerjaan', 'getPjPekerjaan', 'getSubPekerjaan'])
+                ->where('user_id', Auth::user()->id)
+                ->orderBy('status_pekerjaan_id', 'ASC')
+                ->orderBy('tingkat_kesulitan', 'DESC');
+        }
 
         if ($request->ajax()) {
             if ($request->has('pekerjaan')) {

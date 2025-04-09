@@ -21,13 +21,19 @@ class PelayananController extends Controller
         $text = 'Kamu yakin ingin menghapus data ini ?';
         confirmDelete($title, $text);
 
-        $pelayanan = Pelayanan::with('getDivisi', 'kategoriPelayanan', 'subKategoriPelayanan', 'pic');
         $kategori_pelayanan = KategoriPelayanan::orderBy('pelayanan', 'asc')->get();
         $sub_kategori_pelayanan = SubKategoriPelayanan::orderBy('sub_pelayanan', 'asc')->get();
         $user = User::where('nik', '!=', null)->get();
         $divisi = Divisi::all();
         $divisi_modal = Divisi::all();
         $employee_hris = EmployeeHris::with('getDivisi.getDepartemen')->select('nik', 'nama_karyawan', 'divisi_id')->where('status_resign', '!=', null)->get();
+
+        if (Auth::user()->role == "ASMEN") {
+            $pelayanan = Pelayanan::with('getDivisi', 'kategoriPelayanan', 'subKategoriPelayanan', 'pic');
+        } else {
+            $pelayanan = Pelayanan::with('getDivisi', 'kategoriPelayanan', 'subKategoriPelayanan', 'pic')->where(Auth::user()->id, 'user_id');
+        }
+
 
         if ($request->ajax()) {
             if ($request->has('divisi_id')) {

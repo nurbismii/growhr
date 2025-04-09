@@ -13,6 +13,7 @@ use App\Models\User;
 use Illuminate\Console\Scheduling\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class HomeController extends Controller
 {
@@ -27,6 +28,11 @@ class HomeController extends Controller
     }
 
     public function index(Request $request)
+    {
+        return view('home');
+    }
+
+    public function papanKerja(Request $request)
     {
         $start_date = $request->query('start_date');
         $end_date = $request->query('end_date');
@@ -169,5 +175,11 @@ class HomeController extends Controller
             'prioritas',
             'status_pekerjaan'
         ));
+    }
+
+    public function autosave(Request $request)
+    {
+        Storage::put('informasi-penting.txt', $request->input('informasi'));
+        return response()->json(['status' => 'ok']);
     }
 }

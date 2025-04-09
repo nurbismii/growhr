@@ -30,10 +30,14 @@ class LaporanhasilController extends Controller
         $pekerjaan = Pekerjaan::orderBy('created_at', 'desc')->where('user_id', Auth::user()->id)->get();
         $user = User::where('nik', '!=', null)->get();
 
-        $hasil = Hasil::with('pekerjaan', 'pic', 'prioritas')->where('user_id', Auth::user()->id);
-
         $modal_hasil = Hasil::with('pekerjaan', 'pic', 'prioritas')->where('user_id', Auth::user()->id)->get();
         $modal_pekerjaan = Pekerjaan::orderBy('created_at', 'desc')->where('user_id', Auth::user()->id)->get();
+
+        if (Auth::user()->role == 'ASMEN') {
+            $hasil = Hasil::with('pekerjaan', 'pic', 'prioritas');
+        } else {
+            $hasil = Hasil::with('pekerjaan', 'pic', 'prioritas')->where('user_id', Auth::user()->id);
+        }
 
         if ($request->ajax()) {
             if ($request->has('pekerjaan_id')) {
@@ -60,9 +64,9 @@ class LaporanhasilController extends Controller
                 'hasil' => $hasil->get(),
                 'status_laporan' => [
                     'diajukan',
+                    'revisi',
                     'ditolak',
                     'disetujui',
-                    'revisi'
                 ],
                 'pekerjaan'
             ]);

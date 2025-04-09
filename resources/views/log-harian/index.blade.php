@@ -227,14 +227,14 @@
                 <tbody>
                     @foreach($pekerjaan as $kerjaan)
                     <tr>
-                        <td>{{ ++$no }}</td>
+                        <td class="text-center">{{ ++$no }}</td>
                         <td>
                             <button class="btn btn-sm toggle-btn {{ $kerjaan->getSubPekerjaan->isEmpty() ? 'btn-light-gray' : 'btn-primary' }}"
                                 data-id="{{ $kerjaan->id }}">
                                 {{ $kerjaan->getSubPekerjaan->isEmpty() ? '-' : '+' }}
                             </button>
                         </td>
-                        <td>{{ date_format($kerjaan->created_at, 'd-m-Y') }}</td>
+                        <td class="text-center">{{ date_format($kerjaan->created_at, 'd-m-Y') }}</td>
                         <td>{{ $kerjaan->getUser->name }}</td>
                         <td>{{ $kerjaan->getSifatPekerjaan->pekerjaan }}</td>
                         <td>
