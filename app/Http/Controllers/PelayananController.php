@@ -31,9 +31,8 @@ class PelayananController extends Controller
         if (Auth::user()->role == "ASMEN") {
             $pelayanan = Pelayanan::with('getDivisi', 'kategoriPelayanan', 'subKategoriPelayanan', 'pic');
         } else {
-            $pelayanan = Pelayanan::with('getDivisi', 'kategoriPelayanan', 'subKategoriPelayanan', 'pic')->where(Auth::user()->id, 'user_id');
+            $pelayanan = Pelayanan::with('getDivisi', 'kategoriPelayanan', 'subKategoriPelayanan', 'pic')->where('id', Auth::user()->id);
         }
-
 
         if ($request->ajax()) {
             if ($request->has('divisi_id')) {
