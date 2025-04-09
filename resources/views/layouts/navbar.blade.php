@@ -8,26 +8,13 @@
     </div>
 
     <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
-        <!-- Search -->
-        <div class="navbar-nav align-items-center">
-            <div class="nav-item d-flex align-items-center mt-3">
-                <h4>Welcome back, <b class="text-primary">{{ Auth::user()->name }}</b></h4>
-            </div>
+        <div class="flex-grow-1">
+            <h3 class="fs-6 text-break mb-0">
+                Welcome back, <b class="text-primary">{{ Auth::user()->name }}</b>
+            </h3>
         </div>
-        <!-- /Search -->
 
         <ul class="navbar-nav flex-row align-items-center ms-auto">
-            <!-- Place this tag where you want the button to render. -->
-            <div class="navbar-nav align-items-center me-4">
-                <div class="nav-item d-flex align-items-center">
-                    <i class="bx bx-search fs-4 lh-0"></i>
-                    <input
-                        type="text"
-                        class="form-control form-control-sm border-0 shadow-none"
-                        placeholder="Search..."
-                        aria-label="Search..." />
-                </div>
-            </div>
             <li class="nav-item lh-1 me-3">
                 <a
                     class="github-button"
@@ -38,7 +25,6 @@
                     aria-label="Star themeselection/sneat-html-admin-template-free on GitHub">Star</a>
             </li>
 
-            <!-- User -->
             <li class="nav-item navbar-dropdown dropdown-user dropdown">
                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
@@ -64,6 +50,10 @@
                     <li>
                         <div class="dropdown-divider"></div>
                     </li>
+                    <a class="dropdown-item" href="{{ route('profile.index') }}">
+                        <i class="bx bx-user-check me-2"></i>
+                        <span class="align-middle">Profile</span>
+                    </a>
                     <li>
                         <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                             <i class="bx bx-power-off me-2"></i>
@@ -76,7 +66,6 @@
                     </li>
                 </ul>
             </li>
-            <!--/ User -->
         </ul>
     </div>
 </nav>

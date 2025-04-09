@@ -38,15 +38,15 @@
                             </div>
                             <div class="mb-3 col-md-4">
                                 <label for="jenisKelamin" class="form-label">Jenis Kelamin</label>
-                                <input class="form-control" type="text" id="jenisKelamin" value="{{ $user->getEmployee->jenis_kelamin == 'L' ? 'Laki-Laki' : 'Perempuan' }}" disabled />
+                                <input class="form-control" type="text" id="jenisKelamin" value="{{ optional($user->getEmployee)->jenis_kelamin ? 'Laki-Laki' : 'Perempuan' }}" disabled />
                             </div>
                             <div class="mb-3 col-md-4">
                                 <label for="tempatLahir" class="form-label">Tempat Lahir</label>
-                                <input type="text" class="form-control" name="tempat_lahir" id="tempatLahir" value="{{ $user->tempat_lahir }}" />
+                                <input type="text" class="form-control" name="tempat_lahir" id="tempatLahir" value="{{ $user->tempat_lahir ?? '-' }}" />
                             </div>
                             <div class="mb-3 col-md-4">
                                 <label for="tanggalLahir" class="form-label">Tanggal Lahir</label>
-                                <input type="text" class="form-control" id="tanggalLahir" value="{{ $user->getEmployee->tgl_lahir }}" disabled />
+                                <input type="text" class="form-control" id="tanggalLahir" value="{{ optional($user->getEmployee)->tgl_lahir }}" disabled />
                             </div>
                             <div class="mb-3 col-md-4">
                                 <label for="usia" class="form-label">Usia</label>
@@ -63,23 +63,23 @@
                             </div>
                             <div class="mb-3 col-md-4">
                                 <label for="organization" class="form-label">Departemen</label>
-                                <input type="text" class="form-control" id="organization" value="{{ $user->getEmployee->getDivisi->getDepartemen->departemen }}" />
+                                <input type="text" class="form-control" id="organization" value="{{ $user->getEmployee ? $user->getEmployee->getDivisi->getDepartemen->departemen : '-' }}" />
                             </div>
                             <div class="mb-3 col-md-4">
                                 <label for="address" class="form-label">Divisi</label>
-                                <input type="text" class="form-control" id="address" name="address" value="{{ $user->getEmployee->getDivisi->nama_divisi }}" />
+                                <input type="text" class="form-control" id="address" name="address" value="{{ $user->getEmployee ? $user->getEmployee->getDivisi->nama_divisi : '-' }}" />
                             </div>
                             <div class="mb-3 col-md-4">
                                 <label for="organization" class="form-label">Area Kerja</label>
-                                <input type="text" class="form-control" id="organization" value="{{ $user->getEmployee->area_kerja }}" />
+                                <input type="text" class="form-control" id="organization" value="{{ $user->getEmployee ? $user->getEmployee->area_kerja : '-' }}" />
                             </div>
                             <div class="mb-3 col-md-4">
                                 <label for="organization" class="form-label">Posisi</label>
-                                <input type="text" class="form-control" id="organization" value="{{ $user->getEmployee->posisi }}" />
+                                <input type="text" class="form-control" id="organization" value="{{ $user->getEmployee ? $user->getEmployee->posisi : '-' }}" />
                             </div>
                             <div class="mb-3 col-md-4">
                                 <label for="address" class="form-label">Jabatan</label>
-                                <input type="text" class="form-control" id="address" value="{{ $user->getEmployee->jabatan }}" />
+                                <input type="text" class="form-control" id="address" value="{{ $user->getEmployee ? $user->getEmployee->jabatan : '-' }}" />
                             </div>
                         </div>
                         <div class="mt-2">

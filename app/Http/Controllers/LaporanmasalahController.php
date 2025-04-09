@@ -219,7 +219,7 @@ class LaporanmasalahController extends Controller
             'user_id' => Auth::user()->id,
             'prioritas_id' => $request->prioritas_id,
             'kategori_kendala' => $request->kategori_kendala,
-            'status_pekerjaan_id' => $request->status_pekerjaan_id,
+            'status_kendala' => $request->status_pekerjaan_id,
             'alasan_tingkat_dampak_pengaduan' => $request->alasan_tingkat_dampak_pengaduan,
             'deskripsi_pengaduan' => $request->deskripsi_pengaduan,
             'langkah_penyelesaian' => $request->langkah_penyelesaian,
