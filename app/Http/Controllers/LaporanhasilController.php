@@ -103,8 +103,14 @@ class LaporanhasilController extends Controller
 
         if ($doc_laporan = $request->file('doc_laporan')) {
             $path = 'Laporan Hasil/' . Auth::user()->name;
+
+            // Buat folder jika belum ada
+            if (!File::exists(public_path($path))) {
+                File::makeDirectory(public_path($path), 0755, true);
+            }
+
             $laporanHasilName = $doc_laporan->getClientOriginalName();
-            $doc_laporan->move($path, $laporanHasilName);
+            $doc_laporan->move(public_path($path), $laporanHasilName);
         }
 
         Hasil::create([
@@ -121,9 +127,9 @@ class LaporanhasilController extends Controller
 
     public function update(Request $request, $id)
     {
-        $doc_laporan = null;
-
         $hasil = Hasil::findOrFail($id);
+
+        $laporanHasilName = $hasil->doc_laporan;
 
         if ($request->hasFile('doc_laporan')) {
             $path = 'Laporan Hasil/' . Auth::user()->name;
@@ -142,7 +148,7 @@ class LaporanhasilController extends Controller
         $hasil->update([
             'status_laporan' => $request->status_laporan,
             'keterangan' => $request->keterangan,
-            'doc_laporan' => $laporanHasilName ?? $hasil->doc_laporan,
+            'doc_laporan' => $laporanHasilName,
         ]);
 
         Alert::success('Berhasil', 'Laporan hasil berhasil diperbarui');

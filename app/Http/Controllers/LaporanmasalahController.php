@@ -97,26 +97,45 @@ class LaporanmasalahController extends Controller
 
     public function store(Request $request)
     {
-        $doc_permasalahan_file = null;
-        $doc_analisis_file = null;
-        $doc_solusi_file = null;
+        $permasalahFileName = null;
+        $analisaFileName = null;
+        $solusiFileName = null;
 
+        // Upload file Permasalahan
         if ($doc_permasalahan_file = $request->file('doc_permasalahan')) {
             $path = 'Permasalahan/' . Auth::user()->name;
+
+            // Buat folder jika belum ada
+            if (!File::exists(public_path($path))) {
+                File::makeDirectory(public_path($path), 0755, true);
+            }
+
             $permasalahFileName = $doc_permasalahan_file->getClientOriginalName();
-            $doc_permasalahan_file->move($path, $permasalahFileName);
+            $doc_permasalahan_file->move(public_path($path), $permasalahFileName);
         }
 
-        if ($doc_analisis_file = $request->file('doc_analisa')) {
+        // Upload file Analisa
+        if ($doc_analisa_file = $request->file('doc_analisa')) {
             $path = 'Analisa/' . Auth::user()->name;
-            $analisaFileName = $doc_analisis_file->getClientOriginalName();
-            $doc_analisis_file->move($path, $analisaFileName);
+
+            if (!File::exists(public_path($path))) {
+                File::makeDirectory(public_path($path), 0755, true);
+            }
+
+            $analisaFileName = $doc_analisa_file->getClientOriginalName();
+            $doc_analisa_file->move(public_path($path), $analisaFileName);
         }
 
-        if ($doc_solusi_file = $request->file('doc_analisa')) {
+        // Upload file Solusi
+        if ($doc_solusi_file = $request->file('doc_solusi')) {
             $path = 'Solusi/' . Auth::user()->name;
+
+            if (!File::exists(public_path($path))) {
+                File::makeDirectory(public_path($path), 0755, true);
+            }
+
             $solusiFileName = $doc_solusi_file->getClientOriginalName();
-            $doc_solusi_file->move($path, $solusiFileName);
+            $doc_solusi_file->move(public_path($path), $solusiFileName);
         }
 
         Pengaduan::create([
@@ -128,9 +147,9 @@ class LaporanmasalahController extends Controller
             'alasan_tingkat_dampak_pengaduan' => $request->alasan_tingkat_dampak_pengaduan,
             'deskripsi_pengaduan' => $request->deskripsi_pengaduan,
             'langkah_penyelesaian' => $request->langkah_penyelesaian,
-            'doc_permasalahan' => $permasalahFileName ?? null,
-            'doc_analisis_risiko' => $analisaFileName ?? null,
-            'doc_solusi' => $solusiFileName ?? null
+            'doc_permasalahan' => $permasalahFileName,
+            'doc_analisis_risiko' => $analisaFileName,
+            'doc_solusi' => $solusiFileName
         ]);
 
         Alert::success('Berhasil', 'Kendala berhasil ditambahkan!');
@@ -141,9 +160,9 @@ class LaporanmasalahController extends Controller
     {
         $pengaduan = Pengaduan::findOrFail($id);
 
-        $doc_permasalahan_file = $pengaduan->doc_permasalahan;
-        $doc_analisis_file = $pengaduan->doc_analisis_risiko;
-        $doc_solusi_file = $pengaduan->doc_solusi;
+        $permasalahFileName = $pengaduan->doc_permasalahan;
+        $analisaFileName = $pengaduan->doc_analisis_risiko;
+        $solusiFileName = $pengaduan->doc_solusi;
 
         if ($request->hasFile('doc_permasalahan')) {
             $path = 'Permasalahan/' . Auth::user()->name;
@@ -196,9 +215,9 @@ class LaporanmasalahController extends Controller
             'alasan_tingkat_dampak_pengaduan' => $request->alasan_tingkat_dampak_pengaduan,
             'deskripsi_pengaduan' => $request->deskripsi_pengaduan,
             'langkah_penyelesaian' => $request->langkah_penyelesaian,
-            'doc_permasalahan' => $permasalahFileName ?? null,
-            'doc_analisis_risiko' => $analisaFileName ?? null,
-            'doc_solusi' => $solusiFileName ?? null
+            'doc_permasalahan' => $permasalahFileName,
+            'doc_analisis_risiko' => $analisaFileName,
+            'doc_solusi' => $solusiFileName,
         ]);
 
         Alert::success('Berhasil', 'Kendala berhasil diperbarui!');

@@ -10,7 +10,7 @@ use App\Models\SubKategoriPelayanan;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class PelayananController extends Controller
@@ -93,18 +93,17 @@ class PelayananController extends Controller
         $doc_pendukung = null;
 
         if ($request->hasFile('doc_pendukung')) {
-            // Tentukan path penyimpanan relatif dalam storage/app/public
-            $path = 'Laporan pelayanan/' . Auth::user()->name . '/' . date('dmY');
+            // Tentukan path tujuan di folder public
+            $path = public_path('Laporan pelayanan/' . Auth::user()->name);
 
-            // Buat folder jika belum ada
-            Storage::disk('public')->makeDirectory($path);
+            if (!file_exists($path)) {
+                mkdir($path, 0755, true);
+            }
 
-            // Simpan file dengan nama asli ke dalam path yang benar
-            $doc_pendukung = $request->file('doc_pendukung')->storeAs(
-                $path, // Folder dalam `storage/app/public/`
-                $request->file('doc_pendukung')->getClientOriginalName(),
-                'public' // Gunakan disk 'public'
-            );
+            $docPendukungFile = $request->file('doc_pendukung');
+            $doc_pendukung = $docPendukungFile->getClientOriginalName();
+
+            $docPendukungFile->move($path, $doc_pendukung);
         }
 
         Pelayanan::create([
@@ -131,19 +130,20 @@ class PelayananController extends Controller
     {
         $pelayanan = Pelayanan::findOrFail($id);
 
-        if ($request->hasFile('doc_laporan')) {
-            // Hapus file lama jika ada
-            if ($pelayanan->doc_pendukung) {
-                Storage::disk('public')->delete($pelayanan->doc_pendukung);
+        $laporanHasilName = $pelayanan->doc_pendukung;
+
+        if ($request->hasFile('doc_pendukung')) {
+            $path = 'Laporan Pelayanan/' . Auth::user()->name;
+
+            // Hapus file lama jika ada file baru yang diunggah
+            if ($pelayanan->doc_pendukung && File::exists($path . $pelayanan->doc_pendukung)) {
+                File::delete($path . $pelayanan->doc_pendukung);
             }
 
-            $path = 'Laporan pelayanan/' . Auth::user()->name . '/' . date('dmY');
-            Storage::disk('public')->makeDirectory($path);
-            $doc_laporan = $request->file('doc_laporan')->storeAs(
-                $path,
-                $request->file('doc_laporan')->getClientOriginalName(),
-                'public'
-            );
+            // Simpan file baru
+            $doc_laporan = $request->file('doc_pendukung');
+            $laporanHasilName = $doc_laporan->getClientOriginalName();
+            $doc_laporan->move($path, $laporanHasilName);
         }
 
         $pelayanan->update([
@@ -159,7 +159,7 @@ class PelayananController extends Controller
             'waktu_selesai' => $request->waktu_selesai,
             'durasi' => $request->durasi,
             'keterangan' => $request->keterangan,
-            'doc_pendukung' => $doc_laporan
+            'doc_pendukung' => $laporanHasilName
         ]);
 
         Alert::success('Berhasil', 'Laporan pelayanan berhasil diperbarui');
@@ -170,13 +170,20 @@ class PelayananController extends Controller
     {
         $pelayanan = Pelayanan::findOrFail($id);
 
-        if ($pelayanan->doc_pendukung) {
-            Storage::disk('public')->delete($pelayanan->doc_pendukung);
+        if ($pelayanan) {
+            // Hapus file yang terkait dengan pekerjaan utama
+            $filePathHasil = public_path('Laporan Hasil/' . Auth::user()->name . '/' . $pelayanan->doc_pendukung);
+            if (File::exists($filePathHasil)) {
+                File::delete($filePathHasil);
+            }
+
+            // Hapus pekerjaan utama dari database
+            $pelayanan->delete();
+
+            Alert::success('Berhasil', 'Laporan pelayanan berhasil dihapus');
+            return back();
         }
-
-        $pelayanan->delete();
-
-        Alert::success('Berhasil', 'Laporan pelayanan berhasil dihapus');
+        Alert::error('Gagal!', 'Data tidak ditemukan');
         return back();
     }
 
