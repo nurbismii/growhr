@@ -231,8 +231,8 @@
                         <td>{{ $hasil->pic->name }}</td>
                         <td>{{ $hasil->pekerjaan != null ? $hasil->pekerjaan->deskripsi_pekerjaan : '-'}}</td>
                         <td>
-                            <a class="nav-link" target="_blank" href="{{ asset('storage/' . $hasil->doc_laporan) }}">
-                                <i class="bx bx-link-alt me-1"></i> {{ basename($hasil->doc_laporan) ?? '---' }}
+                            <a class="nav-link" target="_blank" href="{{ asset('Laporan Hasil/' . $hasil->pic->name  . '/' . $hasil->doc_laporan) }}">
+                                <i class="bx bx-link-alt me-1"></i> {{ $hasil->doc_laporan ?? '---' }}
                             </a>
                         </td>
                         <td>
@@ -248,78 +248,6 @@
                             <a href="#" data-bs-toggle="modal" data-bs-target="#keteranganModal{{ $hasil->id }}">
                                 Detail Keterangan
                             </a>
-
-                            <!-- Modal Detail -->
-                            <div class="modal fade" id="keteranganModal{{ $hasil->id }}" tabindex="-1" aria-labelledby="keteranganModal{{ $hasil->id }}" aria-hidden="true">
-                                <div class="modal-dialog modal-lg modal-dialog-centered">
-                                    <div class="modal-content">
-                                        <div class="modal-header bg-primary">
-                                            <h5 class="modal-title text-white d-flex align-items-center gap-0">
-                                                <i class="bx bx-file"></i> Detail Laporan ID #{{ $hasil->id }}-{{ date('mY', strtotime($hasil->created_at)) }}
-                                            </h5>
-                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                                        </div>
-                                        <div class="modal-body px-4 py-3 text-center">
-                                            <div class="row g-3 mb-3 justify-content-center">
-                                                <div class="col-md-4">
-                                                    <i class="bx bx-calendar"></i>
-                                                    <strong>Tanggal Pelaporan :</strong><br>
-                                                    {{ date('d-m-Y', strtotime($hasil->created_at)) }}
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <i class="bx bx-user"></i>
-                                                    <strong>PIC :</strong><br>
-                                                    {{ $hasil->pic->name }}
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <i class="bx bx-briefcase"></i>
-                                                    <strong>Pekerjaan :</strong><br>
-                                                    {{ $hasil->pekerjaan->deskripsi_pekerjaan ?? '-' }}
-                                                </div>
-                                            </div>
-
-                                            <div class="mb-3 d-flex justify-content-between align-items-center flex-wrap">
-                                                <div>
-                                                    <i class="bx bx-file"></i>
-                                                    <strong>Dokumen :</strong>
-                                                    <a href="{{ asset('storage/' . $hasil->doc_laporan) }}" target="_blank" class="text-decoration-none text-primary fw-semibold">
-                                                        <i class="bx bx-link-alt"></i> {{ basename($hasil->doc_laporan) }}
-                                                    </a>
-                                                </div>
-                                                <div class="mt-2 mt-md-0">
-                                                    <i class="bx bx-check-circle"></i>
-                                                    <strong>Status Laporan :</strong>
-                                                    <span class="badge bg-success">{{ ucfirst($selectedStatus) }}</span>
-                                                </div>
-                                            </div>
-
-                                            <div class="text-start">
-                                                <h6 class="d-flex align-items-center gap-2">
-                                                    <i class="bx bx-message-rounded-dots"></i> Keterangan :
-                                                </h6>
-                                                <div class="border rounded p-3 bg-light mb-3">
-                                                    {!! $hasil->keterangan !!}
-                                                </div>
-
-                                                <h6 class="d-flex align-items-center gap-2">
-                                                    <i class="bx bx-comment-dots"></i> Feedback :
-                                                </h6>
-                                                <div class="text-muted fst-italic mb-3">
-                                                    {{ $hasil->feedback ?? 'Belum ada feedback.' }}
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="modal-footer justify-content-between">
-                                            <span class="text-muted small">Ditampilkan pada: {{ now()->format('d-m-Y H:i') }}</span>
-                                            <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">
-                                                <i class="bx bx-x"></i> Tutup
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
                         </td>
                         <td>{{ $hasil->feedback ?? '---' }}</td>
                         <td>
@@ -343,6 +271,85 @@
         </div>
     </div>
 </div>
+
+@foreach($modal_hasil as $m_hasil)
+<!-- Modal Detail -->
+<div class="modal fade" id="keteranganModal{{ $m_hasil->id }}" tabindex="-1" aria-labelledby="keteranganModal{{ $m_hasil->id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title text-white d-flex align-items-center gap-0">
+                    <i class="bx bx-file"></i> Detail Laporan ID #{{ $m_hasil->id }}-{{ date('mY', strtotime($m_hasil->created_at)) }}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            </div>
+            <div class="modal-body px-4 py-3 text-center">
+                <div class="row g-3 mb-3 justify-content-center">
+                    <div class="col-md-4">
+                        <i class="bx bx-calendar"></i>
+                        <strong>Tanggal Pelaporan :</strong><br>
+                        {{ date('d-m-Y', strtotime($m_hasil->created_at)) }}
+                    </div>
+                    <div class="col-md-4">
+                        <i class="bx bx-user"></i>
+                        <strong>PIC :</strong><br>
+                        {{ $m_hasil->pic->name }}
+                    </div>
+                    <div class="col-md-4">
+                        <i class="bx bx-briefcase"></i>
+                        <strong>Pekerjaan :</strong><br>
+                        {{ $m_hasil->pekerjaan->deskripsi_pekerjaan ?? '-' }}
+                    </div>
+                </div>
+
+                <div class="mb-3 d-flex justify-content-between align-items-center flex-wrap">
+                    <div>
+                        <i class="bx bx-file"></i>
+                        <strong>Dokumen :</strong>
+                        @if ($m_hasil->doc_laporan)
+                        <a href="{{ asset('Laporan Hasil/' . $m_hasil->pic->name  . '/' . $m_hasil->doc_laporan) }}"
+                            target="_blank"
+                            class="text-decoration-none text-primary fw-semibold">
+                            <i class="bx bx-link-alt"></i> {{ $m_hasil->doc_laporan }}
+                        </a>
+                        @else
+                        <span class="text-muted">---</span>
+                        @endif
+                    </div>
+                    <div class="mt-2 mt-md-0">
+                        <i class="bx bx-check-circle"></i>
+                        <strong>Status Laporan :</strong>
+                        <span class="badge bg-success">{{ ucfirst($selectedStatus ?? '') }}</span>
+                    </div>
+                </div>
+
+                <div class="text-start">
+                    <h6 class="d-flex align-items-center gap-2">
+                        <i class="bx bx-message-rounded-dots"></i> Keterangan :
+                    </h6>
+                    <div class="border rounded p-3 bg-light mb-3">
+                        {!! $m_hasil->keterangan !!}
+                    </div>
+
+                    <h6 class="d-flex align-items-center gap-2">
+                        <i class="bx bx-comment-dots"></i> Feedback :
+                    </h6>
+                    <div class="text-muted fst-italic mb-3">
+                        {{ $m_hasil->feedback ?? 'Belum ada feedback.' }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <span class="text-muted small">Ditampilkan pada: {{ now()->format('d-m-Y H:i') }}</span>
+                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">
+                    <i class="bx bx-x"></i> Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@endforeach
 
 <!-- Tambah feedback modal laporan hasil -->
 @foreach($modal_hasil as $m_hasil)
@@ -537,7 +544,7 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
             // Reset semua class warna
             select.classList.remove(
                 "text-primary", "text-success", "text-warning", "text-danger",
-                "bg-label-success", "bg-label-warning", "bg-label-primary", "bg-label-danger", 
+                "bg-label-success", "bg-label-warning", "bg-label-primary", "bg-label-danger",
             );
 
             // Tambahkan class warna sesuai status
@@ -635,6 +642,12 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
         return path.split('/').pop();
     }
 
+    function stripHtml(html) {
+        const div = document.createElement("div");
+        div.innerHTML = html;
+        return div.textContent || div.innerText || "";
+    }
+
     $(document).ready(function() {
         let table = $('#laporan-hasil').DataTable({
             responsive: true,
@@ -665,20 +678,21 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
                         table.row.add([
                             index + 1,
                             formatTimestamp(hasil.created_at),
-                            escapeHtml(hasil.pic.name),
-                            escapeHtml(hasil.pekerjaan.deskripsi_pekerjaan),
+                            escapeHtml(hasil.pic_name),
+                            escapeHtml(hasil.pekerjaan_deskripsi),
                             hasil.doc_laporan ?
-                            `<a class="nav-link" target="_blank" href="/storage/${hasil.doc_laporan}">
-                        <i class="bx bx-link-alt me-1"></i> ${getBasename(hasil.doc_laporan)}
-                    </a>` : '---',
+                            `<a class="nav-link" target="_blank" href="/Laporan Hasil/${hasil.pic_name}/${hasil.doc_laporan}">
+                            <i class="bx bx-link-alt me-1"></i> ${hasil.doc_laporan}
+                             </a>` :
+                            '---',
                             `<select class="form-select form-select-sm main-status status-pekerjaan">
-                        ${statusOptions}
-                    </select>`,
-                            '-',
-                            `<span data-bs-toggle="tooltip" data-bs-placement="top" title="${escapeHtml(hasil.keterangan)}">
-                        ${escapeHtml(hasil.keterangan.substring(0, 25))}...
-                    </span>`,
-                            escapeHtml(hasil.feedback),
+                             ${statusOptions}
+                            </select>`,
+                            hasil.pic_divisi || '-',
+                            `<a href="#" data-bs-toggle="modal" data-bs-target="#keteranganModal${hasil.id}">
+                            Detail Keterangan
+                            </a>`,
+                            hasil.feedback ? escapeHtml(hasil.feedback) : '---',
                             '<div class="dropdown">' +
                             '<button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">' +
                             '<i class="bx bx-edit text-primary"></i>' +

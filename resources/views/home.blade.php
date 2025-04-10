@@ -42,6 +42,10 @@
         background-color: #fff;
         color: #9C4FFF;
     }
+
+    .bottom-img {
+    max-height: 100%;
+}
 </style>
 @endpush
 
@@ -49,21 +53,28 @@
     <div class="bg-white p-4 rounded-4 shadow-sm">
 
         <!-- Header Purple Section -->
-        <div class="bg-purple p-4 d-flex flex-column flex-md-row justify-content-between align-items-center rounded-20">
+        <div class="bg-purple p-4 d-flex flex-column flex-md-row justify-content-between align-items-stretch rounded-20 position-relative overflow-hidden" style="min-height: 200px;">
             <div class="col-sm-7">
                 <div class="card-body">
                     <h5 class="card-title text-white">Halo, {{ strtoupper(Auth::user()->name) }}! 🎉</h5>
                     <p class="mb-4">
                         Apa agenda pekerjaanmu hari ini? <br> Yuk catat agenda harian kamu
                     </p>
-                    <a href="{{ route('log-harian.create') }}" class="btn btn-light btn-sm me-2"><i class="menu-icon tf-icons bx bx-plus-circle"></i> Buat Kegiatan</a>
-                    <a href="{{ route('log-harian.index') }}" class="btn btn-outline-white btn-sm"><i class="menu-icon tf-icons bx bx-history"></i> Riwayat Kegiatan</a>
+                    <a href="{{ route('log-harian.create') }}" class="btn btn-light btn-sm me-2">
+                        <i class="menu-icon tf-icons bx bx-plus-circle"></i> Buat Kegiatan
+                    </a>
+                    <a href="{{ route('log-harian.index') }}" class="btn btn-outline-white btn-sm">
+                        <i class="menu-icon tf-icons bx bx-history"></i> Riwayat Kegiatan
+                    </a>
                 </div>
             </div>
-            <div class="col-sm-5 text-center text-sm-left">
-                <div class="card-body pb-0 px-0 px-md-4">
-                    <img src="../assets/img/illustrations/man-with-laptop-light.png" height="140" alt="View Badge User" data-app-dark-img="illustrations/man-with-laptop-dark.png" data-app-light-img="illustrations/man-with-laptop-light.png">
-                </div>
+            <div class="col-sm-5 d-flex align-items-end justify-content-center position-relative">
+                <img src="../assets/img/illustrations/man-with-laptop-light.png"
+                    class="bottom-img"
+                    alt="View Badge User"
+                    height="180"
+                    data-app-dark-img="illustrations/man-with-laptop-dark.png"
+                    data-app-light-img="illustrations/man-with-laptop-light.png">
             </div>
         </div>
 

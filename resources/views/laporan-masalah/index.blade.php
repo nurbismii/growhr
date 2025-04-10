@@ -268,18 +268,18 @@
                             </span>
                         </td>
                         <td>
-                            <a class="nav-link" target="_blank" href="{{ asset('storage/' . $pengaduan->doc_permasalahan) }}">
-                                <i class="bx bx-link-alt me-1"></i> {{ basename($pengaduan->doc_permasalahan) }}
+                            <a class="nav-link" target="_blank" href="{{ asset('Permasalahan/' .  $pengaduan->pic->name . '/' . $pengaduan->doc_permasalahan) }}">
+                                <i class="bx bx-link-alt me-1"></i> {{ $pengaduan->doc_permasalahan ?? '---' }}
                             </a>
                         </td>
                         <td>
-                            <a class="nav-link" target="_blank" href="{{ asset('storage/' . $pengaduan->doc_analisis_risiko) }}">
-                                <i class="bx bx-link-alt me-1"></i> {{ basename($pengaduan->doc_analisis_risiko) }}
+                            <a class="nav-link" target="_blank" href="{{ asset('Analisa/' . $pengaduan->pic->name . '/' . $pengaduan->doc_analisis_risiko) }}">
+                                <i class="bx bx-link-alt me-1"></i> {{ $pengaduan->doc_analisis_risiko ?? '---' }}
                             </a>
                         </td>
                         <td>
-                            <a class="nav-link" target="_blank" href="{{ asset('storage/' . $pengaduan->doc_solusi) }}">
-                                <i class="bx bx-link-alt me-1"></i> {{ basename($pengaduan->doc_solusi) ?? '---' }}
+                            <a class="nav-link" target="_blank" href="{{ asset('Solusi/' . $pengaduan->pic->name . '/' .  $pengaduan->doc_solusi) }}">
+                                <i class="bx bx-link-alt me-1"></i> {{ $pengaduan->doc_solusi ?? '---' }}
                             </a>
                         </td>
                         <td>
@@ -661,16 +661,16 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
                                 ${escapeHtml(pengaduan.langkah_penyelesaian.substring(0, 25))}...
                             </span>`,
                             pengaduan.doc_permasalahan ?
-                            `<a class="nav-link" target="_blank" href="/storage/${pengaduan.doc_permasalahan}">
-                                <i class="bx bx-link-alt me-1"></i> ${getBasename(pengaduan.doc_permasalahan)}
+                            `<a class="nav-link" target="_blank" href="/Permasalahan/${pengaduan.pic.name}/${pengaduan.doc_permasalahan}">
+                                <i class="bx bx-link-alt me-1"></i> ${pengaduan.doc_permasalahan}
                             </a>` : '---',
                             pengaduan.doc_analisis_risiko ?
-                            `<a class="nav-link" target="_blank" href="/storage/${pengaduan.doc_analisis_risiko}">
-                                <i class="bx bx-link-alt me-1"></i> ${getBasename(pengaduan.doc_analisis_risiko)}
+                            `<a class="nav-link" target="_blank" href="/Analisa/${pengaduan.pic.name}/${pengaduan.doc_analisis_risiko}">
+                                <i class="bx bx-link-alt me-1"></i> ${pengaduan.doc_analisis_risiko}
                             </a>` : '---',
                             pengaduan.doc_solusi ?
-                            `<a class="nav-link" target="_blank" href="/storage/${pengaduan.doc_solusi}">
-                                <i class="bx bx-link-alt me-1"></i> ${getBasename(pengaduan.doc_solusi)}
+                            `<a class="nav-link" target="_blank" href="/Solusi/${pengaduan.pic.name}/${pengaduan.doc_solusi}">
+                                <i class="bx bx-link-alt me-1"></i> ${pengaduan.doc_solusi}
                             </a>` : '---',
                             '<div class="dropdown">' +
                             '<button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">' +

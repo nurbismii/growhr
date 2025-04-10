@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Hasil;
 use App\Models\KategoriPekerjaan;
 use App\Models\Pekerjaan;
+use App\Models\Pengaduan;
 use App\Models\Prioritas;
 use App\Models\RiwayatPembaruanStatusPekerjaan;
 use App\Models\SifatPekerjaan;
@@ -14,7 +16,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\File;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class LogharianController extends Controller
@@ -207,6 +208,43 @@ class LogharianController extends Controller
     public function destroy($id)
     {
         $pekerjaan = Pekerjaan::with('getSubPekerjaan')->where('id', $id)->first();
+
+        $hasil = Hasil::where('pekerjaan_id', $pekerjaan->id)->first();
+
+        $pengaduan = Pengaduan::where('pekerjaan_id', $pekerjaan->id)->first();
+
+        if ($hasil) {
+            // Hapus file yang terkait dengan pekerjaan utama
+            $filePathHasil = public_path('Laporan Hasil/' . Auth::user()->name . '/' . $hasil->doc_laporan);
+            if (File::exists($filePathHasil)) {
+                File::delete($filePathHasil);
+            }
+            $hasil->delete();
+        }
+
+        if ($pengaduan) {
+
+            $filePathPermasalahan = 'Permasalahan/' . Auth::user()->name . '/' . $pengaduan->doc_permasalahan;
+
+            if (File::exists($filePathPermasalahan)) {
+                File::delete($filePathPermasalahan);
+            }
+
+            $filePathAnalisa = 'Analisa/' . Auth::user()->name . '/' . $pengaduan->doc_analisis_risiko;
+
+            if (File::exists($filePathAnalisa)) {
+                File::delete($filePathAnalisa);
+            }
+
+            $filePathSolusi = 'Solusi/' . Auth::user()->name . '/' . $pengaduan->doc_solusi;
+
+            if (File::exists($filePathSolusi)) {
+                File::delete($filePathSolusi);
+            }
+
+            $pengaduan->delete();
+        }
+
 
         if ($pekerjaan) {
             // Hapus file yang terkait dengan pekerjaan utama

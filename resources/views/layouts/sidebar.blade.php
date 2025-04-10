@@ -24,35 +24,11 @@
     <ul class="menu-inner py-1">
 
         {{-- INSIGHT --}}
-        <li class="menu-item {{ request()->routeIs('papan-kerja', 'kalender-kerja', 'tugas') ? 'active open' : '' }}">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Form Elements">Dashboard</div>
+        <li class="menu-item {{ request()->routeIs('home') ? 'active' : '' }}">
+            <a href="{{ route('home') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-compass"></i>
+                <div data-i18n="Analytics">Pekerjaan Harian</div>
             </a>
-            <ul class="menu-sub">
-                <li class="menu-item {{ request()->routeIs('home') ? 'active' : '' }}">
-                    <a href="{{ route('home') }}" class="menu-link">
-                        <div data-i18n="Basic Inputs">Home</div>
-                    </a>
-                </li>
-                <li class="menu-item {{ request()->routeIs('papan-kerja') ? 'active' : '' }}">
-                    <a href="{{ route('papan-kerja') }}" class="menu-link">
-                        <div data-i18n="Basic Inputs">Papan Kerja</div>
-                    </a>
-                </li>
-                <li class="menu-item {{ request()->routeIs('kalender-kerja') ? 'active' : '' }}">
-                    <a href="{{ route('kalender-kerja') }}" class="menu-link">
-                        <div data-i18n="Input groups">Kalender Kerja</div>
-                    </a>
-                </li>
-                @if((Auth::user()->role == 'ADMIN') || (Auth::user()->role == 'ASMEN'))
-                <li class="menu-item {{ request()->routeIs('tugas') ? 'active' : '' }}">
-                    <a href="{{ route('tugas') }}" class="menu-link">
-                        <div data-i18n="Input groups">Tugas</div>
-                    </a>
-                </li>
-                @endif
-            </ul>
         </li>
 
         {{-- CORE --}}

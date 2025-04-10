@@ -10,11 +10,10 @@ use App\Models\RiwayatPembaruanStatusPekerjaan;
 use App\Models\SifatPekerjaan;
 use App\Models\StatusPekerjaan;
 use App\Models\User;
-use Facade\FlareClient\Stacktrace\File;
+use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class LaporanmasalahController extends Controller
@@ -98,53 +97,26 @@ class LaporanmasalahController extends Controller
 
     public function store(Request $request)
     {
-        $doc_analisis_file = null;
         $doc_permasalahan_file = null;
+        $doc_analisis_file = null;
         $doc_solusi_file = null;
 
-        if ($request->hasFile('doc_permasalahan')) {
-            // Tentukan path penyimpanan relatif dalam storage/app/public
-            $path = 'Permasalahan/' . Auth::user()->name . '/' . date('dmY');
-
-            // Buat folder jika belum ada
-            Storage::disk('public')->makeDirectory($path);
-
-            // Simpan file dengan nama asli ke dalam path yang benar
-            $doc_permasalahan_file = $request->file('doc_permasalahan')->storeAs(
-                $path, // Folder dalam `storage/app/public/`
-                $request->file('doc_permasalahan')->getClientOriginalName(),
-                'public' // Gunakan disk 'public'
-            );
+        if ($doc_permasalahan_file = $request->file('doc_permasalahan')) {
+            $path = 'Permasalahan/' . Auth::user()->name;
+            $permasalahFileName = $doc_permasalahan_file->getClientOriginalName();
+            $doc_permasalahan_file->move($path, $permasalahFileName);
         }
 
-        if ($request->hasFile('doc_analisa')) {
-            // Tentukan path penyimpanan relatif dalam storage/app/public
-            $path = 'Analisa/' . Auth::user()->name . '/' . date('dmY');
-
-            // Buat folder jika belum ada
-            Storage::disk('public')->makeDirectory($path);
-
-            // Simpan file dengan nama asli ke dalam path yang benar
-            $doc_analisis_file = $request->file('doc_analisa')->storeAs(
-                $path, // Folder dalam `storage/app/public/`
-                $request->file('doc_analisa')->getClientOriginalName(),
-                'public' // Gunakan disk 'public'
-            );
+        if ($doc_analisis_file = $request->file('doc_analisa')) {
+            $path = 'Analisa/' . Auth::user()->name;
+            $analisaFileName = $doc_analisis_file->getClientOriginalName();
+            $doc_analisis_file->move($path, $analisaFileName);
         }
 
-        if ($request->hasFile('doc_solusi')) {
-            // Tentukan path penyimpanan relatif dalam storage/app/public
-            $path = 'Solusi/' . Auth::user()->name . '/' . date('dmY');
-
-            // Buat folder jika belum ada
-            Storage::disk('public')->makeDirectory($path);
-
-            // Simpan file dengan nama asli ke dalam path yang benar
-            $doc_solusi_file = $request->file('doc_solusi')->storeAs(
-                $path, // Folder dalam `storage/app/public/`
-                $request->file('doc_solusi')->getClientOriginalName(),
-                'public' // Gunakan disk 'public'
-            );
+        if ($doc_solusi_file = $request->file('doc_analisa')) {
+            $path = 'Solusi/' . Auth::user()->name;
+            $solusiFileName = $doc_solusi_file->getClientOriginalName();
+            $doc_solusi_file->move($path, $solusiFileName);
         }
 
         Pengaduan::create([
@@ -156,9 +128,9 @@ class LaporanmasalahController extends Controller
             'alasan_tingkat_dampak_pengaduan' => $request->alasan_tingkat_dampak_pengaduan,
             'deskripsi_pengaduan' => $request->deskripsi_pengaduan,
             'langkah_penyelesaian' => $request->langkah_penyelesaian,
-            'doc_permasalahan' => $doc_permasalahan_file,
-            'doc_analisis_risiko' => $doc_analisis_file,
-            'doc_solusi' => $doc_solusi_file
+            'doc_permasalahan' => $permasalahFileName ?? null,
+            'doc_analisis_risiko' => $analisaFileName ?? null,
+            'doc_solusi' => $solusiFileName ?? null
         ]);
 
         Alert::success('Berhasil', 'Kendala berhasil ditambahkan!');
@@ -174,48 +146,45 @@ class LaporanmasalahController extends Controller
         $doc_solusi_file = $pengaduan->doc_solusi;
 
         if ($request->hasFile('doc_permasalahan')) {
-            // Hapus file lama jika ada
-            if ($pengaduan->doc_permasalahan) {
-                Storage::disk('public')->delete($pengaduan->doc_permasalahan);
+            $path = 'Permasalahan/' . Auth::user()->name;
+
+            // Hapus file lama jika ada file baru yang diunggah
+            if ($pengaduan->doc_permasalahan && File::exists($path . $pengaduan->doc_permasalahan)) {
+                File::delete($path . $pengaduan->doc_permasalahan);
             }
 
-            $path = 'Permasalahan/' . Auth::user()->name . '/' . date('dmY');
-            Storage::disk('public')->makeDirectory($path);
-            $doc_permasalahan_file = $request->file('doc_permasalahan')->storeAs(
-                $path,
-                $request->file('doc_permasalahan')->getClientOriginalName(),
-                'public'
-            );
+            // Simpan file baru
+            $doc_permasalahan_file = $request->file('doc_permasalahan');
+            $permasalahFileName = $doc_permasalahan_file->getClientOriginalName();
+            $doc_permasalahan_file->move($path, $permasalahFileName);
         }
 
         if ($request->hasFile('doc_analisa')) {
-            // Hapus file lama jika ada
-            if ($pengaduan->doc_analisis_risiko) {
-                Storage::disk('public')->delete($pengaduan->doc_analisis_risiko);
+            $path = 'Analisa/' . Auth::user()->name;
+
+            // Hapus file lama jika ada file baru yang diunggah
+            if ($pengaduan->doc_analisis_risiko && File::exists($path . $pengaduan->doc_analisis_risiko)) {
+                File::delete($path . $pengaduan->doc_analisis_risiko);
             }
 
-            $path = 'Analisa/' . Auth::user()->name . '/' . date('dmY');
-            Storage::disk('public')->makeDirectory($path);
-            $doc_analisis_file = $request->file('doc_analisa')->storeAs(
-                $path,
-                $request->file('doc_analisa')->getClientOriginalName(),
-                'public'
-            );
+            // Simpan file baru
+            $doc_analisis_file = $request->file('doc_analisa');
+            $analisaFileName = $doc_analisis_file->getClientOriginalName();
+            $doc_analisis_file->move($path, $analisaFileName);
         }
 
         if ($request->hasFile('doc_solusi')) {
-            // Hapus file lama jika ada
-            if ($pengaduan->doc_solusi) {
-                Storage::disk('public')->delete($pengaduan->doc_solusi);
+            $path = 'Solusi/' . Auth::user()->name;
+
+            // Hapus file lama jika ada file baru yang diunggah
+            if ($pengaduan->doc_solusi && File::exists($path . $pengaduan->doc_solusi)) {
+                File::delete($path . $pengaduan->doc_solusi);
             }
 
-            $path = 'Solusi/' . Auth::user()->name . '/' . date('dmY');
-            Storage::disk('public')->makeDirectory($path);
-            $doc_solusi_file = $request->file('doc_solusi')->storeAs(
-                $path,
-                $request->file('doc_solusi')->getClientOriginalName(),
-                'public'
-            );
+            // Simpan file baru
+            $doc_solusi_file = $request->file('doc_solusi');
+            $solusiFileName = $doc_solusi_file->getClientOriginalName();
+            $doc_solusi_file->move($path, $solusiFileName);
         }
 
         $pengaduan->update([
@@ -227,9 +196,9 @@ class LaporanmasalahController extends Controller
             'alasan_tingkat_dampak_pengaduan' => $request->alasan_tingkat_dampak_pengaduan,
             'deskripsi_pengaduan' => $request->deskripsi_pengaduan,
             'langkah_penyelesaian' => $request->langkah_penyelesaian,
-            'doc_permasalahan' => $doc_permasalahan_file,
-            'doc_analisis_risiko' => $doc_analisis_file,
-            'doc_solusi' => $doc_solusi_file
+            'doc_permasalahan' => $permasalahFileName ?? null,
+            'doc_analisis_risiko' => $analisaFileName ?? null,
+            'doc_solusi' => $solusiFileName ?? null
         ]);
 
         Alert::success('Berhasil', 'Kendala berhasil diperbarui!');
@@ -241,22 +210,34 @@ class LaporanmasalahController extends Controller
     {
         $pengaduan = Pengaduan::where('id', $id)->first();
 
-        if ($pengaduan->doc_permasalahan) {
-            Storage::disk('public')->delete($pengaduan->doc_permasalahan);
+        if ($pengaduan) {
+
+            $filePathPermasalahan = 'Permasalahan/' . Auth::user()->name . '/' . $pengaduan->doc_permasalahan;
+
+            if (File::exists($filePathPermasalahan)) {
+                File::delete($filePathPermasalahan);
+            }
+
+            $filePathAnalisa = 'Analisa/' . Auth::user()->name . '/' . $pengaduan->doc_analisis_risiko;
+
+            if (File::exists($filePathAnalisa)) {
+                File::delete($filePathAnalisa);
+            }
+
+            $filePathSolusi = 'Solusi/' . Auth::user()->name . '/' . $pengaduan->doc_solusi;
+
+            if (File::exists($filePathSolusi)) {
+                File::delete($filePathSolusi);
+            }
+
+            // Hapus pekerjaan utama dari database
+            $pengaduan->delete();
+
+            Alert::success('Berhasil', 'Data pekerjaan dan lampiran berhasil dihapus');
+            return back();
         }
 
-        if ($pengaduan->doc_analisis_risiko) {
-            Storage::disk('public')->delete($pengaduan->doc_analisis_risiko);
-        }
-
-        if ($pengaduan->doc_permasalahan) {
-            Storage::disk('public')->delete($pengaduan->doc_permasalahan);
-        }
-
-        // Hapus pekerjaan utama dari database
-        $pengaduan->delete();
-
-        Alert::success('Berhasil', 'Data pekerjaan dan lampiran berhasil dihapus');
+        Alert::error('Gagal!', 'Data tidak ditemukan');
         return back();
     }
 

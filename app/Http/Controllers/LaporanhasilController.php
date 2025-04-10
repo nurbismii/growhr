@@ -5,16 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Hasil;
 use App\Models\KategoriPekerjaan;
 use App\Models\Pekerjaan;
-use App\Models\Pengaduan;
 use App\Models\Prioritas;
 use App\Models\SifatPekerjaan;
-use App\Models\StatusPekerjaan;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\File;
 
 class LaporanhasilController extends Controller
 {
@@ -30,7 +28,7 @@ class LaporanhasilController extends Controller
         $pekerjaan = Pekerjaan::orderBy('created_at', 'desc')->where('user_id', Auth::user()->id)->get();
         $user = User::where('nik', '!=', null)->get();
 
-        $modal_hasil = Hasil::with('pekerjaan', 'pic', 'prioritas')->where('user_id', Auth::user()->id)->get();
+        $modal_hasil = Hasil::with('pekerjaan', 'pic', 'prioritas')->get();
         $modal_pekerjaan = Pekerjaan::orderBy('created_at', 'desc')->where('user_id', Auth::user()->id)->get();
 
         if (Auth::user()->role == 'ASMEN') {
@@ -61,14 +59,20 @@ class LaporanhasilController extends Controller
             }
 
             return response()->json([
-                'hasil' => $hasil->get(),
-                'status_laporan' => [
-                    'diajukan',
-                    'revisi',
-                    'ditolak',
-                    'disetujui',
-                ],
-                'pekerjaan'
+                'hasil' => $hasil->get()->map(function ($item) {
+                    return [
+                        'id' => $item->id,
+                        'created_at' => $item->created_at->format('Y-m-d H:i:s'),
+                        'pic_name' => optional($item->pic)->name ?? '-',
+                        'pic_divisi' => optional($item->pic)->getNameDivisi() ?? '-',
+                        'pekerjaan_deskripsi' => optional($item->pekerjaan)->deskripsi_pekerjaan ?? '-',
+                        'doc_laporan' => $item->doc_laporan,
+                        'status_laporan' => $item->status_laporan,
+                        'feedback' => $item->feedback,
+                    ];
+                }),
+                'status_laporan' => ['diajukan', 'revisi', 'ditolak', 'disetujui'],
+                'pekerjaan' => Pekerjaan::all()
             ]);
         }
 
@@ -97,19 +101,10 @@ class LaporanhasilController extends Controller
     {
         $doc_laporan = null;
 
-        if ($request->hasFile('doc_laporan')) {
-            // Tentukan path penyimpanan relatif dalam storage/app/public
-            $path = 'Laporan Hasil/' . Auth::user()->name . '/' . date('dmY');
-
-            // Buat folder jika belum ada
-            Storage::disk('public')->makeDirectory($path);
-
-            // Simpan file dengan nama asli ke dalam path yang benar
-            $doc_laporan = $request->file('doc_laporan')->storeAs(
-                $path, // Folder dalam `storage/app/public/`
-                $request->file('doc_laporan')->getClientOriginalName(),
-                'public' // Gunakan disk 'public'
-            );
+        if ($doc_laporan = $request->file('doc_laporan')) {
+            $path = 'Laporan Hasil/' . Auth::user()->name;
+            $laporanHasilName = $doc_laporan->getClientOriginalName();
+            $doc_laporan->move($path, $laporanHasilName);
         }
 
         Hasil::create([
@@ -117,7 +112,7 @@ class LaporanhasilController extends Controller
             'pekerjaan_id' => $request->pekerjaan_id,
             'status_laporan' => $request->status_laporan,
             'keterangan' => $request->keterangan,
-            'doc_laporan' => $doc_laporan
+            'doc_laporan' => $laporanHasilName ?? null
         ]);
 
         Alert::success('Berhasil', 'Laporan hasil berhasil ditambahkan');
@@ -126,27 +121,28 @@ class LaporanhasilController extends Controller
 
     public function update(Request $request, $id)
     {
+        $doc_laporan = null;
+
         $hasil = Hasil::findOrFail($id);
 
         if ($request->hasFile('doc_laporan')) {
-            // Hapus file lama jika ada
-            if ($hasil->doc_laporan) {
-                Storage::disk('public')->delete($hasil->doc_laporan);
+            $path = 'Laporan Hasil/' . Auth::user()->name;
+
+            // Hapus file lama jika ada file baru yang diunggah
+            if ($hasil->doc_laporan && File::exists($path . $hasil->doc_laporan)) {
+                File::delete($path . $hasil->doc_laporan);
             }
 
-            $path = 'Laporan Hasil/' . Auth::user()->name . '/' . date('dmY');
-            Storage::disk('public')->makeDirectory($path);
-            $doc_laporan = $request->file('doc_laporan')->storeAs(
-                $path,
-                $request->file('doc_laporan')->getClientOriginalName(),
-                'public'
-            );
+            // Simpan file baru
+            $doc_laporan = $request->file('doc_laporan');
+            $laporanHasilName = $doc_laporan->getClientOriginalName();
+            $doc_laporan->move($path, $laporanHasilName);
         }
 
         $hasil->update([
             'status_laporan' => $request->status_laporan,
             'keterangan' => $request->keterangan,
-            'doc_laporan' => $doc_laporan ?? $hasil->doc_laporan,
+            'doc_laporan' => $laporanHasilName ?? $hasil->doc_laporan,
         ]);
 
         Alert::success('Berhasil', 'Laporan hasil berhasil diperbarui');
@@ -157,14 +153,21 @@ class LaporanhasilController extends Controller
     {
         $hasil = Hasil::where('id', $id)->first();
 
-        if ($hasil->doc_laporan) {
-            Storage::disk('public')->delete($hasil->doc_laporan);
+        if ($hasil) {
+            // Hapus file yang terkait dengan pekerjaan utama
+            $filePathHasil = public_path('Laporan Hasil/' . Auth::user()->name . '/' . $hasil->doc_laporan);
+            if (File::exists($filePathHasil)) {
+                File::delete($filePathHasil);
+            }
+
+            // Hapus pekerjaan utama dari database
+            $hasil->delete();
+
+            Alert::success('Berhasil', 'Laporan hasil dan lampiran berhasil dihapus');
+            return back();
         }
 
-        // Hapus pekerjaan utama dari database
-        $hasil->delete();
-
-        Alert::success('Berhasil', 'Laporan hasil dan lampiran berhasil dihapus');
+        Alert::error('Gagal!', 'Data tidak ditemukan');
         return back();
     }
 
