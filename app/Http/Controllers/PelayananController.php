@@ -192,7 +192,13 @@ class PelayananController extends Controller
 
     public function getKategori($divisi_id)
     {
-        $kategori = KategoriPelayanan::where('divisi_id', $divisi_id)->get();
+        $generalist = 2;
+
+        if ($generalist == $divisi_id) {
+            $kategori = KategoriPelayanan::orderBy('id', 'asc')->get();
+        } else {
+            $kategori = KategoriPelayanan::where('divisi_id', $divisi_id)->get();
+        }
         return response()->json($kategori);
     }
 

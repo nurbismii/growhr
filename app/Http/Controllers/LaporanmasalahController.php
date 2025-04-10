@@ -31,7 +31,7 @@ class LaporanmasalahController extends Controller
         $user = User::where('nik', '!=', null)->get();
         $pekerjaan = Pekerjaan::where('user_id', Auth::user()->id)->get();
 
-        $pengaduan_modal = Pengaduan::with(['pekerjaan', 'pic', 'statusPekerjaan', 'prioritas'])->where('user_id', Auth::user()->id)->get();
+        $pengaduan_modal = Pengaduan::with(['pekerjaan', 'pic', 'statusPekerjaan', 'prioritas'])->get();
         $pekerjaan_modal = Pekerjaan::where('user_id', Auth::user()->id)->orderBy('id', 'desc')->get();
 
         $startDate = date('Y-m-01');
