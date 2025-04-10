@@ -59,7 +59,7 @@
                     <a href="{{ route('log-harian.create') }}" class="btn btn-light btn-sm me-2 mb-3">
                         <i class="menu-icon tf-icons bx bx-plus-circle"></i> Buat Kegiatan
                     </a>
-                    <a href="{{ route('log-harian.index') }}" class="btn btn-outline-white btn-sm">
+                    <a href="{{ route('log-harian.index') }}" class="btn btn-outline-white btn-sm mb-3">
                         <i class="menu-icon tf-icons bx bx-history"></i> Riwayat Kegiatan
                     </a>
                 </div>
