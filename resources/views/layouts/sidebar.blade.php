@@ -26,8 +26,8 @@
         {{-- INSIGHT --}}
         <li class="menu-item {{ request()->routeIs('home') ? 'active' : '' }}">
             <a href="{{ route('home') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-compass"></i>
-                <div data-i18n="Analytics">Pekerjaan Harian</div>
+                <i class="menu-icon tf-icons bx bx-home"></i>
+                <div data-i18n="Analytics">Dashboard</div>
             </a>
         </li>
 

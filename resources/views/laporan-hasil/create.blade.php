@@ -52,7 +52,7 @@
                         </div>
                     </div>
                     <a href="{{ route('laporan-hasil.index') }}" class="btn btn-primary">
-                        <span class="tf-icons bx bx-arrow-back"></span>&nbsp; Hasil
+                        <span class="tf-icons bx bx-arrow-back"></span>&nbsp; Kembali
                     </a>
                 </div>
 

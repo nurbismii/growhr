@@ -42,10 +42,6 @@
         background-color: #fff;
         color: #9C4FFF;
     }
-
-    .bottom-img {
-    max-height: 100%;
-}
 </style>
 @endpush
 
@@ -60,7 +56,7 @@
                     <p class="mb-4">
                         Apa agenda pekerjaanmu hari ini? <br> Yuk catat agenda harian kamu
                     </p>
-                    <a href="{{ route('log-harian.create') }}" class="btn btn-light btn-sm me-2">
+                    <a href="{{ route('log-harian.create') }}" class="btn btn-light btn-sm me-2 mb-3">
                         <i class="menu-icon tf-icons bx bx-plus-circle"></i> Buat Kegiatan
                     </a>
                     <a href="{{ route('log-harian.index') }}" class="btn btn-outline-white btn-sm">
@@ -68,13 +64,21 @@
                     </a>
                 </div>
             </div>
-            <div class="col-sm-5 d-flex align-items-end justify-content-center position-relative">
+            <div class="col-sm-5 d-flex align-items-end justify-content-center position-relative p-0" style="margin-bottom: -4px;">
+                <!-- Gambar meja -->
+                <img src="../assets/img/illustrations/meja.png"
+                    alt="meja"
+                    class="position-absolute"
+                    style="bottom: 0; z-index: 1; height: 50px;">
+
+                <!-- Gambar orang -->
                 <img src="../assets/img/illustrations/man-with-laptop-light.png"
-                    class="bottom-img"
+                    class="bottom-img position-relative"
                     alt="View Badge User"
                     height="180"
                     data-app-dark-img="illustrations/man-with-laptop-dark.png"
-                    data-app-light-img="illustrations/man-with-laptop-light.png">
+                    data-app-light-img="illustrations/man-with-laptop-light.png"
+                    style="z-index: 2; margin-bottom: -22px;">
             </div>
         </div>
 
