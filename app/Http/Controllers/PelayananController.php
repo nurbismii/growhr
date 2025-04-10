@@ -28,6 +28,9 @@ class PelayananController extends Controller
         $divisi_modal = Divisi::all();
         $employee_hris = EmployeeHris::with('getDivisi.getDepartemen')->select('nik', 'nama_karyawan', 'divisi_id')->where('status_resign', '!=', null)->get();
 
+        $startDate = date('Y-m-01');
+        $endDate = date('Y-m-t');    // Hari terakhir bulan ini
+
         if (Auth::user()->role == "ASMEN") {
             $pelayanan = Pelayanan::with('getDivisi', 'kategoriPelayanan', 'subKategoriPelayanan', 'pic');
         } else {
@@ -60,7 +63,7 @@ class PelayananController extends Controller
             ]);
         }
 
-        $pelayanan = $pelayanan->get();
+        $pelayanan = $pelayanan->whereBetween('created_at', array($startDate, $endDate))->get();
 
         return view('pelayanan.index', compact(
             'pelayanan',

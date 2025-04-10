@@ -31,6 +31,9 @@ class LaporanhasilController extends Controller
         $modal_hasil = Hasil::with('pekerjaan', 'pic', 'prioritas')->get();
         $modal_pekerjaan = Pekerjaan::orderBy('created_at', 'desc')->where('user_id', Auth::user()->id)->get();
 
+        $startDate = date('Y-m-01');
+        $endDate = date('Y-m-t');
+
         if (Auth::user()->role == 'ASMEN') {
             $hasil = Hasil::with('pekerjaan', 'pic', 'prioritas');
         } else {
@@ -76,7 +79,7 @@ class LaporanhasilController extends Controller
             ]);
         }
 
-        $hasil = $hasil->get();
+        $hasil = $hasil->whereBetween('created_at', array($startDate, $endDate))->get();
 
         return view('laporan-hasil.index', compact(
             'hasil',
