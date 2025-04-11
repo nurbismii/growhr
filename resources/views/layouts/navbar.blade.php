@@ -15,20 +15,15 @@
         </div>
 
         <ul class="navbar-nav flex-row align-items-center ms-auto">
-            <li class="nav-item lh-1 me-3">
-                <a
-                    class="github-button"
-                    href="https://github.com/themeselection/sneat-html-admin-template-free"
-                    data-icon="octicon-star"
-                    data-size="large"
-                    data-show-count="true"
-                    aria-label="Star themeselection/sneat-html-admin-template-free on GitHub">Star</a>
-            </li>
 
             <li class="nav-item navbar-dropdown dropdown-user dropdown">
                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
-                        <img src="{{ asset('assets/img/avatars/1.png') }}" alt class="w-px-40 h-auto rounded-circle" />
+                        @if(Auth::user()->image != null)
+                        <img src="{{ asset('img/profile/' . Auth::user()->image) }}" alt class="w-px-40 h-auto rounded-circle">
+                        @else
+                        <img src="{{ asset('assets/img/avatars/1.png') }}" alt class="w-px-40 h-auto rounded-circle">
+                        @endif
                     </div>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">

@@ -72,12 +72,12 @@
             </a>
         </li>
 
-        <li class="menu-item {{ request()->is('penilaian*') ? 'active' : '' }}">
+        <!-- <li class="menu-item {{ request()->is('penilaian*') ? 'active' : '' }}">
             <a href="javascript:void(0)" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-star"></i>
                 <div data-i18n="Analytics">Penilaian</div>
             </a>
-        </li>
+        </li> -->
 
         {{-- ACCOUNT --}}
         <li class="menu-header small text-uppercase"><span class="menu-header-text">Account</span></li>
@@ -89,12 +89,12 @@
             </a>
         </li>
 
-        <li class="menu-item {{ request()->is('setting*') ? 'active' : '' }}">
+        <!-- <li class="menu-item {{ request()->is('setting*') ? 'active' : '' }}">
             <a href="cards-basic.html" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-cog"></i>
                 <div data-i18n="Basic">Setting</div>
             </a>
-        </li>
+        </li> -->
 
         {{-- WIDGET --}}
         @if(Auth::user()->role == 'ADMIN')

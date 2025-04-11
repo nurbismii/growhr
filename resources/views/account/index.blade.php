@@ -12,7 +12,11 @@
                     <!-- Account -->
                     <div class="card-body">
                         <div class="d-flex align-items-start align-items-sm-center gap-4">
-                            <img src="{{ asset('img/profile/' . $user->image )}}" alt="user-avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar" />
+                            @if(Auth::user()->image != null)
+                            <img src="{{ asset('img/profile/' . $user->image) }}" alt="user-avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar">
+                            @else
+                            <img src="{{ asset('assets/img/avatars/1.png') }}" alt="user-avatar" class="d-block rounded" height="100" width="100" id="uploadedAvatar">
+                            @endif
                             <div class="button-wrapper">
                                 <label for="upload" class="btn btn-primary me-2 mb-4" tabindex="0">
                                     <i class="tf-icons bx bx-upload"></i>
@@ -84,7 +88,7 @@
                         </div>
                         <div class="mt-2">
                             <button type="submit" class="btn btn-primary text-white float-end mb-3">
-                                <span class="tf-icons bx bx-edit"></span>&nbsp; Edit
+                                <span class="tf-icons bx bx-save"></span>&nbsp; Simpan
                             </button>
                         </div>
                     </div>

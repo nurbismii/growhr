@@ -231,7 +231,7 @@
 
                     @php
                     $statusOptions = ['sedang-ditangani', 'terselesaikan'];
-                    $selectedStatus = $pengaduan->status_kendala;
+                    $selectedStatus = $pengaduan->status_kendala ?? '';
                     $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang sudah ada
                     @endphp
 
@@ -305,7 +305,7 @@
 
 @php
 $statusOptions = ['sedang-ditangani', 'terselesaikan'];
-$selectedStatus = $pengaduan->status_kendala;
+$selectedStatus = $pengaduan->status_kendala ?? '';
 $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang sudah ada
 @endphp
 
