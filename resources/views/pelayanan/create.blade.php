@@ -288,34 +288,67 @@
     });
 
     $(document).ready(function() {
+        function toggleSelect2($element, disabled) {
+            $element.prop('disabled', disabled).trigger('change.select2');
+        }
+
         $('#divisiId').on('change', function() {
             var divisiId = $(this).val();
+            var $kategoriSelect = $('#kategori_pelayanan');
+            var $subKategoriSelect = $('#sub_kategori_pelayanan');
 
-            $('#kategori_pelayanan').html('<option value="">-- Pilih Kategori --</option>');
-            $('#sub_kategori_pelayanan').html('<option value="">Pilih Sub Kategori</option>');
+            $kategoriSelect.html('<option value="">-- Pilih Kategori --</option>');
+            $subKategoriSelect.html('<option value="">Pilih Sub Kategori</option>');
+
+            toggleSelect2($kategoriSelect, true);
+            toggleSelect2($subKategoriSelect, true);
 
             if (divisiId) {
-                $.get('/get-kategori/' + divisiId, function(data) {
-                    $.each(data, function(index, value) {
-                        $('#kategori_pelayanan').append('<option value="' + value.id + '">' + value.pelayanan + '</option>');
-                    });
+                $.ajax({
+                    url: '/get-kategori/' + divisiId,
+                    type: 'GET',
+                    beforeSend: function() {
+                        toggleSelect2($kategoriSelect, true);
+                    },
+                    success: function(data) {
+                        $.each(data, function(index, value) {
+                            $kategoriSelect.append('<option value="' + value.id + '">' + value.pelayanan + '</option>');
+                        });
+                    },
+                    complete: function() {
+                        toggleSelect2($kategoriSelect, false);
+                    }
                 });
             }
         });
 
         $('#kategori_pelayanan').on('change', function() {
             var kategoriId = $(this).val();
-            $('#sub_kategori_pelayanan').html('<option value="">Pilih Sub Kategori</option>');
+            var $subKategoriSelect = $('#sub_kategori_pelayanan');
+
+            $subKategoriSelect.html('<option value="">Pilih Sub Kategori</option>');
+            toggleSelect2($subKategoriSelect, true);
 
             if (kategoriId) {
-                $.get('/get-sub-kategori/' + kategoriId, function(data) {
-                    $.each(data, function(index, value) {
-                        $('#sub_kategori_pelayanan').append('<option value="' + value.id + '">' + value.sub_pelayanan + '</option>');
-                    });
+                $.ajax({
+                    url: '/get-sub-kategori/' + kategoriId,
+                    type: 'GET',
+                    beforeSend: function() {
+                        toggleSelect2($subKategoriSelect, true);
+                    },
+                    success: function(data) {
+                        $.each(data, function(index, value) {
+                            $subKategoriSelect.append('<option value="' + value.id + '">' + value.sub_pelayanan + '</option>');
+                        });
+                    },
+                    complete: function() {
+                        toggleSelect2($subKategoriSelect, false);
+                    }
                 });
             }
         });
     });
+
 
     $(document).ready(function() {
         $('#nik_karyawan').change(function() {
