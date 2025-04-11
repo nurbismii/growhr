@@ -32,6 +32,7 @@
         </li>
 
         {{-- CORE --}}
+        @if(Auth::user()->role == 'ADMIN')
         <li class="menu-header small text-uppercase"><span class="menu-header-text">Core</span></li>
 
         <li class="menu-item {{ request()->routeIs('user.index') ? 'active' : '' }}">
@@ -40,6 +41,7 @@
                 <div data-i18n="Analytics">Pengguna</div>
             </a>
         </li>
+        @endif
 
         {{-- PAGES --}}
         <li class="menu-header small text-uppercase"><span class="menu-header-text">Pages</span></li>
