@@ -220,44 +220,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($pelayanan as $layanan)
-                    <tr class="text-center">
-                        <td>{{ ++$no }}</td>
-                        <td>{{ date('d-m-Y', strtotime($layanan->created_at)) }}</td>
-                        <td>{{ $layanan->getDivisi->divisi  }}</td>
-                        <td>{{ optional($layanan->kategoriPelayanan)->pelayanan }}</td>
-                        <td>{{ $layanan->subKategoriPelayanan != null ? $layanan->subKategoriPelayanan->sub_pelayanan : '-' }}</td>
-                        <td>{{ $layanan->nik_karyawan }}</td>
-                        <td>{{ $layanan->nama_karyawan }}</td>
-                        <td>{{ $layanan->departemen }}</td>
-                        <td>{{ $layanan->divisi }}</td>
-                        <td>{{ $layanan->waktu_mulai }}</td>
-                        <td>{{ $layanan->waktu_selesai }}</td>
-                        <td>{{ $layanan->durasi }}</td>
-                        <td>
-                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $layanan->keterangan }}">
-                                {{ substr($layanan->keterangan, 0, 50) }}....
-                            </span>
-                        </td>
-                        <td>{{ $layanan->pic->name }}</td>
-                        <td>
-                            <a class="nav-link" target="_blank" href="{{ asset('storage/' . $layanan->doc_pendukung) }}">
-                                <i class="bx bx-link-alt me-1"></i> {{ basename($layanan->doc_pendukung) }}
-                            </a>
-                        </td>
-                        <td>
-                            <div class="dropdown">
-                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                    <i class="bx bx-edit text-primary"></i>
-                                </button>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#edit{{$layanan->id}}"><i class="bx text-primary bx-edit-alt me-2"></i> Edit</a>
-                                    <a class="dropdown-item" href="{{ route('laporan-pelayanan.destroy', $layanan->id) }}" data-confirm-delete="true"><i class="bx text-primary bx-trash me-2"></i> Delete</a>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforeach
+
                 </tbody>
             </table>
         </div>
@@ -431,8 +394,7 @@
         }
 
         // Inisialisasi saat modal terbuka
-        $('#edit{{$layanan->id ?? '
-            '}}').on('shown.bs.modal', function() {
+        $('[id^="edit"]').on('shown.bs.modal', function() {
             initSelect2(this);
         });
 
