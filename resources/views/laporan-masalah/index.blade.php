@@ -227,7 +227,9 @@
                     </tr>
                 </thead>
                 <tbody class="table-border-bottom-0">
+                    @if($pengaduan)
                     @foreach($pengaduan as $pengaduan)
+
 
                     @php
                     $statusOptions = ['sedang-ditangani', 'terselesaikan'];
@@ -295,17 +297,20 @@
                         </td>
                     </tr>
                     @endforeach
+                    @endif
                 </tbody>
             </table>
         </div>
     </div>
 </div>
 
+@if($pengaduan)
+
 @foreach($pengaduan_modal as $p_modal)
 
 @php
 $statusOptions = ['sedang-ditangani', 'terselesaikan'];
-$selectedStatus = $pengaduan->status_kendala ?? '';
+$selectedStatus = $p_modal->status_kendala ?? '';
 $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang sudah ada
 @endphp
 
@@ -332,14 +337,14 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
                             <label for="tanggalPelaporan" class="form-label">Tanggal Pelaporan
                                 <span class="text-danger">*</span>
                             </label>
-                            <input type="text" class="form-control" name="tanggal_pelaporan" id="tanggalPelaporan" value="{{ date('d/m/Y', strtotime($pengaduan->created_at)) }}" readonly>
+                            <input type="text" class="form-control" name="tanggal_pelaporan" id="tanggalPelaporan" value="{{ date('d/m/Y', strtotime($p_modal->created_at)) }}" readonly>
                         </div>
                         <div class="col-md-8 mb-3">
                             <label for="jenisKegiatan" class="form-label">Jenis Pekerjaan
                                 <span class="text-danger">*</span>
                             </label>
                             <select id="jenisKegiatan" name="jenis_pekerjaan_id" class="form-select" required>
-                                <option value="{{ $p_modal->pekerjaan_id }}">{{ $pengaduan->pekerjaan != null ? $pengaduan->pekerjaan->deskripsi_pekerjaan : '-'}}</option>
+                                <option value="{{ $p_modal->pekerjaan_id }}">{{ $p_modal->pekerjaan != null ? $p_modal->pekerjaan->deskripsi_pekerjaan : '-'}}</option>
                                 @foreach($pekerjaan_modal as $pk_modal)
                                 <option value="{{ $pk_modal->id }}">{{ $pk_modal->deskripsi_pekerjaan }} | {{ $pk_modal->tanggal_mulai }}</option>
                                 @endforeach
@@ -451,6 +456,8 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
     </div>
 </div>
 @endforeach
+
+@endif
 
 @push('script')
 <script>

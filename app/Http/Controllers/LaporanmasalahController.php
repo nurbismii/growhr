@@ -74,6 +74,11 @@ class LaporanmasalahController extends Controller
             ]);
         }
 
+        $status_kendala = [
+            'sedang-ditangani',
+            'terselesaikan'
+        ];
+
         $pengaduan = $pengaduan->whereBetween('created_at', array($startDate, $endDate))->get();
 
         return view('laporan-masalah.index', compact(
@@ -85,7 +90,8 @@ class LaporanmasalahController extends Controller
             'user',
             'prioritas',
             'status_pekerjaan',
-            'pekerjaan'
+            'pekerjaan',
+            'status_kendala'
         ))->with('no');
     }
 
