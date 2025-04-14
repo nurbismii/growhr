@@ -63,7 +63,7 @@ class PelayananController extends Controller
             ]);
         }
 
-        $pelayanan = $pelayanan->whereBetween('created_at', array($startDate, $endDate))->get();
+        $pelayanan = $pelayanan->get();
 
         return view('pelayanan.index', compact(
             'pelayanan',

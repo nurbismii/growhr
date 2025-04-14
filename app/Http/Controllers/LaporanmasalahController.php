@@ -79,7 +79,7 @@ class LaporanmasalahController extends Controller
             'terselesaikan'
         ];
 
-        $pengaduan = $pengaduan->whereBetween('created_at', array($startDate, $endDate))->get();
+        $pengaduan = $pengaduan->get();
 
         return view('laporan-masalah.index', compact(
             'pengaduan',

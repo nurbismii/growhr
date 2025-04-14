@@ -16,6 +16,30 @@
 
         <ul class="navbar-nav flex-row align-items-center ms-auto">
 
+            <!-- Notifikasi Dropdown -->
+            <li class="nav-item dropdown notif-dropdown position-relative">
+                <a class="nav-link" href="#" id="notifDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bx bx-bell fs-4"></i>
+                    <span class="badge bg-danger rounded-pill position-absolute notif-badge">3</span>
+                </a>
+
+                <div class="dropdown-menu dropdown-menu-end p-3 shadow">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0 fw-bold text-primary">Notifikasi <span class="text-primary">(3)</span></h6>
+                        <a href="#" class="text-muted small">Mark all as read</a>
+                    </div>
+
+                    <div class="notif-item d-flex align-items-start mb-3 border-bottom pb-2">
+                        @if(Auth::user()->image != null)
+                        <img src="{{ asset('img/profile/' . Auth::user()->image) }}" class="rounded-circle me-2" alt="Avatar">
+                        @else
+                        <img src="{{ asset('assets/img/avatars/1.png') }}" class="rounded-circle me-2" alt="Avatar">
+                        @endif
+                        <p class="mb-0">Pekerjaan harianmu tanggal 13 Februari 2025 mendapatkan feedback.</p>
+                    </div>
+                </div>
+            </li>
+
             <li class="nav-item navbar-dropdown dropdown-user dropdown">
                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">

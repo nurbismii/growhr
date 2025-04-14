@@ -79,7 +79,7 @@ class LaporanhasilController extends Controller
             ]);
         }
 
-        $hasil = $hasil->whereBetween('created_at', array($startDate, $endDate))->get();
+        $hasil = $hasil->get();
 
         return view('laporan-hasil.index', compact(
             'hasil',

@@ -61,6 +61,81 @@
 
     <!-- Date -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+    <style>
+        .notif-badge {
+            font-size: 10px;
+            padding: 3px 6px;
+            top: 5px;
+            right: 5px;
+        }
+
+        .notif-dropdown .dropdown-menu {
+            border-radius: 15px;
+            width: 350px;
+            max-width: 90vw;
+        }
+
+        .notif-item img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .notif-item p {
+            font-size: 13px;
+        }
+
+        @media (max-width: 576px) {
+            .notif-dropdown {
+                display: none;
+                /* Sembunyikan dropdown biasa di HP */
+            }
+
+            .notif-offcanvas {
+                display: block !important;
+            }
+        }
+
+        @media (min-width: 577px) {
+            .notif-offcanvas {
+                display: none !important;
+                /* Sembunyikan offcanvas di desktop */
+            }
+        }
+
+        /* Paksa arah dari bawah */
+        .offcanvas.offcanvas-bottom {
+            top: auto !important;
+            bottom: 0 !important;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 60vh;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            transform: translateY(100%) !important;
+            visibility: hidden;
+            transition: transform 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+
+        .offcanvas.offcanvas-bottom.show {
+            transform: translateY(0%) !important;
+            visibility: visible;
+        }
+
+        /* Fix konten agar scrollable */
+        .offcanvas-bottom .offcanvas-body {
+            overflow-y: auto;
+        }
+
+        /* Sembunyikan scrollbar horizontal */
+        .offcanvas-body::-webkit-scrollbar {
+            height: 0;
+        }
+    </style>
+
     @stack('styles')
 </head>
 

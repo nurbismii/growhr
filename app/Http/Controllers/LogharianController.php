@@ -74,7 +74,7 @@ class LogharianController extends Controller
             ]);
         }
 
-        $pekerjaan = $pekerjaan->whereBetween('tanggal_mulai', array($startDate, $endDate))->get();
+        $pekerjaan = $pekerjaan->get();
 
         return view('log-harian.index', compact(
             'pekerjaan',
