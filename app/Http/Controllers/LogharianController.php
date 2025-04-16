@@ -467,7 +467,7 @@ class LogharianController extends Controller
                 'status_pembaruan' => $status->status_pekerjaan,
             ]);
 
-            if ($request->status_pekerjaan_id == 5) {
+            if ($subPekerjaan->status_pekerjaan_id == 5) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Update ditolak! status selesai tidak dapat dianulir'

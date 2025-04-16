@@ -797,8 +797,7 @@
                         title: "Berhasil!",
                         text: "Status sub pekerjaan telah diperbarui.",
                         icon: "success",
-                        timer: 1500,
-                        showConfirmButton: false
+                        showConfirmButton: true
                     });
 
                     fetchData();
