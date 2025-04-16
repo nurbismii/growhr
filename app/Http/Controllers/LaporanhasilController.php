@@ -31,13 +31,10 @@ class LaporanhasilController extends Controller
         $modal_hasil = Hasil::with('pekerjaan', 'pic', 'prioritas')->get();
         $modal_pekerjaan = Pekerjaan::orderBy('created_at', 'desc')->where('user_id', Auth::user()->id)->get();
 
-        $startDate = date('Y-m-01');
-        $endDate = date('Y-m-t');
-
         if (Auth::user()->role == 'ASMEN') {
-            $hasil = Hasil::with('pekerjaan', 'pic', 'prioritas');
+            $hasil = Hasil::with('pekerjaan', 'pic', 'prioritas')->orderBy('id', 'desc');
         } else {
-            $hasil = Hasil::with('pekerjaan', 'pic', 'prioritas')->where('user_id', Auth::user()->id);
+            $hasil = Hasil::with('pekerjaan', 'pic', 'prioritas')->where('user_id', Auth::user()->id)->orderBy('id', 'desc');
         }
 
         if ($request->ajax()) {

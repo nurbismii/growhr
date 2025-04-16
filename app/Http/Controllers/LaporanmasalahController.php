@@ -34,13 +34,10 @@ class LaporanmasalahController extends Controller
         $pengaduan_modal = Pengaduan::with(['pekerjaan', 'pic', 'statusPekerjaan', 'prioritas'])->get();
         $pekerjaan_modal = Pekerjaan::where('user_id', Auth::user()->id)->orderBy('id', 'desc')->get();
 
-        $startDate = date('Y-m-01');
-        $endDate = date('Y-m-t');    // Hari terakhir bulan ini
-
         if (Auth::user()->role == 'ASMEN') {
-            $pengaduan = Pengaduan::with('pekerjaan', 'pic', 'statusPekerjaan', 'prioritas');
+            $pengaduan = Pengaduan::with('pekerjaan', 'pic', 'statusPekerjaan', 'prioritas')->orderBy('id', 'desc');
         } else {
-            $pengaduan = Pengaduan::with('pekerjaan', 'pic', 'statusPekerjaan', 'prioritas')->where('user_id', Auth::user()->id);
+            $pengaduan = Pengaduan::with('pekerjaan', 'pic', 'statusPekerjaan', 'prioritas')->where('user_id', Auth::user()->id)->orderBy('id', 'desc');
         }
 
         if ($request->ajax()) {

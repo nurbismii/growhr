@@ -28,18 +28,16 @@ class PelayananController extends Controller
         $divisi_modal = Divisi::all();
         $employee_hris = EmployeeHris::with('getDivisi.getDepartemen')->select('nik', 'nama_karyawan', 'divisi_id')->where('status_resign', '!=', null)->get();
 
-        $startDate = date('Y-m-01');
-        $endDate = date('Y-m-t');    // Hari terakhir bulan ini
-
         if (Auth::user()->role == "ASMEN") {
-            $pelayanan = Pelayanan::with('getDivisi', 'kategoriPelayanan', 'subKategoriPelayanan', 'pic');
+            $pelayanan = Pelayanan::with('getDivisi', 'kategoriPelayanan', 'subKategoriPelayanan', 'pic')->orderBy('id', 'desc');
         } else {
-            $pelayanan = Pelayanan::with('getDivisi', 'kategoriPelayanan', 'subKategoriPelayanan', 'pic')->where('user_id', Auth::user()->id);
+            $pelayanan = Pelayanan::with('getDivisi', 'kategoriPelayanan', 'subKategoriPelayanan', 'pic')->orderBy('id', 'desc')->where('user_id', Auth::user()->id);
         }
 
         if ($request->ajax()) {
             if ($request->has('divisi_id')) {
-                $pelayanan->where('divisi_id', $request->divisi_id);
+                $pelayanan->where('divisi_id', $request
+                ->divisi_id);
             }
             if ($request->has('kategori_pelayanan_id')) {
                 $pelayanan->where('kategori_pelayanan_id', $request->kategori_pelayanan_id);

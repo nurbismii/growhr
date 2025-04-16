@@ -549,31 +549,6 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
     });
 
     $(document).ready(function() {
-        function getCurrentMonthRange() {
-            let start = moment().startOf('month'); // Hari pertama bulan ini
-            let end = moment().endOf('month'); // Hari terakhir bulan ini
-
-            return {
-                start,
-                end
-            };
-        }
-
-        let {
-            start,
-            end
-        } = getCurrentMonthRange();
-
-        $('.daterange').daterangepicker({
-            startDate: start,
-            endDate: end,
-            locale: {
-                format: 'DD-MM-YYYY'
-            }
-        });
-    });
-
-    $(document).ready(function() {
         $('.select-kendala').select2({
             theme: 'bootstrap-5',
             placeholder: "Kategori",
@@ -704,6 +679,49 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
                 }
             });
         }
+
+        $(document).ready(function() {
+            function getCurrentMonthRange() {
+                let start = moment().startOf('month'); // Hari pertama bulan ini
+                let end = moment().endOf('month'); // Hari terakhir bulan ini
+
+                return {
+                    start,
+                    end
+                };
+            }
+
+            let {
+                start,
+                end
+            } = getCurrentMonthRange();
+
+            $('.daterange')
+                .attr('placeholder', 'Cari tanggal')
+                .daterangepicker({
+                    startDate: start,
+                    endDate: end,
+                    autoUpdateInput: false, // Ini penting supaya input nggak langsung keisi
+                    locale: {
+                        format: 'DD-MM-YYYY',
+                        cancelLabel: 'Batal',
+                        applyLabel: 'Terapkan'
+                    }
+                });
+
+            // Isi input saat tanggal dipilih
+            $('.daterange').on('apply.daterangepicker', function(ev, picker) {
+                const value = picker.startDate.format('DD-MM-YYYY') + ' - ' + picker.endDate.format('DD-MM-YYYY');
+                $(this).val(value); // <- penting! agar masuk saat serialize()
+                fetchData(); // kirim data via AJAX
+            });
+
+            // Kosongkan input saat klik batal
+            $('.daterange').on('cancel.daterangepicker', function(ev, picker) {
+                $(this).val('');
+                fetchData();
+            });
+        });
 
         // Update status pekerjaan
         $('#laporan-masalah tbody').on('change', '.main-status', function() {
