@@ -593,7 +593,8 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
         $('.select-pekerjaan').select2({
             theme: 'bootstrap-5',
             placeholder: "Pekerjaan",
-            allowClear: true // Memungkinkan pengguna menghapus pilihan
+            allowClear: true, // Memungkinkan pengguna menghapus pilihan
+            width: '100%'
         });
     });
 
@@ -601,7 +602,8 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
         $('.select-prioritas').select2({
             theme: 'bootstrap-5',
             placeholder: "Prioritas",
-            allowClear: true // Memungkinkan pengguna menghapus pilihan
+            allowClear: true, // Memungkinkan pengguna menghapus pilihan
+            width: '100%'
         });
     });
 
@@ -609,7 +611,8 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
         $('.select-pic').select2({
             theme: 'bootstrap-5',
             placeholder: "PIC",
-            allowClear: true // Memungkinkan pengguna menghapus pilihan
+            allowClear: true, // Memungkinkan pengguna menghapus pilihan
+            width: '100%'
         });
     });
 
