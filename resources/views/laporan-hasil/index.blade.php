@@ -249,7 +249,7 @@
                                 Detail Keterangan
                             </a>
                         </td>
-                        <td>{{ $hasil->feedback ?? '---' }}</td>
+                        <td>{!! substr(strip_tags($hasil->feedback_atasan), 0, 25) !!}</td>
                         <td>
                             <div class="dropdown">
                                 <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
@@ -334,8 +334,8 @@
                     <h6 class="d-flex align-items-center gap-2">
                         <i class="bx bx-comment-dots"></i> Feedback :
                     </h6>
-                    <div class="text-muted fst-italic mb-3">
-                        {{ $m_hasil->feedback ?? 'Belum ada feedback.' }}
+                    <div class="border rounded p-3 bg-light mb-3">
+                        {!! $m_hasil->feedback_atasan ?? 'Belum ada feedback.' !!}
                     </div>
                 </div>
             </div>
@@ -368,7 +368,7 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('laporan-hasil.update', $m_hasil->id) }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('laporan-hasil.store.feedback', $m_hasil->id) }}" method="post" enctype="multipart/form-data">
                     @csrf
                     {{ method_field('patch') }}
                     <div class="row mb-4">

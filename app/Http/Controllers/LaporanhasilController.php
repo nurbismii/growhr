@@ -196,4 +196,16 @@ class LaporanhasilController extends Controller
             'message' => 'Status laporan berhasil diperbarui'
         ], 200);
     }
+
+    public function storeFeedback(Request $request, $id)
+    {
+        $hasil = Hasil::findOrFail($id);
+
+        $hasil->update([
+            'feedback_atasan' => $request->feedback
+        ]);
+
+        Alert::success('Berhasil', 'Feedback berhasil ditambahkan');
+        return back();
+    }
 }

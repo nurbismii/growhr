@@ -34,6 +34,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('laporan-masalah/update-status-pekerjaan/{id}', [App\Http\Controllers\LaporanmasalahController::class, 'updateStatusPekerjaan']);
     Route::post('laporan-hasil/update-status-laporan/{id}', [App\Http\Controllers\LaporanhasilController::class, 'updateStatusLaporan']);
 
+    Route::patch('laporan-hasil/feedback/{id}', [App\Http\Controllers\LaporanhasilController::class, 'storeFeedback'])->name('laporan-hasil.store.feedback');
+
     # Api controller 
     Route::get('/get-kategori/{divisi_id}', [App\Http\Controllers\PelayananController::class, 'getKategori']);
     Route::get('/get-sub-kategori/{kategori_id}', [App\Http\Controllers\PelayananController::class, 'getSubKategori']);
