@@ -39,7 +39,7 @@ class HomeController extends Controller
         $limit = $request->query('limit', 12);
         $divisi_id = $request->query('divisi_id');
 
-        $query = Pekerjaan::with(['getSubPekerjaan', 'getStatusPekerjaan', 'getUser'])
+        $query = Pekerjaan::with(['getSubPekerjaan.getKategoriPekerjaan', 'getStatusPekerjaan', 'getUser'])
             ->where('status_pekerjaan_id', '!=', 5);
 
         if ($start_date && $end_date) {

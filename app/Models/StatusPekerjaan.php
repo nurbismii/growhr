@@ -11,4 +11,6 @@ class StatusPekerjaan extends Model
 
     protected $table = 'status_pekerjaan';
     protected $guarded = [];
+
+    
 }
