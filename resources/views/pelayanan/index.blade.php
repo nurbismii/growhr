@@ -220,7 +220,40 @@
                     </tr>
                 </thead>
                 <tbody>
-
+                    @foreach($pelayanan as $row)
+                    <tr data-id="{{ $row->id }}">
+                        <td>{{ ++$no }}</td>
+                        <td>{{ date('d-m-Y', strtotime($row->created_at)) }}</td>
+                        <td>{{ $row->getDivisi->divisi }}</td>
+                        <td>{{ $row->kategoriPelayanan->pelayanan }}</td>
+                        <td>{{ $row->subKategoriPelayanan->sub_pelayanan }}</td>
+                        <td>{{ $row->nama_karyawan }}</td>
+                        <td>{{ $row->nik_karyawan }}</td>
+                        <td>{{ $row->departemen }}</td>
+                        <td>{{ $row->divisi }}</td>
+                        <td>{{ $row->waktu_mulai }}</td>
+                        <td>{{ $row->waktu_selesai }}</td>
+                        <td>{{ $row->durasi }}</td>
+                        <td>{{ $row->keterangan }}</td>
+                        <td>{{ $row->pic->name }}</td>
+                        <td>
+                            <a class="nav-link" target="_blank" href="{{ asset('Laporan pelayanan/' .  $row->pic->name . '/' . $row->doc_pendukung) }}">
+                                <i class="bx bx-link-alt me-1"></i> {{ $row->doc_pendukung ?? '---' }}
+                            </a>
+                        </td>
+                        <td>
+                            <div class="dropdown">
+                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                    <i class="bx bx-edit text-primary"></i>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#edit{{$row->id}}"><i class="bx text-primary bx-edit-alt me-2"></i> Edit</a>
+                                    <a class="dropdown-item" href="{{ route('laporan-pelayanan.destroy', $row->id) }}" data-confirm-delete="true"><i class="bx text-primary bx-trash me-2"></i> Delete</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>

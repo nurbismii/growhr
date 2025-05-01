@@ -16,7 +16,7 @@
 
         <ul class="navbar-nav flex-row align-items-center ms-auto">
 
-            <!-- Notifikasi Dropdown -->
+            <!-- Notifikasi Dropdown
             <li class="nav-item dropdown notif-dropdown position-relative">
                 <a class="nav-link" href="#" id="notifDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="bx bx-bell fs-4"></i>
@@ -38,7 +38,7 @@
                         <p class="mb-0">Pekerjaan harianmu tanggal 13 Februari 2025 mendapatkan feedback.</p>
                     </div>
                 </div>
-            </li>
+            </li> -->
 
             <li class="nav-item navbar-dropdown dropdown-user dropdown">
                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
