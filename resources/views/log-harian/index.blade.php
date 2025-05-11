@@ -146,6 +146,21 @@
         text-align: center;
         white-space: nowrap;
     }
+
+    #custom-tooltip {
+        position: fixed;
+        /* Gunakan fixed agar tidak bergantung pada scroll */
+        display: none;
+        background: rgba(0, 0, 0, 0.85);
+        color: #fff;
+        padding: 6px 10px;
+        border-radius: 5px;
+        font-size: 13px;
+        max-width: 300px;
+        pointer-events: none;
+        z-index: 9999;
+        white-space: pre-line;
+    }
 </style>
 @endpush
 
@@ -185,14 +200,14 @@
                 <select name="pic[]" class="form-control select-pic w-100">
                     <option value="" disabled selected>PIC</option>
                     @foreach($user as $user)
-                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                    <option value="{{ $user->id }}">{{ ucwords(strtolower($user->name)) }}</option>
                     @endforeach
                 </select>
             </div>
             <div class="col-12 col-sm-6 col-md-3">
                 <div class="input-group w-100">
                     <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-                    <input type="text" name="tanggal" class="form-control daterange" placeholder="Cari tanggal"/>
+                    <input type="text" name="tanggal" class="form-control daterange" placeholder="Cari tanggal" />
                 </div>
             </div>
         </div>
@@ -200,15 +215,15 @@
 
     <div class="card">
         <div class="table-responsive text-nowrap">
-            <table class="table table-border" id="log-harian">
+            <table class="table table-hover" id="log-harian">
                 <thead class="table-primary">
                     <tr>
                         <th class="text-center text-white">No</th>
                         <td class="text-center text-white"></td>
                         <th class="text-center text-white">Tanggal Pencatatan</th>
-                        <th class="text-center text-white">PIC</th>
-                        <th class="text-center text-white">Sifat Pekerjaan</th>
                         <th class="text-center text-white">Deskripsi Pekerjaan</th>
+                        <th class="text-center text-white">Sifat Pekerjaan</th>
+                        <th class="text-center text-white">PIC</th>
                         <th class="text-center text-white">Prioritas</th>
                         <th class="text-center text-white">Status Pekerjaan</th>
                         <th class="text-center text-white">Kategori Pekerjaan</th>
@@ -226,7 +241,7 @@
                 </thead>
                 <tbody>
                     @foreach($pekerjaan as $kerjaan)
-                    <tr>
+                    <tr class="row-hover" data-deskripsi="Deskripsi Pekerjaan : {{ $kerjaan->deskripsi_pekerjaan }}">
                         <td class="text-center">{{ ++$no }}</td>
                         <td>
                             <button class="btn btn-sm toggle-btn {{ $kerjaan->getSubPekerjaan->isEmpty() ? 'btn-light-gray' : 'btn-primary' }}"
@@ -235,13 +250,13 @@
                             </button>
                         </td>
                         <td class="text-center">{{ date_format($kerjaan->created_at, 'd-m-Y') }}</td>
-                        <td>{{ $kerjaan->getUser->name }}</td>
-                        <td>{{ $kerjaan->getSifatPekerjaan->pekerjaan }}</td>
                         <td>
                             <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $kerjaan->deskripsi_pekerjaan }}">
                                 {{ substr($kerjaan->deskripsi_pekerjaan, 0, 25) }}...
                             </span>
                         </td>
+                        <td>{{ $kerjaan->getSifatPekerjaan->pekerjaan }}</td>
+                        <td>{{ $kerjaan->getUser->name }}</td>
                         <td>{{ $kerjaan->getPrioritas->prioritas }}</td>
                         <td>
                             <select class="form-select form-select-sm main-status status-pekerjaan">
@@ -287,6 +302,7 @@
                     @endforeach
                 </tbody>
             </table>
+            <div id="custom-tooltip" style="position: absolute; display: none; background: #333; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 14px; max-width: 300px; z-index: 9999;"></div>
         </div>
     </div>
 </div>
@@ -426,16 +442,44 @@
 @push('script')
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        const tooltip = document.getElementById('custom-tooltip');
+
+        document.querySelectorAll('.row-hover').forEach(function(row) {
+            row.addEventListener('mousemove', function(e) {
+                tooltip.innerText = row.getAttribute('data-deskripsi');
+                tooltip.style.display = 'block';
+
+                const offset = 12; // jarak dari kursor
+                const tooltipWidth = tooltip.offsetWidth;
+                const tooltipHeight = tooltip.offsetHeight;
+
+                let posX = e.clientX + offset;
+                let posY = e.clientY + offset;
+
+                // Deteksi jika tooltip keluar dari sisi kanan atau bawah layar
+                if (posX + tooltipWidth > window.innerWidth) {
+                    posX = e.clientX - tooltipWidth - offset;
+                }
+                if (posY + tooltipHeight > window.innerHeight) {
+                    posY = e.clientY - tooltipHeight - offset;
+                }
+
+                tooltip.style.left = posX + 'px';
+                tooltip.style.top = posY + 'px';
+            });
+
+            row.addEventListener('mouseleave', function() {
+                tooltip.style.display = 'none';
+            });
+        });
         // Fungsi untuk memperbarui warna select berdasarkan nilai yang dipilih
         window.updateSelectColor = function(select) {
             let selectedValue = select.value;
 
             // Reset semua class warna
             select.classList.remove(
-                "text-danger", "text-primary", "text-success",
-                "text-secondary", "text-warning",
-                "bg-label-danger", "bg-label-primary",
-                "bg-label-success", "bg-label-secondary", "bg-label-warning"
+                "text-danger", "text-primary", "text-success", "text-secondary", "text-warning", "text-info",
+                "bg-label-danger", "bg-label-primary", "bg-label-success", "bg-label-secondary", "bg-label-warning", "bg-label-info"
             );
 
             // Tambahkan class warna sesuai status
@@ -453,8 +497,12 @@
                     select.classList.add("text-secondary", "bg-label-secondary");
                     break;
                 case "5":
+                    select.classList.add("text-info", "bg-label-info");
+                    break;
+                case "6":
                     select.classList.add("text-success", "bg-label-success");
                     break;
+
             }
         };
 
@@ -485,7 +533,7 @@
             if (!cellTanggal || !selectStatus) return;
 
             let statusPekerjaan = selectStatus.options[selectStatus.selectedIndex].text.trim().toLowerCase();
-            if (statusPekerjaan === "selesai") {
+            if (statusPekerjaan === "selesai" || statusPekerjaan === "selesai dan diterima") {
                 row.classList.remove("table-danger", "table-warning", "table-success");
                 return;
             }
@@ -654,11 +702,11 @@
                             index + 1,
                             toggleIcon,
                             formatTimestamp(kerjaan.created_at),
-                            kerjaan.get_user.name,
-                            kerjaan.get_sifat_pekerjaan.pekerjaan,
                             `<span data-bs-toggle="tooltip" data-bs-placement="top" title="${escapeHtml(kerjaan.deskripsi_pekerjaan)}">
                                 ${escapeHtml(kerjaan.deskripsi_pekerjaan.substring(0, 25))}...
                             </span>`,
+                            kerjaan.get_sifat_pekerjaan.pekerjaan,
+                            kerjaan.get_user.name,
                             kerjaan.get_prioritas.prioritas,
                             `<select class="form-select form-select-sm main-status status-pekerjaan">
                                 ${statusOptions}
@@ -900,17 +948,18 @@
                             toggleBtn.html('-').removeClass('btn-primary').addClass('btn-light-gray');
                         } else {
                             subRows = subPekerjaan.map((sub, index) => `
-                    <tr class="sub-row table-hover">
+                    <tr class="sub-row table-hover row-hover" data-deskripsi="Deskripsi Pekerjaan : ${escapeHtml(sub.deskripsi_pekerjaan)}">
                         <td></td>
                         <td>${index + 1}</td>
                         <td>${formatTimestamp(sub.created_at)}</td>
-                        <td>${escapeHtml(sub.get_user.name)}</td>
-                        <td>${escapeHtml(sub.get_sifat_pekerjaan.pekerjaan)}</td>
                         <td>
                             <span data-bs-toggle="tooltip" data-bs-placement="top" title="${escapeHtml(sub.deskripsi_pekerjaan)}">
                                 ${escapeHtml(sub.deskripsi_pekerjaan.substring(0, 25))}...
                             </span>
                         </td>
+                        <td>${escapeHtml(sub.get_sifat_pekerjaan.pekerjaan)}</td>
+                        <td>${escapeHtml(sub.get_user.name)}</td>
+                        
                         <td>${escapeHtml(sub.get_prioritas.prioritas)}</td>
                         <td>
                             <select class="form-select status-pekerjaan form-select-sm sub-status" data-id="${sub.id}">
@@ -956,7 +1005,8 @@
                                 </div>
                             </div>
                         </td>
-                    </tr>`).join('');
+                    </tr>
+                    `).join('');
 
                             // Tambahkan sub-row setelah baris utama
                             $(tr).after(subRows);

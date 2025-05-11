@@ -383,6 +383,7 @@ class LogharianController extends Controller
     {
         $belum_mulai = 1;
         $selesai = 5;
+        $selesai_diterima = 6;
 
         $kerjaan = Pekerjaan::with('getStatusPekerjaan')->where('id', $id)->first();
 
@@ -398,7 +399,7 @@ class LogharianController extends Controller
             return $sub->status_pekerjaan_id != 5;
         });
 
-        if ($request->stastatus_pekerjaan_id == $selesai) {
+        if (($request->stastatus_pekerjaan_id == $selesai) || ($kerjaan->status_pekerjaan_id == $selesai_diterima)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Update ditolak! status selesai tidak dapat dianulir'
@@ -413,7 +414,7 @@ class LogharianController extends Controller
         }
 
         // Jika masih ada SubPekerjaan yang belum selesai dan ingin mengubah status ke 3, tolak update
-        if ($adaBelumSelesai && $request->status_pekerjaan_id == $selesai) {
+        if ($adaBelumSelesai && ($request->status_pekerjaan_id == $selesai) || ($kerjaan->status_pekerjaan_id == $selesai_diterima)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Update ditolak! Masih ada Sub Pekerjaan yang belum selesai.'

@@ -62,6 +62,16 @@
                             <textarea class="form-control" name="deskripsi_pekerjaan" id="deskripsiTugas" placeholder="Isi Tugas" rows="3" required readonly>{{ $pk->deskripsi_pekerjaan }}</textarea>
                         </div>
 
+                        @if(Auth::user()->role == 'ASMEN')
+                        <div class="col-md-4 mb-3">
+                            <label for="tanggalMulai" class="form-label">Tanggal Mulai</label>
+                            <input type="date" class="form-control tanggalMulai" name="tanggal_mulai" id="tanggalMulai" value="{{ $pk->tanggal_mulai }}" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="tanggalSelesai" class="form-label">Tanggal Selesai</label>
+                            <input type="date" class="form-control tanggalSelesai" name="tanggal_selesai" id="tanggalSelesai" value="{{ $pk->tanggal_selesai }}" required>
+                        </div>
+                        @else
                         <div class="col-md-4 mb-3">
                             <label for="tanggalMulai" class="form-label">Tanggal Mulai</label>
                             <input type="date" class="form-control tanggalMulai" name="tanggal_mulai" id="tanggalMulai" value="{{ $pk->tanggal_mulai }}" required readonly>
@@ -70,6 +80,8 @@
                             <label for="tanggalSelesai" class="form-label">Tanggal Selesai</label>
                             <input type="date" class="form-control tanggalSelesai" name="tanggal_selesai" id="tanggalSelesai" value="{{ $pk->tanggal_selesai }}" required readonly>
                         </div>
+                        @endif
+                        
                         <div class="col-md-4 mb-3">
                             <label for="duration" class="form-label">Durasi</label>
                             <input type="text" class="form-control duration" name="durasi" id="duration" value="{{ $pk->durasi }}" required readonly>

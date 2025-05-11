@@ -6,7 +6,7 @@
                 <div class="card shadow-sm border-1 border-primary">
                     <div class="card-body">
                         <h6 class="bold text-uppercase text-primary">
-                            <a href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="{{  $job->deskripsi_pekerjaan }}">{{ substr($job->deskripsi_pekerjaan, 0, 30) }} -</a>
+                            <a href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $job->deskripsi_pekerjaan }}">{{ substr($job->deskripsi_pekerjaan, 0, 30) }} -</a>
                             @if($job->getUser->image)
                             <img src="{{ asset('img/profile/' . $job->getUser->image) }}" alt="PIC" class="rounded-circle" width="30">
                             @else

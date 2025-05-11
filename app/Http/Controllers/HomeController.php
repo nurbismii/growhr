@@ -40,7 +40,8 @@ class HomeController extends Controller
         $divisi_id = $request->query('divisi_id');
 
         $query = Pekerjaan::with(['getSubPekerjaan.getKategoriPekerjaan', 'getStatusPekerjaan', 'getUser'])
-            ->where('status_pekerjaan_id', '!=', 5);
+            ->where('status_pekerjaan_id', '!=', 5)
+            ->orWhere('status_pekerjaan_id', '!=', 6);
 
         if ($start_date && $end_date) {
             $query->whereBetween('tanggal_mulai', [$start_date, $end_date]);
@@ -73,8 +74,7 @@ class HomeController extends Controller
         }
 
         if ($request->ajax()) {
-            $data = Pekerjaan::with('getUser')->whereDate('tanggal_mulai', '>=', $request->start)
-                ->whereDate('tanggal_selesai', '<=', $request->end)
+            $data = Pekerjaan::with('getUser')
                 ->where('status_pekerjaan_id', '!=', $selesai)
                 ->get()
                 ->map(function ($item) {
