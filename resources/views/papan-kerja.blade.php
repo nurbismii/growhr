@@ -15,6 +15,11 @@
         </div>
 
         <div class="d-flex gap-2">
+            <select id="status" class="form-select" style="width: auto;">
+                <option value="progress">Progress</option>
+                <option value="selesai">Selesai</option>
+            </select>
+
             <div class="input-group" style="max-width: 250px;">
                 <span class="input-group-text"><i class="bx bx-calendar text-primary"></i></span>
                 <input type="text" name="tanggal_mulai" class="form-control daterange" />
@@ -67,6 +72,7 @@
         });
 
         function loadFilteredData() {
+            let status = $('#status').val();
             let limit = $('#limitSelect').val();
             let divisiId = $('input[name="divisi"]:checked').val();
 
@@ -77,7 +83,8 @@
                     start_date: currentStartDate,
                     end_date: currentEndDate,
                     limit: limit,
-                    divisi_id: divisiId
+                    divisi_id: divisiId,
+                    status: status
                 },
                 success: function(response) {
                     $('.papan-kerja-container').html(response);
@@ -94,6 +101,11 @@
 
         // Limit berubah
         $('#limitSelect').on('change', function() {
+            loadFilteredData();
+        });
+
+        // Status berubah
+        $('#status').on('change', function() {
             loadFilteredData();
         });
 

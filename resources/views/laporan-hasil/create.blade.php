@@ -84,7 +84,6 @@
                             <select id="statusLaporan" name="status_laporan" class="form-select" id="statusLaporan" required>
                                 <option value="">-- Pilih Status Laporan --</option>
                                 <option value="diajukan">Diajukan</option>
-                                <option value="disetujui">Disetujui</option>
                                 <option value="revisi">Revisi</option>
                             </select>
                         </div>

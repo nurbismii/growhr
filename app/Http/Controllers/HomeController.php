@@ -37,11 +37,16 @@ class HomeController extends Controller
         $start_date = $request->query('start_date');
         $end_date = $request->query('end_date');
         $limit = $request->query('limit', 12);
+        $status = $request->query('status');
         $divisi_id = $request->query('divisi_id');
 
-        $query = Pekerjaan::with(['getSubPekerjaan.getKategoriPekerjaan', 'getStatusPekerjaan', 'getUser'])
-            ->where('status_pekerjaan_id', '!=', 5)
-            ->orWhere('status_pekerjaan_id', '!=', 6);
+        if ($status == "selesai") {
+            $query = Pekerjaan::with(['getSubPekerjaan.getKategoriPekerjaan', 'getStatusPekerjaan', 'getUser'])
+                ->whereIn('status_pekerjaan_id', [5, 6]);
+        } else {
+            $query = Pekerjaan::with(['getSubPekerjaan.getKategoriPekerjaan', 'getStatusPekerjaan', 'getUser'])
+                ->whereNotIn('status_pekerjaan_id', [5, 6]);
+        }
 
         if ($start_date && $end_date) {
             $query->whereBetween('tanggal_mulai', [$start_date, $end_date]);

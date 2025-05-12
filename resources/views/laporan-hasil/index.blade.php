@@ -177,7 +177,7 @@
                 <select name="status_laporan[]" class="form-control select-prioritas w-100">
                     <option value="" disabled selected>Prioritas</option>
                     <option value="diajukan">Diajukan</option>
-                    <option value="ditolak">Diajukan</option>
+                    <option value="ditolak">Ditolak</option>
                     <option value="disetujui">Disetujui</option>
                     <option value="revisi">Revisi</option>
                 </select>
@@ -220,7 +220,12 @@
                     @foreach($hasil as $hasil)
 
                     @php
-                    $statusOptions = ['diajukan', 'revisi', 'ditolak', 'disetujui'];
+
+                    if(Auth::user()->role == 'ASMEN') {
+                        $statusOptions = ['ditolak', 'disetujui'];
+                    } else {
+                        $statusOptions = ['diajukan', 'revisi'];
+                    }
                     $selectedStatus = $hasil->status_laporan;
                     $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang sudah ada
                     @endphp

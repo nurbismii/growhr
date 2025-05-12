@@ -6,12 +6,12 @@
                 <div class="card shadow-sm border-1 border-primary">
                     <div class="card-body">
                         <h6 class="bold text-uppercase text-primary">
-                            <a href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $job->deskripsi_pekerjaan }}">{{ substr($job->deskripsi_pekerjaan, 0, 30) }} -</a>
                             @if($job->getUser->image)
                             <img src="{{ asset('img/profile/' . $job->getUser->image) }}" alt="PIC" class="rounded-circle" width="30">
                             @else
                             <img src="{{ asset('assets/img/avatars/1.png') }}" alt="PIC" class="rounded-circle" width="30">
                             @endif
+                            <a href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $job->deskripsi_pekerjaan }}"> - {{ $job->deskripsi_pekerjaan }}</a>
                         </h6>
                         <i><small class="text-black mt-0">{{ $job->getStatusPekerjaan->status_pekerjaan }}</small></i>
 

@@ -58,6 +58,12 @@ class LaporanhasilController extends Controller
                 }
             }
 
+            if(Auth::user()->role == 'ASMEN') {
+                $arr_status = ['ditolak', 'disetujui'];
+            }else {
+                $arr_status = ['diajukan', 'revisi'];
+            }
+
             return response()->json([
                 'hasil' => $hasil->get()->map(function ($item) {
                     return [
@@ -71,7 +77,7 @@ class LaporanhasilController extends Controller
                         'feedback' => $item->feedback,
                     ];
                 }),
-                'status_laporan' => ['diajukan', 'revisi', 'ditolak', 'disetujui'],
+                'status_laporan' => $arr_status,
                 'pekerjaan' => Pekerjaan::all()
             ]);
         }
