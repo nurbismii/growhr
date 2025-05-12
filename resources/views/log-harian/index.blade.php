@@ -548,12 +548,12 @@
 
             row.classList.remove("table-danger", "table-warning", "table-success");
 
-            if (selisihHari <= 0) {
-                row.classList.add("table-danger");
-            } else if (selisihHari <= 1) {
-                row.classList.add("table-warning");
-            } else if (selisihHari <= 3) {
+            if (selisihHari >= 2 && selisihHari <= 3) {
                 row.classList.add("table-success");
+            } else if (selisihHari >= 0 && selisihHari <= 1) {
+                row.classList.add("table-warning");
+            } else if (selisihHari < 0) {
+                row.classList.add("table-danger");
             }
         });
     }

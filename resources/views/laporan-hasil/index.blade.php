@@ -400,7 +400,7 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
 @foreach($modal_hasil as $m_hasil)
 
 @php
-$statusOptions = ['diajukan', 'revisi', 'ditolak', 'disetujui'];
+$statusOptions = ['diajukan', 'revisi'];
 $selectedStatus = $m_hasil->status_laporan;
 $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang sudah ada
 @endphp

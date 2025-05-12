@@ -86,7 +86,7 @@
                                 <option value="material">Material</option>
                                 <option value="pengukuran">Pengukuran</option>
                                 <option value="lingkungan">Lingkungan</option>
-                                <option value="lainnya">Lingkungan</option>
+                                <option value="lainnya">Lainnya</option>
                             </select>
                         </div>
                         <div class="col-md-4 mb-3">
