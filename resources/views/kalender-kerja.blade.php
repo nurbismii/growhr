@@ -4,6 +4,14 @@
 
 @push('styles')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.css" />
+<style>
+    /* Perbesar ukuran popover */
+    .fc-popover {
+        max-width: 400px !important;
+        /* Atur lebar sesuai kebutuhan */
+        width: auto;
+    }
+</style>
 @endpush
 
 <div class="container-xxl flex-grow-1 container-p-y">
