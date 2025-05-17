@@ -18,7 +18,7 @@
                         <ul class="list-unstyled mt-2">
                             @foreach($job->getSubPekerjaan as $sub)
                             <li class="border-bottom py-1 mt-1">
-                                <small>{{ $sub->tanggal_mulai }}: {{ $sub->getKategoriPekerjaan->kategori_pekerjaan }}</small>
+                                <small>{{ $sub->tanggal_mulai }}: {{ $sub->sub_deskripsi_pekerjaan }} [{{ $sub->getKategoriPekerjaan->kategori_pekerjaan }}]</small>
                             </li>
                             @endforeach
                         </ul>

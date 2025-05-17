@@ -380,6 +380,12 @@
                             <textarea class="form-control" name="deskripsi_pekerjaan" id="deskripsiTugas" placeholder="Isi Tugas" rows="3" required readonly>{{ $pk->deskripsi_pekerjaan }}</textarea>
                         </div>
 
+                        <div class="col-md-12 mb-3">
+                            <label for="subDeskripsiPekerjaan" class="form-label">Sub Deskripsi Tugas</label>
+                            <textarea class="form-control" name="sub_deskripsi_pekerjaan" id="subDeskripsiPekerjaan" placeholder="Isi Sub Deskripsi Tugas" rows="3" required></textarea>
+                        </div>
+
+
                         <div class="col-md-4 mb-3">
                             <label for="tanggalMulai" class="form-label">Tanggal Mulai</label>
                             <input type="date" class="form-control tanggalMulai" name="tanggal_mulai" id="tanggalMulai" value="{{ $subpk->tanggal_mulai }}" required readonly>
