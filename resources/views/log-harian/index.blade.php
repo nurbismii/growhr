@@ -161,7 +161,82 @@
         z-index: 9999;
         white-space: pre-line;
     }
+
+    th,
+    td {
+        white-space: nowrap;
+        /* supaya tidak pecah baris */
+    }
+
+    .dataTables_wrapper {
+        width: 100%;
+        overflow: auto;
+    }
+
+    #log-harian th:nth-child(1),
+    #log-harian td:nth-child(1),
+    #log-harian th:nth-child(2),
+    #log-harian td:nth-child(2),
+    #log-harian th:nth-child(3),
+    #log-harian td:nth-child(3){
+        position: sticky;
+        left: 0;
+        background-color: white;
+        z-index: 1;
+    }
+
+    /* Untuk kolom ke-2, 3, dst harus atur left-nya bertahap */
+    #log-harian th:nth-child(1),
+    #log-harian td:nth-child(1) {
+        left: 60px;
+        /* adjust sesuai lebar kolom pertama */
+    }
+
+    #log-harian th:nth-child(2),
+    #log-harian td:nth-child(2) {
+        left: 120px;
+        /* dst. */
+    }
+
+    /* Header dan Footer kolom freeze */
+    table.dataTable thead tr>.dtfc-fixed-left,
+    table.dataTable thead tr>.dtfc-fixed-right,
+    table.dataTable tfoot tr>.dtfc-fixed-left,
+    table.dataTable tfoot tr>.dtfc-fixed-right {
+        top: 0;
+        bottom: 0;
+        z-index: 2;
+        /* Untuk menindih kolom biasa */
+        background-color: #8c52ff !important;
+        /* Warna ungu */
+        color: white;
+        /* Agar teks tetap terbaca */
+    }
+
+    /* Sel body kolom freeze */
+    table.dataTable tbody tr>.dtfc-fixed-left,
+    table.dataTable tbody tr>.dtfc-fixed-right {
+        background-color: #f9f9f9;
+        /* Warna isi kolom freeze */
+        z-index: 1;
+    }
+
+    /* Untuk mencegah garis terpotong */
+    table.dataTable .dtfc-fixed-left,
+    table.dataTable .dtfc-fixed-right {
+        box-shadow: inset -1px 0 #ddd;
+    }
+
+    /* (Opsional) Agar sticky header tertutup dengan halus */
+    table.dataTable thead th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background-color: #8c52ff;
+        color: white;
+    }
 </style>
+<link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/4.3.0/css/fixedColumns.dataTables.min.css">
 @endpush
 
 <div class="container-xxl flex-grow-1 container-p-y">
@@ -220,8 +295,8 @@
                     <tr>
                         <th class="text-center text-white">No</th>
                         <td class="text-center text-white"></td>
-                        <th class="text-center text-white">Tanggal Pencatatan</th>
                         <th class="text-center text-white">Deskripsi Pekerjaan</th>
+                        <th class="text-center text-white">Tanggal Pencatatan</th>
                         <th class="text-center text-white">Sifat Pekerjaan</th>
                         <th class="text-center text-white">PIC</th>
                         <th class="text-center text-white">Prioritas</th>
@@ -249,12 +324,12 @@
                                 {{ $kerjaan->getSubPekerjaan->isEmpty() ? '-' : '+' }}
                             </button>
                         </td>
-                        <td class="text-center">{{ date_format($kerjaan->created_at, 'd-m-Y') }}</td>
                         <td>
                             <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $kerjaan->deskripsi_pekerjaan }}">
                                 {{ substr($kerjaan->deskripsi_pekerjaan, 0, 25) }}...
                             </span>
                         </td>
+                        <td class="text-center">{{ date_format($kerjaan->created_at, 'd-m-Y') }}</td>
                         <td>{{ $kerjaan->getSifatPekerjaan->pekerjaan }}</td>
                         <td>{{ $kerjaan->getUser->name }}</td>
                         <td>{{ $kerjaan->getPrioritas->prioritas }}</td>
@@ -446,6 +521,8 @@
 <!-- Sub Modal edit end -->
 
 @push('script')
+<script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const tooltip = document.getElementById('custom-tooltip');
@@ -667,8 +744,11 @@
             paging: true,
             searching: true,
             ordering: true,
-            scrollY: '60vh',
+            scrollX: true,
             scrollCollapse: true,
+            fixedColumns: {
+                leftColumns: 3 // ⬅️ mengunci kolom ke-1 sampai ke-4
+            },
             columnDefs: [{
                 targets: 14, // kolom tingkat kesulitan
                 type: 'num', // pastikan dianggap sebagai numerik
@@ -707,10 +787,10 @@
                         table.row.add([
                             index + 1,
                             toggleIcon,
-                            formatTimestamp(kerjaan.created_at),
                             `<span data-bs-toggle="tooltip" data-bs-placement="top" title="${escapeHtml(kerjaan.deskripsi_pekerjaan)}">
                                 ${escapeHtml(kerjaan.deskripsi_pekerjaan.substring(0, 25))}...
                             </span>`,
+                            formatTimestamp(kerjaan.created_at),
                             kerjaan.get_sifat_pekerjaan.pekerjaan,
                             kerjaan.get_user.name,
                             kerjaan.get_prioritas.prioritas,
@@ -954,15 +1034,15 @@
                             toggleBtn.html('-').removeClass('btn-primary').addClass('btn-light-gray');
                         } else {
                             subRows = subPekerjaan.map((sub, index) => `
-                    <tr class="sub-row table-hover row-hover" data-deskripsi="Deskripsi Pekerjaan : ${escapeHtml(sub.deskripsi_pekerjaan)}">
+                    <tr class="sub-row table-hover row-hover">
                         <td></td>
                         <td>${index + 1}</td>
-                        <td>${formatTimestamp(sub.created_at)}</td>
                         <td>
                             <span data-bs-toggle="tooltip" data-bs-placement="top" title="${escapeHtml(sub.deskripsi_pekerjaan)}">
                                 ${escapeHtml(sub.deskripsi_pekerjaan.substring(0, 25))}...
                             </span>
                         </td>
+                        <td>${formatTimestamp(sub.created_at)}</td>
                         <td>${escapeHtml(sub.get_sifat_pekerjaan.pekerjaan)}</td>
                         <td>${escapeHtml(sub.get_user.name)}</td>
                         
