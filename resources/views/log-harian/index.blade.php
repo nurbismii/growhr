@@ -178,7 +178,7 @@
     #log-harian th:nth-child(2),
     #log-harian td:nth-child(2),
     #log-harian th:nth-child(3),
-    #log-harian td:nth-child(3){
+    #log-harian td:nth-child(3) {
         position: sticky;
         left: 0;
         background-color: white;
@@ -1038,8 +1038,8 @@
                         <td></td>
                         <td>${index + 1}</td>
                         <td>
-                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="${escapeHtml(sub.sub_deskripsi_pekerjaan)}">
-                                ${escapeHtml(sub.sub_deskripsi_pekerjaan.substring(0, 25))}...
+                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="${escapeHtml(sub.sub_deskripsi_pekerjaan || sub.deskripsi_pekerjaan)}">
+                                ${escapeHtml((sub.sub_deskripsi_pekerjaan || sub.deskripsi_pekerjaan).substring(0, 25))}...
                             </span>
                         </td>
                         <td>${formatTimestamp(sub.created_at)}</td>
