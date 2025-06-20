@@ -42,10 +42,10 @@ class HomeController extends Controller
 
         if ($status == "selesai") {
             $query = Pekerjaan::with(['getSubPekerjaan.getKategoriPekerjaan', 'getStatusPekerjaan', 'getUser'])
-                ->whereIn('status_pekerjaan_id', [5, 6]);
+                ->whereIn('status_pekerjaan_id', [5, 7]);
         } else {
             $query = Pekerjaan::with(['getSubPekerjaan.getKategoriPekerjaan', 'getStatusPekerjaan', 'getUser'])
-                ->whereNotIn('status_pekerjaan_id', [5, 6]);
+                ->whereNotIn('status_pekerjaan_id', [5, 7]);
         }
 
         if ($start_date && $end_date) {
