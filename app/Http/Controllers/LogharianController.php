@@ -398,10 +398,10 @@ class LogharianController extends Controller
 
         // Cek apakah masih ada SubPekerjaan yang belum selesai (status_pekerjaan_id != 5)
         $adaBelumSelesai = $subPekerjaan->contains(function ($sub) {
-            return $sub->status_pekerjaan_id != 5;
+            return $sub->status_pekerjaan_id != 5 || $sub->status_pekerjaan_id != 6;
         });
 
-        if (($request->stastatus_pekerjaan_id == $selesai) || ($kerjaan->status_pekerjaan_id == $selesai_diterima)) {
+        if (($request->status_pekerjaan_id == $selesai) || ($kerjaan->status_pekerjaan_id == $selesai_diterima)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Update ditolak! status selesai tidak dapat dianulir'
