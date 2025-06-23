@@ -393,7 +393,7 @@ class LogharianController extends Controller
             return response()->json(['message' => 'Pekerjaan tidak ditemukan'], 404);
         }
 
-        if (($kerjaan->status_pekerjaan_id == $selesai) || ($kerjaan->status_pekerjaan_id == $selesai_diterima)) {
+        if ($kerjaan->status_pekerjaan_id == $selesai_diterima) {
             return response()->json([
                 'success' => false,
                 'message' => 'Update ditolak! status selesai tidak dapat dianulir'
@@ -412,11 +412,11 @@ class LogharianController extends Controller
 
         // Cek apakah masih ada SubPekerjaan yang belum selesai (status_pekerjaan_id != 7)
         $adaBelumSelesai = $subPekerjaan->contains(function ($sub) {
-            return $sub->status_pekerjaan_id != 7;
+            return $sub->status_pekerjaan_id != 5 || $sub->status_pekerjaan_id != 7;
         });
 
-        // Jika masih ada SubPekerjaan yang belum selesai dan ingin mengubah status ke 3, tolak update
-        if ($adaBelumSelesai && ($request->status_pekerjaan_id == $selesai) || ($kerjaan->status_pekerjaan_id == $selesai_diterima)) {
+        // Jika masih ada SubPekerjaan yang belum selesai dan ingin mengubah status ke selesai dan diterima, tolak update
+        if ($adaBelumSelesai && $request->status_pekerjaan_id == $selesai_diterima) {
             return response()->json([
                 'success' => false,
                 'message' => 'Update ditolak! Masih ada Sub Pekerjaan yang belum selesai.'
@@ -434,7 +434,7 @@ class LogharianController extends Controller
                 'status_pembaruan' => $status->status_pekerjaan
             ]);
 
-            // Jika tidak ada sub pekerjaan atau update bukan ke status 3, izinkan update
+            // Jika tidak ada sub pekerjaan atau update bukan ke status selesai, izinkan update
             $kerjaan->status_pekerjaan_id = $request->status_pekerjaan_id;
             $kerjaan->save();
 
