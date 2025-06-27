@@ -125,7 +125,7 @@
                             <select id="pj_pekerjaan" name="pj_pekerjaan_id" class="form-select" required>
                                 <option value="">-- Pilih Penanggung Jawab --</option>
                                 @foreach($user as $user)
-                                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                <option value="{{ $user->id }}">{{ strtoupper($user->name) }}</option>
                                 @endforeach
                             </select>
                         </div>

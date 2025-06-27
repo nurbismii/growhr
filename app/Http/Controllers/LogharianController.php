@@ -86,11 +86,11 @@ class LogharianController extends Controller
 
     public function create()
     {
-        $sifat_pekerjaan = SifatPekerjaan::orderBy('pekerjaan', 'asc')->get();
+        $sifat_pekerjaan = SifatPekerjaan::orderBy('created_at', 'asc')->get();
         $kategori_pekerjaan = KategoriPekerjaan::orderBy('kategori_pekerjaan', 'asc')->get();
         $prioritas = Prioritas::orderBy('prioritas', 'asc')->get();
         $status_pekerjaan = StatusPekerjaan::orderBy('status_pekerjaan', 'asc')->get();
-        $user = User::where('nik', '!=', null)->get();
+        $user = User::where('nik', '!=', null)->orderBy('name', 'asc')->get();
 
         return view('log-harian.create', compact('sifat_pekerjaan', 'kategori_pekerjaan', 'user', 'prioritas', 'status_pekerjaan'));
     }

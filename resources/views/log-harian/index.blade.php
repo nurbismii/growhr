@@ -377,7 +377,6 @@
                     @endforeach
                 </tbody>
             </table>
-            <div id="custom-tooltip" style="position: absolute; display: none; background: #333; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 14px; max-width: 300px; z-index: 9999;"></div>
         </div>
     </div>
 </div>
@@ -525,36 +524,6 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const tooltip = document.getElementById('custom-tooltip');
-
-        document.querySelectorAll('.row-hover').forEach(function(row) {
-            row.addEventListener('mousemove', function(e) {
-                tooltip.innerText = row.getAttribute('data-deskripsi');
-                tooltip.style.display = 'block';
-
-                const offset = 12; // jarak dari kursor
-                const tooltipWidth = tooltip.offsetWidth;
-                const tooltipHeight = tooltip.offsetHeight;
-
-                let posX = e.clientX + offset;
-                let posY = e.clientY + offset;
-
-                // Deteksi jika tooltip keluar dari sisi kanan atau bawah layar
-                if (posX + tooltipWidth > window.innerWidth) {
-                    posX = e.clientX - tooltipWidth - offset;
-                }
-                if (posY + tooltipHeight > window.innerHeight) {
-                    posY = e.clientY - tooltipHeight - offset;
-                }
-
-                tooltip.style.left = posX + 'px';
-                tooltip.style.top = posY + 'px';
-            });
-
-            row.addEventListener('mouseleave', function() {
-                tooltip.style.display = 'none';
-            });
-        });
         // Fungsi untuk memperbarui warna select berdasarkan nilai yang dipilih
         window.updateSelectColor = function(select) {
             let selectedValue = select.value;
