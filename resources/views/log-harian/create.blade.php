@@ -154,8 +154,9 @@
                         <div class="col-md-12 mb-3">
                             <label for="deskripsiTugas" class="form-label">Deskripsi Tugas
                                 <span class="text-danger">*</span>
+                                <sup>maks 45 Karakter</sup>
                             </label>
-                            <textarea class="form-control" maxlength="45" name="deskripsi_pekerjaan" id="deskripsiTugas" placeholder="Isi Tugas" rows="3" required></textarea>
+                            <textarea class="form-control" maxlength="45" name="deskripsi_pekerjaan" id="deskripsiTugas" placeholder="Isi Tugas" rows="1" required></textarea>
                         </div>
 
                         <div class="col-md-4 mb-3">

@@ -21,14 +21,14 @@
                             <label for="sifatPekerjaan" class="form-label">Sifat Pekerjaan
                                 <span class="text-danger">*</span>
                             </label>
-                            <input type="text" class="form-control" name="sifat_pekerjaan" id="sifatPekerjaan" value="{{ $pk->getSifatPekerjaan->pekerjaan }}" readonly>
+                            <input type="text" class="form-control" name="sifat_pekerjaan" id="sifatPekerjaan" value="{{ $pk->getSifatPekerjaan->pekerjaan }}" required readonly>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="kategoriKegiatan" class="form-label">Kategori Pekerjaan
                                 <span class="text-danger">*</span>
                             </label>
                             <select id="kategoriKegiatan" name="kategori_pekerjaan_id" class="form-select" required>
-                                <option selected disabled>-- Pilih Kategori Kegiatan --</option>
+                                <option value="">-- Pilih Kategori Kegiatan --</option>
                                 @foreach($kategori_pekerjaan as $kategori)
                                 <option value="{{ $kategori->id }}">{{ $kategori->kategori_pekerjaan }}</option>
                                 @endforeach
@@ -39,7 +39,7 @@
                                 <span class="text-danger">*</span>
                             </label>
                             <select id="pj_pekerjaan" name="pj_pekerjaan_id" class="form-select" required>
-                                <option selected disabled>-- Pilih Penanggung Jawab --</option>
+                                <option value="" >-- Pilih Penanggung Jawab --</option>
                                 @foreach($user_modal as $um)
                                 <option value="{{ $um->id }}">{{ $um->name }}</option>
                                 @endforeach
@@ -50,7 +50,7 @@
                                 <span class="text-danger">*</span>
                             </label>
                             <select id="prioritas" name="prioritas_id" class="form-select" required>
-                                <option selected disabled>-- Pilih Prioritas --</option>
+                                <option value="">-- Pilih Prioritas --</option>
                                 @foreach($prioritas as $priorit)
                                 <option value="{{ $priorit->id }}">{{ $priorit->prioritas }}</option>
                                 @endforeach
@@ -61,7 +61,7 @@
                                 <span class="text-danger">*</span>
                             </label>
                             <select id="statusPekerjaan" name="status_pekerjaan_id" class="form-select" required>
-                                <option selected disabled>-- Pilih Status Pekerjaan --</option>
+                                <option value="">-- Pilih Status Pekerjaan --</option>
                                 @foreach($status_pekerjaan as $sk)
                                 <option value="{{ $sk->id }}">{{ $sk->status_pekerjaan }}</option>
                                 @endforeach
@@ -71,14 +71,14 @@
                             <label for="deskripsiTugas" class="form-label">Deskripsi Tugas
                                 <span class="text-danger">*</span>
                             </label>
-                            <textarea class="form-control" name="deskripsi_pekerjaan" id="deskripsiTugas" placeholder="Isi Tugas" rows="3" required readonly>{{ $pk->deskripsi_pekerjaan }}</textarea>
+                            <textarea class="form-control" name="deskripsi_pekerjaan" id="deskripsiTugas" placeholder="Isi Tugas" rows="1" required readonly>{{ $pk->deskripsi_pekerjaan }}</textarea>
                         </div>
 
                         <div class="col-md-12 mb-3">
                             <label for="subDeskripsiPekerjaan" class="form-label">Sub Deskripsi Tugas
-                                <sup>(Opsional)</sup>
+                                <sup>(Opsional) maks 45 Karakter</sup>
                             </label>
-                            <textarea class="form-control" name="sub_deskripsi_pekerjaan" id="subDeskripsiPekerjaan" placeholder="Isi sub Tugas" rows="3"></textarea>
+                            <textarea class="form-control" name="sub_deskripsi_pekerjaan" maxlength="45" id="subDeskripsiPekerjaan" placeholder="Isi sub Tugas" rows="1"></textarea>
                         </div>
 
                         <div class="col-md-4 mb-3">
