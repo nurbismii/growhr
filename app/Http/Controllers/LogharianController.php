@@ -78,7 +78,7 @@ class LogharianController extends Controller
             ]);
         }
 
-        $pekerjaan = $pekerjaanQuery->paginate(10);
+        $pekerjaan = $pekerjaanQuery->get();
 
         return view('log-harian.index', compact(
             'pekerjaan',
