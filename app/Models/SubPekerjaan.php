@@ -17,6 +17,11 @@ class SubPekerjaan extends Model
         return $this->belongsTo(Pekerjaan::class, 'id');
     }
 
+    public function pekerjaanHasOne()
+    {
+        return $this->hasOne(Pekerjaan::class, 'id', 'pekerjaan_id')->select(['id', 'deskripsi_pekerjaan']);
+    }
+
     public function getStatusPekerjaan()
     {
         return $this->hasOne(StatusPekerjaan::class, 'id', 'status_pekerjaan_id');

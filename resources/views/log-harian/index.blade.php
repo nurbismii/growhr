@@ -256,8 +256,8 @@
         <div class="row g-2 d-flex flex-wrap mb-3">
             @csrf
             <div class="col-12 col-sm-6 col-md-3">
-                <select name="pekerjaan[]" class="form-control select-pekerjaan w-100">
-                    <option value="" disabled selected>Kategori</option>
+                <select name="kategori_pekerjaan[]" class="form-control select-kategori-pekerjaan w-100">
+                    <option value="" disabled selected>Kategori Pekerjaan</option>
                     @foreach($kategori_pekerjaan as $kp)
                     <option value="{{ $kp->id }}">{{ $kp->kategori_pekerjaan }}</option>
                     @endforeach
@@ -272,10 +272,10 @@
                 </select>
             </div>
             <div class="col-12 col-sm-6 col-md-3">
-                <select name="pic[]" class="form-control select-pic w-100">
+                <select name="pic[]" class="form-control select-pic w-100" id="select-pic">
                     <option value="" disabled selected>PIC</option>
                     @foreach($user as $user)
-                    <option value="{{ $user->id }}">{{ ucwords(strtolower($user->name)) }}</option>
+                    <option value="{{ $user->id }}">{{ strtoupper(strtolower($user->name)) }}</option>
                     @endforeach
                 </select>
             </div>
@@ -284,6 +284,11 @@
                     <span class="input-group-text"><i class="bx bx-calendar"></i></span>
                     <input type="text" name="tanggal" class="form-control daterange" placeholder="Cari tanggal" />
                 </div>
+            </div>
+            <div class="col-lg-12">
+                <select class="form-select select-pekerjaan" name="pekerjaan[]" id="select-pekerjaan" multiple>
+                    <option value="">Pilih Pekerjaan</option>
+                </select>
             </div>
         </div>
     </form>
@@ -316,7 +321,7 @@
                 </thead>
                 <tbody>
                     @foreach($pekerjaan as $kerjaan)
-                    <tr class="row-hover" data-deskripsi="Deskripsi Pekerjaan : {{ $kerjaan->deskripsi_pekerjaan }}">
+                    <tr class="row-hover baris-utama" data-id="{{ $kerjaan->id }}" data-warna="{{ $kerjaan->warna_status }}">
                         <td class="text-center">{{ ++$no }}</td>
                         <td>
                             <button class="btn btn-sm toggle-btn {{ $kerjaan->getSubPekerjaan->isEmpty() ? 'btn-light-gray' : 'btn-primary' }}"
@@ -368,7 +373,7 @@
                                 </button>
                                 <div class="dropdown-menu">
                                     <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#sub-{{$kerjaan->id}}"><i class="bx text-primary bx-plus-circle me-2"></i> Tambah</a>
-                                    <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#main-edit{{$kerjaan->id}}"><i class="bx text-primary bx-edit-alt me-2"></i> Edit</a>
+                                    <a class="dropdown-item" href="{{ route('log-harian.edit', $kerjaan->id) }}"><i class="bx text-primary bx-edit-alt me-2"></i> Edit</a>
                                     <a class="dropdown-item" href="{{ route('log-harian.destroy', $kerjaan->id) }}" data-confirm-delete="true"><i class="bx text-primary bx-trash me-2"></i> Delete</a>
                                 </div>
                             </div>
@@ -385,145 +390,12 @@
 @include('log-harian.modal.modal-add')
 <!-- Modal end -->
 
-<!-- Modal edit -->.
-@include('log-harian.modal.modal-edit')
-<!-- Modal edit end -->
-
-<!-- Sub Modal edit -->.
-@foreach($pekerjaan as $pk)
-@foreach($pk->getSubPekerjaan as $subpk)
-<div class="modal fade" id="sub-edit{{$subpk->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Sub Pekerjaan</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="{{ route('log-harian.update.sub', $subpk->id) }}" method="post" enctype="multipart/form-data">
-                    @csrf
-                    {{ method_field('patch') }}
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label for="tanggalPelaporan" class="form-label">Tanggal</label>
-                            <input type="text" class="form-control" id="tanggalPelaporan" value="{{ date_format($subpk->created_at, 'd/m/Y') }}" readonly>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="sifatPekerjaan" class="form-label">Sifat Pekerjaan</label>
-                            <input type="text" class="form-control" value="{{ $subpk->getSifatPekerjaan->pekerjaan }}" readonly>
-                            <input type="hidden" class="form-control" name="sifat_pekerjaan" value="{{ $subpk->getSifatPekerjaan->id }}" readonly>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="kategoriKegiatan" class="form-label">Kategori Pekerjaan</label>
-                            <select id="kategoriKegiatan" name="kategori_pekerjaan_id" class="form-select" required>
-                                <option selected value="{{ $subpk->getKategoriPekerjaan->id }}">{{ $subpk->getKategoriPekerjaan->kategori_pekerjaan }}</option>
-                                @foreach($kategori_pekerjaan as $kategori)
-                                <option value="{{ $kategori->id }}">{{ $kategori->kategori_pekerjaan }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="pj_pekerjaan" class="form-label">Penanggung Jawab</label>
-                            <select id="pj_pekerjaan" name="pj_pekerjaan_id" class="form-select" required>
-                                <option selected value="{{ $subpk->getPjPekerjaan->id }}">{{ $subpk->getPjPekerjaan->name }}</option>
-                                @foreach($user_modal as $um)
-                                <option value="{{ $um->id }}">{{ $um->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="prioritas" class="form-label">Prioritas</label>
-                            <select id="prioritas" name="prioritas_id" class="form-select" required>
-                                <option selected value="{{ $subpk->getPrioritas->id }}">{{ $subpk->getPrioritas->prioritas }}</option>
-                                @foreach($prioritas as $priorit)
-                                <option value="{{ $priorit->id }}">{{ $priorit->prioritas }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="statusPekerjaan" class="form-label">Status Pekerjaan</label>
-                            <select id="statusPekerjaan" name="status_pekerjaan_id" class="form-select" required>
-                                <option selected value="{{ $subpk->getStatusPekerjaan->id }}">{{ $subpk->getStatusPekerjaan->status_pekerjaan }}</option>
-                                @foreach($status_pekerjaan as $sk)
-                                <option value="{{ $sk->id }}">{{ $sk->status_pekerjaan }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-12 mb-3">
-                            <label for="deskripsiTugas" class="form-label">Deskripsi Tugas</label>
-                            <textarea class="form-control" name="deskripsi_pekerjaan" id="deskripsiTugas" placeholder="Isi Tugas" rows="3" required readonly>{{ $pk->deskripsi_pekerjaan }}</textarea>
-                        </div>
-
-                        <div class="col-md-12 mb-3">
-                            <label for="subDeskripsiPekerjaan" class="form-label">Sub Deskripsi Tugas</label>
-                            <textarea class="form-control" name="sub_deskripsi_pekerjaan" id="subDeskripsiPekerjaan" placeholder="Isi Sub Deskripsi Tugas" rows="3" required></textarea>
-                        </div>
-
-
-                        <div class="col-md-4 mb-3">
-                            <label for="tanggalMulai" class="form-label">Tanggal Mulai</label>
-                            <input type="date" class="form-control tanggalMulai" name="tanggal_mulai" id="tanggalMulai" value="{{ $subpk->tanggal_mulai }}" required readonly>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="tanggalSelesai" class="form-label">Tanggal Selesai</label>
-                            <input type="date" class="form-control tanggalSelesai" name="tanggal_selesai" id="tanggalSelesai" value="{{ $subpk->tanggal_selesai }}" required readonly>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="duration" class="form-label">Durasi</label>
-                            <input type="text" class="form-control duration" name="durasi" id="duration" value="{{ $subpk->durasi }}" required readonly>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="deadline" class="form-label">Deadline</label>
-                            <input type="text" class="form-control deadline" name="deadline" id="deadline" readonly>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label fw-bold text-secondary">
-                                Tingkat Kesulitan <span class="text-danger">*</span>
-                            </label>
-                            <div class="slider-container">
-                                <span>1</span>
-                                <div class="slider-wrapper">
-                                    <span class="slider-value">{{ $subpk->tingkat_kesulitan }}</span>
-                                    <input type="range" name="tingkat_kesulitan" class="slider-range" min="1" max="10" step="1" value="{{ $subpk->tingkat_kesulitan }}" required>
-                                </div>
-                                <span>10</span>
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="alasanPemilihan" class="form-label">Alasan pemilihan tingkat kesulitan</label>
-                            <textarea type="text" rows="2" class="form-control" name="alasan" id="alasanPemilihan" required>{{$subpk->alasan}}</textarea>
-                        </div>
-                        <div class="col-md-12 mb-3">
-                            <div class="mb-3">
-                                <label class="form-label fw-bold text-muted">Lampiran Dokumen (Opsional)</label>
-                                <div>
-                                    <label for="fileInputSubEdit{{$subpk->id}}" class="custom-file-upload">
-                                        <i class="bi bi-plus-circle"></i>
-                                        <span class="ms-2 fileLabel" id="fileLabelSubEdit{{$subpk->id}}">Pilih file</span>
-                                    </label>
-                                    <input type="file" id="fileInputSubEdit{{$subpk->id}}" class="fileInputSubEdit" name="lampiran">
-                                </div>
-                                <div class="file-name fileNameSubEdit{{$subpk->id}}"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary text-white float-end">
-                        Kirim &nbsp;<span class="tf-icons bx bx-send"></span>
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-@endforeach
-@endforeach
-<!-- Sub Modal edit end -->
-
 @push('script')
 <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+
         // Fungsi untuk memperbarui warna select berdasarkan nilai yang dipilih
         window.updateSelectColor = function(select) {
             let selectedValue = select.value;
@@ -578,34 +450,76 @@
         let today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        document.querySelectorAll("tr").forEach(row => {
+        // Proses baris utama + sub baris
+        document.querySelectorAll("tr.baris-utama, tr.sub-baris").forEach(row => {
             let cellTanggal = row.querySelector(".tanggal-selesai");
             let selectStatus = row.querySelector(".status-pekerjaan");
+            let id = row.dataset.id; // gunakan data-id untuk semua baris
+            let warnaDb = row.dataset.warna;
 
-            if (!cellTanggal || !selectStatus) return;
-
-            let statusPekerjaan = selectStatus.options[selectStatus.selectedIndex].text.trim().toLowerCase();
-            if (statusPekerjaan === "selesai" || statusPekerjaan === "selesai dan diterima") {
-                row.classList.remove("table-danger", "table-warning", "table-success");
-                return;
-            }
-
-            // Ambil teks tanggal dan ubah ke Date object
-            let tanggalText = cellTanggal.innerText.trim(); // Contoh: "07-04-2025"
-            let [day, month, year] = tanggalText.split("-"); // Pisah berdasarkan '-'
-            let tanggalSelesai = new Date(year, month - 1, day); // Format: YYYY, MM (0-based), DD
-            tanggalSelesai.setHours(0, 0, 0, 0);
-
-            let selisihHari = Math.ceil((tanggalSelesai - today) / (1000 * 60 * 60 * 24));
+            if (!cellTanggal || !selectStatus || !id) return;
 
             row.classList.remove("table-danger", "table-warning", "table-success");
 
-            if (selisihHari >= 2 && selisihHari <= 3) {
-                row.classList.add("table-success");
-            } else if (selisihHari >= 0 && selisihHari <= 1) {
-                row.classList.add("table-warning");
-            } else if (selisihHari < 0) {
-                row.classList.add("table-danger");
+            let statusText = selectStatus.options[selectStatus.selectedIndex].text.trim().toLowerCase();
+            let warnaBaru = null;
+
+            if (statusText === "selesai" || statusText === "selesai dan diterima") {
+                // Jika sudah selesai, pakai warna dari DB untuk tampilan
+                if (warnaDb === "merah") {
+                    row.classList.add("table-danger");
+                } else if (warnaDb === "kuning") {
+                    row.classList.add("table-warning");
+                } else if (warnaDb === "hijau") {
+                    row.classList.add("table-success");
+                }
+                warnaBaru = warnaDb;
+            } else {
+                let tanggalText = cellTanggal.innerText.trim();
+                let [day, month, year] = tanggalText.split("-");
+                let tanggalSelesai = new Date(year, month - 1, day);
+                tanggalSelesai.setHours(0, 0, 0, 0);
+
+                let selisihHari = Math.ceil((tanggalSelesai - today) / (1000 * 60 * 60 * 24));
+
+                if (selisihHari >= 2 && selisihHari <= 3) {
+                    warnaBaru = 'hijau';
+                    row.classList.add("table-success");
+                } else if (selisihHari >= 0 && selisihHari <= 1) {
+                    warnaBaru = 'kuning';
+                    row.classList.add("table-warning");
+                } else if (selisihHari < 0) {
+                    warnaBaru = 'merah';
+                    row.classList.add("table-danger");
+                }
+            }
+
+            if (warnaBaru !== warnaDb) {
+                updateWarnaDB(id, warnaBaru, row);
+            }
+        });
+    }
+
+    function updateWarnaDB(id, warna, row) {
+        if (!warna) {
+            // console.warn(`Warna kosong untuk ID ${id}, skip update`);
+            return;
+        }
+
+        $.ajax({
+            url: "/log-harian/update-warna-status/" + id,
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                warna_status: warna
+            },
+            success: function(response) {
+                // console.log(`Warna updated (ID: ${id}):`, warna);
+                row.dataset.warna = warna;
+            },
+            error: function(xhr) {
+                console.error(`Gagal update warna untuk ID ${id}`, xhr.responseText);
+                // Optional: tampilkan alert atau Swal
             }
         });
     }
@@ -615,14 +529,13 @@
 
     // Jalankan lagi jika data diperbarui via AJAX
     $(document).on('xhr.dt', function() {
-        setTimeout(updateRowColors, 500); // Tunggu data baru di-load
+        setTimeout(updateRowColors, 300); // Tunggu data baru di-load
     });
 
     // Jalankan update warna saat status pekerjaan berubah
     $(document).on("change", ".status-pekerjaan", function() {
         updateRowColors();
     });
-
 
     document.addEventListener("DOMContentLoaded", function() {
         let today = new Date().toISOString().split('T')[0];
@@ -634,29 +547,64 @@
     });
 
     $(document).ready(function() {
-        $('.select-pekerjaan').select2({
+        $('.select-kategori-pekerjaan').select2({
             theme: 'bootstrap-5',
-            placeholder: "Kategori",
+            placeholder: "Kategori Pekerjaan",
             allowClear: true, // Memungkinkan pengguna menghapus pilihan
             width: '100%'
         });
-    });
 
-    $(document).ready(function() {
         $('.select-prioritas').select2({
             theme: 'bootstrap-5',
             placeholder: "Prioritas",
             allowClear: true, // Memungkinkan pengguna menghapus pilihan
             width: '100%'
         });
-    });
 
-    $(document).ready(function() {
         $('.select-pic').select2({
             theme: 'bootstrap-5',
             placeholder: "PIC",
-            allowClear: true, // Memungkinkan pengguna menghapus pilihan
+            allowClear: true,
             width: '100%'
+        });
+
+        $('.select-pekerjaan').select2({
+            theme: 'bootstrap-5',
+            placeholder: "Pekerjaan",
+            allowClear: true,
+            width: '100%'
+        });
+
+        $('#select-pic').on('change', function() {
+            let userId = $(this).val();
+
+            if (userId) {
+                // Request list pekerjaan via AJAX
+                $.ajax({
+                    url: '/log-harian/by-user/' + userId, // Ganti URL sesuai route Laravel Anda
+                    type: 'GET',
+                    success: function(data) {
+                        let $pekerjaanSelect = $('#select-pekerjaan');
+                        $pekerjaanSelect.empty().append('<option value=""></option>');
+
+                        data.forEach(function(item) {
+                            $pekerjaanSelect.append(
+                                $('<option>', {
+                                    value: item.id,
+                                    text: item.deskripsi_pekerjaan // ganti sesuai field
+                                })
+                            );
+                        });
+
+                        $pekerjaanSelect.prop('disabled', false).trigger('change');
+                    },
+                    error: function() {
+                        alert('Gagal mengambil data pekerjaan.');
+                    }
+                });
+            } else {
+                $('#select-pekerjaan').empty().append('<option value=""></option>').prop('disabled', true).trigger('change');
+            }
         });
     });
 
@@ -730,7 +678,6 @@
             }]
         });
 
-
         function fetchData() {
             let formData = $('#search-form').serialize();
 
@@ -794,7 +741,7 @@
                             '<a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#sub-' + kerjaan.id + '">' +
                             '<i class="bx text-primary bx-plus-circle me-2"></i> Tambah' +
                             '</a>' +
-                            '<a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#main-edit' + kerjaan.id + '">' +
+                            '<a class="dropdown-item" href="' + "{{ route('log-harian.edit', ':id') }}".replace(':id', kerjaan.id) + '">' +
                             '<i class="bx text-primary bx-edit-alt me-2"></i> Edit' +
                             '</a>' +
                             '<a class="dropdown-item delete-btn" href="' + "{{ route('log-harian.destroy', ':id') }}".replace(':id', kerjaan.id) + '" data-confirm-delete="true">' +
@@ -803,6 +750,12 @@
                             '</div>' +
                             '</div>'
                         ]).draw();
+
+                        let dtRow = table.row(':last');
+                        let node = dtRow.node();
+                        $(node).attr('data-warna', kerjaan.warna_status); // warna_status dari DB
+                        $(node).addClass('baris-utama');
+                        $(node).attr('data-id', kerjaan.id); // penting untuk updateRowColors
                     });
                     setTimeout(updateRowColors, 500);
                     updateDeadline(); //
@@ -1003,7 +956,7 @@
                             toggleBtn.html('-').removeClass('btn-primary').addClass('btn-light-gray');
                         } else {
                             subRows = subPekerjaan.map((sub, index) => `
-                    <tr class="sub-row table-hover row-hover">
+                    <tr class="sub-row sub-baris table-hover row-hover" data-id="${sub.id}" data-warna="${sub.warna_status}">
                         <td></td>
                         <td>${index + 1}</td>
                         <td>
@@ -1051,7 +1004,7 @@
                                     <i class="bx bx-edit"></i>
                                 </button>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#sub-edit${sub.id}">
+                                    <a class="dropdown-item" href="${"{{ route('log-harian.edit.sub', ':id') }}".replace(':id', sub.id)}">
                                         <i class="bx text-primary bx-edit-alt me-2"></i> Edit
                                     </a>
                                     <a class="dropdown-item delete-btn" href="${"{{ route('log-harian.destroy.sub', ':id') }}".replace(':id', sub.id)}" data-confirm-delete="true">
@@ -1070,9 +1023,6 @@
 
                         updateDeadline();
                         setTimeout(updateRowColors, 100);
-                        setTimeout(() => {
-                            $('[data-bs-toggle="tooltip"]').tooltip();
-                        }, 100);
                         setTimeout(() => {
                             document.querySelectorAll(".sub-status").forEach(function(select) {
                                 updateSelectColor(select);
@@ -1163,23 +1113,23 @@
         $("#fileName" + fileId.replace("fileInput", "")).text(fileName);
     });
 
-    $(document).on("change", ".fileInputEdit", function() {
-        let fileId = $(this).attr("id"); // Dapatkan ID input file (misal: fileInput1)
-        let fileName = this.files[0] ? this.files[0].name : "Pilih File";
+    // $(document).on("change", ".fileInputEdit", function() {
+    //     let fileId = $(this).attr("id"); // Dapatkan ID input file (misal: fileInput1)
+    //     let fileName = this.files[0] ? this.files[0].name : "Pilih File";
 
-        // Ubah label & nama file berdasarkan ID yang sesuai
-        $("#fileLabelEdit" + fileId.replace("fileInputEdit", "")).text(fileName);
-        $("#fileNameEdit" + fileId.replace("fileInputEdit", "")).text(fileName);
-    });
+    //     // Ubah label & nama file berdasarkan ID yang sesuai
+    //     $("#fileLabelEdit" + fileId.replace("fileInputEdit", "")).text(fileName);
+    //     $("#fileNameEdit" + fileId.replace("fileInputEdit", "")).text(fileName);
+    // });
 
-    $(document).on("change", ".fileInputSubEdit", function() {
-        let fileId = $(this).attr("id"); // Dapatkan ID input file (misal: fileInput1)
-        let fileName = this.files[0] ? this.files[0].name : "Pilih File";
+    // $(document).on("change", ".fileInputSubEdit", function() {
+    //     let fileId = $(this).attr("id"); // Dapatkan ID input file (misal: fileInput1)
+    //     let fileName = this.files[0] ? this.files[0].name : "Pilih File";
 
-        // Ubah label & nama file berdasarkan ID yang sesuai
-        $("#fileLabelSubEdit" + fileId.replace("fileInputSubEdit", "")).text(fileName);
-        $("#fileNameSubEditSub" + fileId.replace("fileInputSubEdit", "")).text(fileName);
-    });
+    //     // Ubah label & nama file berdasarkan ID yang sesuai
+    //     $("#fileLabelSubEdit" + fileId.replace("fileInputSubEdit", "")).text(fileName);
+    //     $("#fileNameSubEditSub" + fileId.replace("fileInputSubEdit", "")).text(fileName);
+    // });
 
     document.addEventListener("DOMContentLoaded", function() {
         function calculateDays(startInput, endInput, durationInput, deadlineInput) {
@@ -1209,11 +1159,17 @@
                 tglAkhir = endDate
                 tglAkhir.setHours(0, 0, 0, 0)
 
-                const selisih = ((tglAkhir - today) / (1000 * 60 * 60 * 24));
+                let selisih = ((tglAkhir - today) / (1000 * 60 * 60 * 24));
+
+                if (selisih < 0) {
+                    selisih = 'H+' + String(selisih).replace('-', '');
+                } else {
+                    selisih = 'H-' + String(selisih).replace('-', '');
+                }
 
                 const daysDiff = timeDiff / (1000 * 60 * 60 * 24);
                 durationInput.value = daysDiff + " Hari";
-                deadlineInput.value = selisih > 0 ? "H-" + selisih : "H-0";
+                deadlineInput.value = selisih;
             } else {
                 durationInput.value = "";
                 deadlineInput.value = "";
@@ -1265,11 +1221,13 @@
             tanggalSelesai.setHours(0, 0, 0, 0);
             let selisihHari = Math.ceil((tanggalSelesai - today) / (1000 * 60 * 60 * 24));
 
-            if (selisihHari <= -1) {
-                selisihHari = 0;
+            if (selisihHari < 0) {
+                selisihHari = 'H+' + String(selisihHari).replace('-', '');
+            } else {
+                selisihHari = 'H-' + String(selisihHari).replace('-', '');
             }
 
-            cellDeadline.innerText = `H-${selisihHari}`;
+            cellDeadline.innerText = selisihHari;
         }
 
         // Tabel utama

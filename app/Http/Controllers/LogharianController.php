@@ -22,56 +22,63 @@ class LogharianController extends Controller
 {
     public function index(Request $request)
     {
-        $title = 'Hapus data!';
-        $text = 'Kamu yakin ingin menghapus data ini ?';
-        confirmDelete($title, $text);
+        confirmDelete('Hapus data!', 'Kamu yakin ingin menghapus data ini ?');
 
-        $sifat_pekerjaan = SifatPekerjaan::orderBy('pekerjaan', 'asc')->get();
-        $kategori_pekerjaan = KategoriPekerjaan::orderBy('kategori_pekerjaan', 'asc')->get();
-        $prioritas = Prioritas::orderBy('prioritas', 'asc')->get();
-        $status_pekerjaan = StatusPekerjaan::orderBy('status_pekerjaan', 'asc')->get();
-        $user = User::where('nik', '!=', null)->orderBy('name', 'asc')->get();
-        $user_modal = User::where('nik', '!=', null)->orderBy('name', 'asc')->get();
+        $sifat_pekerjaan = SifatPekerjaan::orderBy('pekerjaan')->get();
+        $kategori_pekerjaan = KategoriPekerjaan::orderBy('kategori_pekerjaan')->get();
+        $prioritas = Prioritas::orderBy('prioritas')->get();
+        $status_pekerjaan = StatusPekerjaan::orderBy('status_pekerjaan')->get();
+        $user = $user_modal = User::whereNotNull('nik')->orderBy('name')->get();
 
-        if (Auth::user()->role == 'ASMEN') {
-            $pekerjaan = Pekerjaan::with(['getUser', 'getKategoriPekerjaan', 'getSifatPekerjaan', 'getPrioritas', 'getStatusPekerjaan', 'getPjPekerjaan', 'getSubPekerjaan'])
-                ->orderBy('status_pekerjaan_id', 'ASC')
-                ->orderBy('tingkat_kesulitan', 'DESC');
-        } else {
-            $pekerjaan = Pekerjaan::with(['getUser', 'getKategoriPekerjaan', 'getSifatPekerjaan', 'getPrioritas', 'getStatusPekerjaan', 'getPjPekerjaan', 'getSubPekerjaan'])
-                ->where('user_id', Auth::user()->id)
-                ->orderBy('status_pekerjaan_id', 'ASC')
-                ->orderBy('tingkat_kesulitan', 'DESC');
+        // Base query
+        $pekerjaanQuery = Pekerjaan::with([
+            'getUser',
+            'getKategoriPekerjaan',
+            'getSifatPekerjaan',
+            'getPrioritas',
+            'getStatusPekerjaan',
+            'getPjPekerjaan',
+            'getSubPekerjaan'
+        ])
+            ->orderBy('status_pekerjaan_id')
+            ->orderByDesc('tingkat_kesulitan');
+
+        // Filter role
+        if (!in_array(Auth::user()->role, ['ASMEN', 'ADMIN'])) {
+            $pekerjaanQuery->where('user_id', Auth::id());
         }
 
+        // Filter jika ajax
         if ($request->ajax()) {
-            if ($request->has('pekerjaan')) {
-                $pekerjaan->whereIn('kategori_pekerjaan_id', $request->pekerjaan);
+            if ($request->filled('pekerjaan')) {
+                $pekerjaanQuery->whereIn('id', $request->pekerjaan);
             }
-            if ($request->has('prioritas')) {
-                $pekerjaan->whereIn('prioritas_id', $request->prioritas);
+            if ($request->filled('kategori_pekerjaan')) {
+                $pekerjaanQuery->whereIn('kategori_pekerjaan_id', $request->kategori_pekerjaan);
             }
-            if ($request->has('pic')) {
-                $pekerjaan->whereIn('user_id', $request->pic);
+            if ($request->filled('prioritas')) {
+                $pekerjaanQuery->whereIn('prioritas_id', $request->prioritas);
             }
-            if ($request->has('tanggal')) {
+            if ($request->filled('pic')) {
+                $pekerjaanQuery->whereIn('user_id', $request->pic);
+            }
+            if ($request->filled('tanggal')) {
                 $dates = explode(" - ", $request->tanggal);
-
-                if (count($dates) == 2) {
-                    $startDate = date('Y-m-d', strtotime(trim($dates[0]))); // Konversi ke format Y-m-d
-                    $endDate = date('Y-m-d', strtotime(trim($dates[1])));
-
-                    $pekerjaan->whereBetween('tanggal_mulai', array($startDate, $endDate));
+                if (count($dates) === 2) {
+                    $pekerjaanQuery->whereBetween('tanggal_mulai', [
+                        date('Y-m-d', strtotime(trim($dates[0]))),
+                        date('Y-m-d', strtotime(trim($dates[1])))
+                    ]);
                 }
             }
 
             return response()->json([
-                'pekerjaan' => $pekerjaan->get(),
+                'pekerjaan' => $pekerjaanQuery->get(),
                 'status_pekerjaan' => $status_pekerjaan
             ]);
         }
 
-        $pekerjaan = $pekerjaan->get();
+        $pekerjaan = $pekerjaanQuery->paginate(10);
 
         return view('log-harian.index', compact(
             'pekerjaan',
@@ -93,6 +100,34 @@ class LogharianController extends Controller
         $user = User::where('nik', '!=', null)->orderBy('name', 'asc')->get();
 
         return view('log-harian.create', compact('sifat_pekerjaan', 'kategori_pekerjaan', 'user', 'prioritas', 'status_pekerjaan'));
+    }
+
+    public function edit($id)
+    {
+        $pekerjaan = Pekerjaan::with(['getUser', 'getKategoriPekerjaan', 'getSifatPekerjaan', 'getPrioritas', 'getStatusPekerjaan', 'getPjPekerjaan', 'getSubPekerjaan'])
+            ->where('id', $id)->first();
+
+        $sifat_pekerjaan = SifatPekerjaan::orderBy('created_at', 'asc')->get();
+        $kategori_pekerjaan = KategoriPekerjaan::orderBy('kategori_pekerjaan', 'asc')->get();
+        $prioritas = Prioritas::orderBy('prioritas', 'asc')->get();
+        $status_pekerjaan = StatusPekerjaan::orderBy('status_pekerjaan', 'asc')->get();
+        $user = User::where('nik', '!=', null)->orderBy('name', 'asc')->get();
+
+        return view('log-harian.edit', compact('pekerjaan', 'sifat_pekerjaan', 'kategori_pekerjaan', 'user', 'prioritas', 'status_pekerjaan'));
+    }
+
+    public function subPekerjaanEdit($id)
+    {
+        $subpk = SubPekerjaan::with(['getUser', 'getKategoriPekerjaan', 'getSifatPekerjaan', 'getPrioritas', 'getStatusPekerjaan', 'getPjPekerjaan', 'pekerjaanHasOne'])
+            ->where('id', $id)->first();
+
+        $sifat_pekerjaan = SifatPekerjaan::orderBy('created_at', 'asc')->get();
+        $kategori_pekerjaan = KategoriPekerjaan::orderBy('kategori_pekerjaan', 'asc')->get();
+        $prioritas = Prioritas::orderBy('prioritas', 'asc')->get();
+        $status_pekerjaan = StatusPekerjaan::orderBy('status_pekerjaan', 'asc')->get();
+        $user = User::where('nik', '!=', null)->orderBy('name', 'asc')->get();
+
+        return view('log-harian.sub-pekerjaan.edit', compact('subpk', 'sifat_pekerjaan', 'kategori_pekerjaan', 'user', 'prioritas', 'status_pekerjaan'));
     }
 
     public function store(Request $request)
@@ -384,6 +419,7 @@ class LogharianController extends Controller
     public function updateStatusPekerjaan(Request $request, $id)
     {
         $belum_mulai = 1;
+        $selesai = 5;
         $selesai_diterima = 7;
 
         $kerjaan = Pekerjaan::with('getStatusPekerjaan')->where('id', $id)->first();
@@ -415,7 +451,7 @@ class LogharianController extends Controller
         });
 
         // Jika masih ada SubPekerjaan yang belum selesai, tolak update
-        if ($adaBelumSelesai) {
+        if ($adaBelumSelesai && ($request->status_pekerjaan_id == $selesai) || ($request->status_pekerjaan_id == $selesai_diterima)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Update ditolak! Masih ada Sub Pekerjaan yang belum selesai.'
@@ -486,5 +522,29 @@ class LogharianController extends Controller
 
             return response()->json(['message' => 'Terjadi kesalahan']);
         }
+    }
+
+    public function updateWarnaStatus(Request $request, $id)
+    {
+        $warna = $request->input('warna_status');
+
+        // Coba update ke Pekerjaan dulu
+        $updated = Pekerjaan::where('id', $id)->update(['warna_status' => $warna]);
+
+        // Kalau tidak ada di Pekerjaan, coba SubPekerjaan
+        $updated = SubPekerjaan::where('id', $id)->update(['warna_status' => $warna]);
+
+        if ($updated) {
+            return response()->json(['message' => 'Warna status updated']);
+        } else {
+            return response()->json(['message' => 'ID not found'], 404);
+        }
+    }
+
+    public function byUser($user)
+    {
+        return Pekerjaan::where('user_id', $user)
+            ->select('id', 'deskripsi_pekerjaan')
+            ->get();
     }
 }

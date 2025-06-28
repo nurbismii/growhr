@@ -24,12 +24,16 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('log-harian', 'App\Http\Controllers\LogharianController');
 
     Route::get('/log-harian/sub/{id}', [App\Http\Controllers\LogharianController::class, 'getSubPekerjaan']);
+    Route::get('/log-harian/sub/edit/{id}', [App\Http\Controllers\LogharianController::class, 'subPekerjaanEdit'])->name('log-harian.edit.sub');
     Route::post('log-harian/store/sub-pekerjaan', [App\Http\Controllers\LogharianController::class, 'subPekerjaanStore'])->name('log-harian.store.sub');
     Route::patch('/log-harian/sub/update/{id}', [App\Http\Controllers\LogharianController::class, 'subPekerjaanUpdate'])->name('log-harian.update.sub');
     Route::delete('/log-harian/sub/destroy/{id}', [App\Http\Controllers\LogharianController::class, 'subPekerjaanDestroy'])->name('log-harian.destroy.sub');
 
     Route::post('log-harian/update-status-pekerjaan/{id}', [App\Http\Controllers\LogharianController::class, 'updateStatusPekerjaan']);
     Route::post('log-harian/sub/update-status-pekerjaan/{id}', [App\Http\Controllers\LogharianController::class, 'updateSubStatusPekerjaan']);
+    Route::post('/log-harian/update-warna-status/{id}', [App\Http\Controllers\LogharianController::class, 'updateWarnaStatus']);
+
+    Route::get('/log-harian/by-user/{user}', [App\Http\Controllers\LogharianController::class, 'byUser']);
 
     Route::post('laporan-masalah/update-status-pekerjaan/{id}', [App\Http\Controllers\LaporanmasalahController::class, 'updateStatusPekerjaan']);
     Route::post('laporan-hasil/update-status-laporan/{id}', [App\Http\Controllers\LaporanhasilController::class, 'updateStatusLaporan']);
