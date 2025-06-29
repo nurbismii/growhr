@@ -451,7 +451,10 @@ class LogharianController extends Controller
         });
 
         // Jika masih ada SubPekerjaan yang belum selesai, tolak update
-        if ($adaBelumSelesai && ($request->status_pekerjaan_id == $selesai) || ($request->status_pekerjaan_id == $selesai_diterima)) {
+        $isSelesaiRequest = $request->status_pekerjaan_id == $selesai || $request->status_pekerjaan_id == $selesai_diterima;
+
+        // Jika masih ada SubPekerjaan yang belum selesai dan request status pekerjaan selesai atau selesai_diterima
+        if ($adaBelumSelesai && $isSelesaiRequest) {
             return response()->json([
                 'success' => false,
                 'message' => 'Update ditolak! Masih ada Sub Pekerjaan yang belum selesai.'
