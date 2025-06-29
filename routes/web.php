@@ -18,7 +18,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group(['prefix' => 'insight'], function () {
         Route::get('papan-kerja', [\App\Http\Controllers\HomeController::class, 'papanKerja'])->name('papan-kerja');
         Route::get('kalender-kerja', [\App\Http\Controllers\HomeController::class, 'kalender'])->name('kalender-kerja');
-        Route::get('tugas', [\App\Http\Controllers\HomeController::class, 'tugas'])->name('tugas')->middleware('role:ASMEN');
+        Route::get('tugas', [\App\Http\Controllers\HomeController::class, 'tugas'])->name('tugas');
     });
 
     Route::resource('log-harian', 'App\Http\Controllers\LogharianController');

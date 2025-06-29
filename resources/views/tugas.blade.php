@@ -160,72 +160,179 @@
     <form id="search-form">
         <div class="row g-2 d-flex flex-wrap mb-3">
             @csrf
-            <div class="col-12 col-sm-6 col-md-3">
-                <select id="pekerjaan_id" name="pekerjaan_id[]" class="form-control select-pekerjaan">
-                    <option value="" disabled selected>Pekerjaan</option>
-                    @foreach($pekerjaan as $pekerjaan)
-                    <option value="{{ $pekerjaan->id }}">{{ $pekerjaan->deskripsi_pekerjaan }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-12 col-sm-6 col-md-3">
-                <select name="prioritas[]" class="form-control select-prioritas w-100">
-                    <option value="" disabled selected>Prioritas</option>
-                    @foreach($prioritas as $prioritas)
-                    <option value="{{ $prioritas->id }}">{{ $prioritas->prioritas }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-12 col-sm-6 col-md-3">
-                <select name="pic[]" class="form-control select-pic w-100">
+            <div class="col-12 col-sm-6 col-md-4">
+                <select name="pic[]" class="form-control select-pic w-100" id="select-pic">
                     <option value="" disabled selected>Person in Charge</option>
                     @foreach($user as $user)
-                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                    <option value="{{ $user->id }}">{{ strtoupper($user->name) }}</option>
                     @endforeach
                 </select>
             </div>
-            <div class="col-12 col-sm-6 col-md-3">
-                <div class="input-group w-100">
-                    <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-                    <input type="text" name="tanggal" class="form-control daterange" />
-                </div>
+            <div class="col-12 col-sm-6 col-md-8">
+                <select id="select-pekerjaan" name="pekerjaan_id[]" class="form-control select-pekerjaan" multiple>
+                    <option value="" selected>Pekerjaan</option>
+                </select>
             </div>
         </div>
     </form>
-
 
     <div class="card">
         <div class="table-responsive text-nowrap">
             <table class="table" id="tugas">
                 <thead class="table-primary">
                     <tr>
+                        <th></th>
                         <th class="text-center text-white">Tanggal Mulai</th>
                         <th class="text-center text-white">PIC</th>
                         <th class="text-center text-white">Deskripsi Pekerjaan</th>
-                        <th class="text-center text-white">Prioritas</th>
                         <th class="text-center text-white">Status Pekerjaan</th>
                         <th class="text-center text-white">Tanggal Update</th>
                     </tr>
                 </thead>
-                <tbody>
-                </tbody>
             </table>
         </div>
     </div>
 
-    <canvas id="statusChart" height="150" class="mt-5"></canvas>
+    <canvas id="chart" height="150" class="mt-5"></canvas>
 </div>
 
 @push('script')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 
 <script>
+    $(document).ready(function() {
+        let table = $('#tugas').DataTable({
+            responsive: true,
+            paging: true,
+            searching: true,
+            ordering: true,
+            scrollY: '60vh',
+            scrollCollapse: true,
+            columns: [{
+                    data: null,
+                    defaultContent: '<button class="btn btn-sm btn-outline-primary toggle-sub">+</button>',
+                    orderable: false
+                },
+                {
+                    data: 'pekerjaan.tanggal_mulai',
+                    defaultContent: '-'
+                },
+                {
+                    data: 'pekerjaan.get_user.name',
+                    defaultContent: '-'
+                },
+                {
+                    data: 'pekerjaan.deskripsi_pekerjaan',
+                    defaultContent: '-'
+                },
+                {
+                    data: 'status_pembaruan',
+                    defaultContent: '-'
+                },
+                {
+                    data: 'pembaruan',
+                    defaultContent: '-'
+                }
+            ]
+        });
+
+        function fetchData() {
+            let formData = $('#search-form').serializeArray();
+            let hasFilter = false;
+
+            // Cek apakah ada filter aktif
+            formData.forEach(function(field) {
+                if (field.value && field.value.trim() !== "") {
+                    hasFilter = true;
+                }
+            });
+
+            let ajaxData;
+            if (hasFilter) {
+                ajaxData = formData;
+            } else {
+                ajaxData = {
+                    limit: 10,
+                    order: 'desc'
+                };
+            }
+
+            $.ajax({
+                url: "{{ route('tugas') }}",
+                type: "GET",
+                data: ajaxData,
+                success: function(response) {
+                    table.clear();
+
+                    window.lastRiwayat = response.riwayat;
+
+                    let utama = response.riwayat.filter(r => !r.sub_pekerjaan_id);
+
+                    utama.forEach(function(riwayat) {
+                        table.row.add(riwayat);
+                    });
+
+                    table.draw();
+
+                    // Di sini gunakan riwayat_chart yang sudah dibatasi backend
+                    generateChart(response.riwayat_chart);
+                },
+                error: function(xhr) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+
+        // Expand tombol
+        $('#tugas tbody').on('click', '.toggle-sub', function() {
+            let tr = $(this).closest('tr');
+            let row = table.row(tr);
+
+            if (row.child.isShown()) {
+                row.child.hide();
+                $(this).text('+');
+            } else {
+                let pekerjaanId = row.data().pekerjaan_id;
+                let subs = window.lastRiwayat.filter(r => r.pekerjaan_id == pekerjaanId && r.sub_pekerjaan_id);
+
+                if (subs.length === 0) {
+                    row.child('<div class="text-muted">Tidak ada sub pekerjaan</div>').show();
+                } else {
+                    let html = '<table class="table table-sm table-bordered mb-0">';
+                    html += '<thead><tr><th>Sub Pekerjaan</th><th>Status</th><th>Pembaruan</th></tr></thead><tbody>';
+                    subs.forEach(s => {
+                        // Pastikan akses ke sub_pekerjaan.sub_deskripsi_pekerjaan
+                        let subDesc = s.sub_pekerjaan && s.sub_pekerjaan.sub_deskripsi_pekerjaan ? s.sub_pekerjaan.sub_deskripsi_pekerjaan : '-';
+                        html += `<tr>
+                <td>${subDesc}</td>
+                <td>${s.status_pembaruan}</td>
+                <td>${s.pembaruan}</td>
+                </tr>`;
+                    });
+                    html += '</tbody></table>';
+
+                    row.child(html).show();
+                }
+                $(this).text('-');
+            }
+        });
+
+        // Trigger otomatis saat filter berubah
+        $('#search-form select, #search-form input').on('change', function() {
+            fetchData();
+        });
+
+        fetchData();
+    });
+
     const statusMap = {
         'Belum Dimulai': 0,
         'Sedang Dikerjakan': 1,
         'Revisi': 2,
         'Laporan': 3,
-        'Selesai': 4
+        'Selesai': 4,
+        'Selesai Dan Diterima': 5
     };
 
     let chartInstance;
@@ -238,7 +345,6 @@
     }
 
     function generateChart(riwayatData) {
-
         const groupedData = {};
 
         riwayatData.forEach(item => {
@@ -247,21 +353,31 @@
 
             const pekerjaanId = pekerjaan.id;
             const pekerjaanName = pekerjaan.deskripsi_pekerjaan;
+            const tglJam = item.pembaruan.substring(0, 16);
+            const statusVal = statusMap[item.status_pembaruan];
 
-            if (!groupedData[pekerjaanId]) {
-                groupedData[pekerjaanId] = {
-                    label: pekerjaanName,
+            let groupKey = pekerjaanId;
+            let labelName = pekerjaanName;
+
+            if (item.sub_pekerjaan_id) {
+                groupKey = pekerjaanId + '-' + item.sub_pekerjaan_id;
+                labelName = `${pekerjaanName} - Sub ${item.sub_pekerjaan_id}`;
+            }
+
+            if (!groupedData[groupKey]) {
+                groupedData[groupKey] = {
+                    label: labelName,
                     data: []
                 };
             }
 
-            groupedData[pekerjaanId].data.push({
-                tgl: item.pembaruan.split(' ')[0],
-                status: statusMap[item.status_pembaruan]
+            groupedData[groupKey].data.push({
+                tgl: tglJam,
+                status: statusVal
             });
         });
 
-        const allDates = [...new Set(riwayatData.map(d => d.pembaruan.split(' ')[0]))].sort();
+        const allDates = [...new Set(riwayatData.map(d => d.pembaruan.substring(0, 16)))].sort();
 
         const datasets = Object.values(groupedData).map(group => {
             const dataByDate = {};
@@ -274,18 +390,19 @@
             return {
                 label: group.label,
                 data: filledData,
-                borderColor: getRandomColor(),
-                borderWidth: 2,
+                borderColor: group.label.includes('Sub') ?
+                    getRandomColor() : 'black',
+                borderWidth: group.label.includes('Sub') ? 1.5 : 3,
                 tension: 0.3,
                 pointRadius: 4,
-                fill: false
+                fill: false,
+                spanGaps: true
             };
         });
 
-        // destroy chart lama kalau ada
         if (chartInstance) chartInstance.destroy();
 
-        const ctx = document.getElementById('statusChart').getContext('2d');
+        const ctx = document.getElementById('chart').getContext('2d');
         chartInstance = new Chart(ctx, {
             type: 'line',
             data: {
@@ -303,149 +420,88 @@
                     y: {
                         ticks: {
                             stepSize: 1,
-                            callback: function(value) {
-                                return Object.keys(statusMap).find(k => statusMap[k] === value);
-                            }
+                            callback: value => Object.keys(statusMap).find(k => statusMap[k] === value)
                         }
                     }
                 },
                 plugins: {
                     legend: {
                         position: 'top'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const point = context.raw;
+                                let statusDisplay = point && point.status_key ? point.status_key : Object.keys(statusMap).find(k => statusMap[k] === context.parsed.y);
+                                return `${context.dataset.label}: ${statusDisplay}`;
+                            }
+                        }
                     }
                 }
             }
         });
     }
 
-    // Initial load saat DOM siap
+    // Saat DOM siap, load chart awal
     document.addEventListener('DOMContentLoaded', function() {
         let rawRiwayat = @json($riwayat_chart);
         const riwayatData = Array.isArray(rawRiwayat) ? rawRiwayat : [rawRiwayat];
         generateChart(riwayatData);
     });
 
-    // Filter by PIC via AJAX
-    document.getElementById('filter-pic').addEventListener('change', function() {
-        const selectedPic = this.value;
-
-        $.ajax({
-            url: "{{ route('tugas') }}",
-            method: "GET",
-            data: {
-                pic: selectedPic ? [selectedPic] : null
-            },
-            success: function(response) {
-                console.log("Response dari server:", response);
-                generateChart(response.riwayat);
-            },
-            error: function(err) {
-                console.error("Gagal ambil data filter:", err);
-            }
-        });
-    });
-</script>
-
-<script>
     $(document).ready(function() {
-        function getCurrentMonthRange() {
-            let start = moment().startOf('month'); // Hari pertama bulan ini
-            let end = moment().endOf('month'); // Hari terakhir bulan ini
 
-            return {
-                start,
-                end
-            };
-        }
-
-        let {
-            start,
-            end
-        } = getCurrentMonthRange();
-
-        $('.daterange').daterangepicker({
-            startDate: start,
-            endDate: end,
-            locale: {
-                format: 'DD-MM-YYYY'
-            }
-        });
-    });
-
-    $(document).ready(function() {
-        $('.select-pekerjaan').select2({
-            theme: 'bootstrap-5',
-            placeholder: "Pekerjaan",
-            allowClear: true // Memungkinkan pengguna menghapus pilihan
-        });
-    });
-
-    $(document).ready(function() {
         $('.select-prioritas').select2({
             theme: 'bootstrap-5',
             placeholder: "Prioritas",
             allowClear: true // Memungkinkan pengguna menghapus pilihan
         });
-    });
 
-    $(document).ready(function() {
         $('.select-pic').select2({
             theme: 'bootstrap-5',
             placeholder: "PIC",
             allowClear: true // Memungkinkan pengguna menghapus pilihan
         });
-    });
 
-    $(document).ready(function() {
-        let table = $('#tugas').DataTable({
-            responsive: true,
-            paging: true,
-            searching: true,
-            ordering: true,
-            scrollY: '60vh',
-            scrollCollapse: true,
-            "columnDefs": [{
-                "className": "dt-center",
-                "targets": "_all"
-            }],
+        $('.select-pekerjaan').select2({
+            theme: 'bootstrap-5',
+            placeholder: "Pekerjaan",
+            allowClear: true // Memungkinkan pengguna menghapus pilihan
         });
 
-        function fetchData() {
-            let formData = $('#search-form').serialize();
+        $('#select-pic').on('change', function() {
+            let userId = $(this).val();
 
-            $.ajax({
-                url: "{{ route('tugas') }}",
-                type: "GET",
-                data: formData,
-                success: function(response) {
-                    table.clear().draw();
+            if (userId) {
+                // Request list pekerjaan via AJAX
+                $.ajax({
+                    url: '/log-harian/by-user/' + userId, // Ganti URL sesuai route Laravel Anda
+                    type: 'GET',
+                    success: function(data) {
+                        let $pekerjaanSelect = $('#select-pekerjaan');
+                        $pekerjaanSelect.empty().append('<option value=""></option>');
 
-                    response.riwayat.forEach(function(riwayat) {
-                        table.row.add([
-                            riwayat.pekerjaan?.tanggal_mulai ?? '-',
-                            riwayat.pekerjaan?.get_user?.name ?? '-',
-                            riwayat.pekerjaan?.deskripsi_pekerjaan ?? '-',
-                            riwayat.pekerjaan?.get_prioritas?.prioritas ?? '-',
-                            riwayat.status_pembaruan,
-                            riwayat.pembaruan ?? '-'
-                        ]).draw(false);
-                    });
+                        data.forEach(function(item) {
+                            $pekerjaanSelect.append(
+                                $('<option>', {
+                                    value: item.id,
+                                    text: item.deskripsi_pekerjaan // ganti sesuai field
+                                })
+                            );
+                        });
 
-                    generateChart(response.riwayat);
-                },
-                error: function(xhr) {
-                    console.log(xhr.responseText);
-                }
-            });
-        }
+                        $pekerjaanSelect.prop('disabled', false).trigger('change');
+                    },
+                    error: function() {
+                        alert('Gagal mengambil data pekerjaan.');
+                    }
+                });
+            } else {
+                $('#select-pekerjaan').empty().append('<option value=""></option>').prop('disabled', true).trigger('change');
+            }
 
-        // Trigger pencarian otomatis saat filter berubah
-        $('#search-form select, #search-form input').on('change', function() {
-            fetchData();
+
         });
-
-        // Jalankan saat pertama kali halaman dimuat
-        fetchData();
     });
 </script>
 @endpush

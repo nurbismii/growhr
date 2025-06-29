@@ -84,7 +84,7 @@
 
         <!-- Dashboard Menu -->
         <h5 class="fw-bold mt-4">Dashboard</h5>
-        @if(Auth::user()->role == 'ASMEN')
+
         <div class="row g-3">
             <div class="col-md-4">
                 <a href="{{ route('papan-kerja') }}">
@@ -111,26 +111,7 @@
                 </a>
             </div>
         </div>
-        @else
-        <div class="row g-3">
-            <div class="col-md-6">
-                <a href="{{ route('papan-kerja') }}">
-                    <div class="dashboard-card">
-                        <img src="{{ asset('dashboard-monitor.svg') }}" width="50" class="mb-2" alt="Papan Kerja">
-                        <div class="fw-bold text-white">Papan Kerja</div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-md-6">
-                <a href="{{ route('kalender-kerja') }}">
-                    <div class="dashboard-card">
-                        <img src="{{ asset('calendar-days.svg') }}" width="50" class="mb-2" alt="Kalender Kerja">
-                        <div class="fw-bold">Kalender Kerja</div>
-                    </div>
-                </a>
-            </div>
-        </div>
-        @endif
+        
         <!-- Informasi Penting -->
         <h5 class="fw-bold text-center mt-4">Informasi Penting</h5>
         <div class="info-box mt-2">

@@ -58,7 +58,7 @@ class HomeController extends Controller
             });
         }
 
-        $pekerjaan = $query->limit($limit)->get();
+        $pekerjaan = $query->orderBy('created_at', 'desc')->limit($limit)->get();
         $divisi = Divisi::all();
 
         if ($request->ajax()) {
@@ -109,7 +109,12 @@ class HomeController extends Controller
         $status_pekerjaan = StatusPekerjaan::all();
         $pekerjaan = Pekerjaan::all();
         $user_chart = User::all();
-        $user = User::all();
+
+        if ((Auth::user()->role == 'ADMIN') || (Auth::user()->role == 'ASMEN')) {
+            $user = User::where('nik', '!=', null)->orderBy('name', 'asc')->get();
+        } else {
+            $user = User::where('nik', '!=', null)->where('id', Auth::user()->id)->orderBy('name', 'asc')->get();
+        }
 
         // Query dasar
         $riwayatQuery = RiwayatPembaruanStatusPekerjaan::with([
@@ -123,7 +128,10 @@ class HomeController extends Controller
             },
             'pekerjaan.getStatusPekerjaan',
             'pekerjaan.getPrioritas',
-            'pekerjaan.getUser'
+            'pekerjaan.getUser',
+            'subPekerjaan' => function ($query) {
+                $query->select('id', 'sub_deskripsi_pekerjaan');
+            }
         ])
             ->whereHas('pekerjaan', function ($query) {
                 $query->whereNotNull('id')
@@ -139,13 +147,6 @@ class HomeController extends Controller
                 $riwayatQuery->whereIn('pekerjaan_id', $request->pekerjaan_id);
             }
 
-            // Filter berdasarkan prioritas pekerjaan
-            if ($request->filled('prioritas')) {
-                $riwayatQuery->whereHas('prioritas_id', function ($query) use ($request) {
-                    $query->whereIn('prioritas_id', $request->prioritas);
-                });
-            }
-
             // Filter berdasarkan PIC (user_id pada pekerjaan)
             if ($request->filled('pic')) {
                 $pic = is_array($request->pic) ? $request->pic : [$request->pic];
@@ -155,19 +156,17 @@ class HomeController extends Controller
                 });
             }
 
-            // Filter berdasarkan tanggal pembaruan
-            if ($request->filled('tanggal')) {
-                $dates = explode(" - ", $request->tanggal);
-                if (count($dates) === 2) {
-                    $startDate = date('Y-m-d', strtotime(trim($dates[0])));
-                    $endDate = date('Y-m-d', strtotime(trim($dates[1])));
-                    $riwayatQuery->whereBetween('pembaruan', [$startDate, $endDate]);
-                }
+            // Tanpa filter → limit 10
+            if (!$request->hasAny(['pekerjaan_id', 'pic'])) {
+                $riwayatQuery->orderBy('pembaruan', 'desc')->limit($request->get('limit', 10));
             }
 
+            // Jalankan query 1x
+            $riwayat = $riwayatQuery->get();
+
             return response()->json([
-                'riwayat' => $riwayatQuery->get(),
-                'riwayat_chart' => $riwayatQuery->limit(10)->get(),
+                'riwayat' => $riwayat,
+                'riwayat_chart' => $riwayat,  // chart pakai hasil yang sama
                 'status_pekerjaan' => $status_pekerjaan
             ]);
         }

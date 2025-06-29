@@ -500,6 +500,7 @@ class LogharianController extends Controller
 
         try {
             RiwayatPembaruanStatusPekerjaan::create([
+                'pekerjaan_id' => $subPekerjaan->pekerjaan_id,
                 'sub_pekerjaan_id' => $subPekerjaan->id,
                 'pembaruan' => date('Y-m-d H:i:s'),
                 'status_pembaruan' => $status->status_pekerjaan,

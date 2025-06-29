@@ -146,7 +146,8 @@
     }
 </style>
 
-<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<!-- Include stylesheet -->
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
 @endpush
 
 @section('content')
@@ -222,9 +223,9 @@
                     @php
 
                     if(Auth::user()->role == 'ASMEN') {
-                        $statusOptions = ['ditolak', 'disetujui'];
+                    $statusOptions = ['ditolak', 'disetujui'];
                     } else {
-                        $statusOptions = ['diajukan', 'revisi'];
+                    $statusOptions = ['diajukan', 'revisi'];
                     }
                     $selectedStatus = $hasil->status_laporan;
                     $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang sudah ada
@@ -359,14 +360,8 @@
 <!-- Tambah feedback modal laporan hasil -->
 @foreach($modal_hasil as $m_hasil)
 
-@php
-$statusOptions = ['diajukan', 'revisi', 'ditolak', 'disetujui'];
-$selectedStatus = $m_hasil->status_laporan;
-$filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang sudah ada
-@endphp
-
 <div class="modal fade" id="feeback{{$m_hasil->id}}" tabindex="-1" aria-labelledby="feeback{{$m_hasil->id}}" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="feeback{{$m_hasil->id}}">Tambahkan Feedback</h1>
@@ -381,8 +376,8 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
                             <label class="form-label">Feedback
                                 <span class="text-danger">*</span>
                             </label>
-                            <input type="hidden" name="feedback" value="{{ old('feedback') }}">
-                            <div id="editor-feedback" style="min-height: 160px;">{!! old('feedback') !!}</div>
+                            <input type="hidden" class="feedback-old" name="feedback" value="{{ $m_hasil->feedback_atasan }}">
+                            <div id="editor-feedback-{{$m_hasil->id}}"></div>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary text-white float-end mt-5">
@@ -470,7 +465,8 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
 <!-- Edit modal laporan hasil end -->
 
 @push('script')
-<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+
 <script>
     $(document).on("change", ".fileInputEditLaporan", function() {
         let fileId = $(this).attr("id"); // Dapatkan ID input file (misal: fileInput1)
@@ -802,47 +798,34 @@ $filteredOptions = array_diff($statusOptions, [$selectedStatus]); // Hapus yang 
 
     });
 
-    var quillInstances = {}; // Objek untuk menyimpan instance Quill
+    // Inisialisasi Quill editor hanya saat modal feedback dibuka, gunakan id unik untuk setiap editor
+    $(document).on('shown.bs.modal', function(event) {
+        const modal = $(event.target);
+        // Cek apakah modal yang dibuka adalah modal feedback
+        if (modal.attr('id') && modal.attr('id').startsWith('feeback')) {
+            // Ambil id laporan hasil dari id modal, misal: feeback12 -> 12
+            const hasilId = modal.attr('id').replace('feeback', '');
+            const editorSelector = '#editor-feedback-' + hasilId;
+            const editorDiv = modal.find(editorSelector);
+            if (editorDiv.length && !editorDiv.data('quill-initialized')) {
+                const quill = new Quill(editorSelector, {
+                    theme: 'snow'
+                });
+                editorDiv.data('quill-initialized', true);
 
-    $(document).ready(function() {
-        $(".editor").each(function() {
-            var editorId = $(this).attr('id'); // Ambil ID unik editor
-            var inputId = "#keterangan-input-" + editorId.split('-')[1]; // Sesuaikan ID input hidden
+                // Ambil isi feedback dari input hidden .feedback-old
+                const feedbackValue = modal.find('.feedback-old').val() || '';
+                quill.root.innerHTML = feedbackValue;
 
-            // Inisialisasi Quill untuk setiap editor
-            quillInstances[editorId] = new Quill("#" + editorId, {
-                theme: "snow"
-            });
-
-            // Isi editor dengan nilai dari input hidden (jika ada)
-            quillInstances[editorId].root.innerHTML = $(inputId).val();
-
-            // Event listener untuk menyimpan data saat terjadi perubahan
-            quillInstances[editorId].on("text-change", function() {
-                $(inputId).val(quillInstances[editorId].root.innerHTML);
-            });
-        });
-
-        // Pastikan editor yang benar diisi saat tombol edit diklik
-        $('.btn-edit').on('click', function() {
-            var id = $(this).data('id');
-            var keterangan = $(this).data('keterangan');
-
-            var editorId = "editor-" + id;
-            var inputId = "#keterangan-input-" + id;
-
-            // Set nilai awal editor
-            quillInstances[editorId].root.innerHTML = keterangan;
-            $(inputId).val(keterangan);
-        });
+                // Sync Quill content ke input hidden sebelum submit
+                modal.find('form').on('submit', function() {
+                    const html = quill.root.innerHTML;
+                    $(this).find('input[name="feedback"]').val(html);
+                });
+            }
+        }
     });
 
-    var quill = new Quill('#editor-feedback', {
-        theme: 'snow'
-    });
-    quill.on('text-change', function(delta, oldDelta, source) {
-        document.querySelector("input[name='feedback']").value = quill.root.innerHTML;
-    })
 </script>
 @endpush
 <!--/ Bootstrap Dark Table -->

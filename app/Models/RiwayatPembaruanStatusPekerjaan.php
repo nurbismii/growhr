@@ -17,6 +17,11 @@ class RiwayatPembaruanStatusPekerjaan extends Model
         return $this->hasOne(Pekerjaan::class, 'id', 'pekerjaan_id');
     }
 
+    public function subPekerjaan()
+    {
+        return $this->hasOne(SubPekerjaan::class, 'id', 'sub_pekerjaan_id');
+    }
+
     public function statusPekerjaan()
     {
         return $this->hasOne(StatusPekerjaan::class, 'id', 'status_pekerjaan_id');

@@ -64,8 +64,7 @@
         let currentEndDate = end.format('YYYY-MM-DD');
 
         $('.daterange').daterangepicker({
-            startDate: start,
-            endDate: end,
+            autoUpdateInput: false,
             locale: {
                 format: 'DD-MM-YYYY'
             }
@@ -92,10 +91,19 @@
             });
         }
 
-        // Tanggal berubah
         $('.daterange').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('DD-MM-YYYY') + ' - ' + picker.endDate.format('DD-MM-YYYY'));
             currentStartDate = picker.startDate.format('YYYY-MM-DD');
             currentEndDate = picker.endDate.format('YYYY-MM-DD');
+            loadFilteredData();
+        });
+
+        $('.daterange').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+            // Reset to current month if cancelled
+            let range = getCurrentMonthRange();
+            currentStartDate = range.start.format('YYYY-MM-DD');
+            currentEndDate = range.end.format('YYYY-MM-DD');
             loadFilteredData();
         });
 
