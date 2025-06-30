@@ -31,6 +31,13 @@
             </a>
         </li>
 
+        <li class="menu-item {{ request()->routeIs('audit') ? 'active' : '' }}">
+            <a href="{{ route('audit') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-history"></i>
+                <div data-i18n="Analytics">Audit Trail</div>
+            </a>
+        </li>
+
         {{-- CORE --}}
         @if(Auth::user()->role == 'ADMIN')
         <li class="menu-header small text-uppercase"><span class="menu-header-text">Core</span></li>

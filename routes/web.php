@@ -13,6 +13,7 @@ Auth::routes();
 Route::group(['middleware' => 'auth'], function () {
 
     Route::get('home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('audit', [App\Http\Controllers\HomeController::class, 'audit'])->name('audit');
     Route::post('/autosave-informasi', [App\Http\Controllers\HomeController::class, 'autosave'])->name('autosave.informasi');
 
     Route::group(['prefix' => 'insight'], function () {

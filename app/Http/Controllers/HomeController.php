@@ -186,6 +186,16 @@ class HomeController extends Controller
         ));
     }
 
+    public function audit()
+    {
+        $audits = \OwenIt\Auditing\Models\Audit::with([
+            'user',
+            'auditable' // jika auditable adalah Pekerjaan
+        ])->get();
+
+        return view('audit', compact('audits'));
+    }
+
     public function autosave(Request $request)
     {
         Storage::put('informasi-penting.txt', $request->input('informasi'));
