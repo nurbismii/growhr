@@ -191,7 +191,7 @@ class HomeController extends Controller
         $audits = \OwenIt\Auditing\Models\Audit::with([
             'user',
             'auditable' // jika auditable adalah Pekerjaan
-        ])->get();
+        ])->orderBy('id', 'desc')->get();
 
         return view('audit', compact('audits'));
     }
