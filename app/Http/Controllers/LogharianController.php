@@ -40,7 +40,8 @@ class LogharianController extends Controller
             'getPjPekerjaan',
             'getSubPekerjaan'
         ])
-            ->orderBy('status_pekerjaan_id')
+            ->orderBy('status_pekerjaan_id', 'asc')
+            ->orderByDesc('tanggal_mulai')
             ->orderByDesc('tingkat_kesulitan');
 
         // Filter role

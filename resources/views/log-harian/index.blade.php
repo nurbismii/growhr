@@ -823,11 +823,9 @@
 
         // Update sub status pekerjaan 
         $('#log-harian tbody').on('change', '.sub-status', function() {
-            let newStatusId = $(this).val(); // Ambil ID status yang dipilih
+            let newStatusId = $(this).val();
             let subPekerjaanId = $(this).data('id');
-
-            console.log(newStatusId);
-            console.log(subPekerjaanId);
+            let $select = $(this);
 
             if (!subPekerjaanId) {
                 Swal.fire({
@@ -856,12 +854,20 @@
                         title: "Berhasil!",
                         text: "Status sub pekerjaan telah diperbarui.",
                         icon: "success",
-                        showConfirmButton: true
+                        showConfirmButton: false,
+                        timer: 1500
                     });
 
-                    fetchData();
+                    // ✅ Update warna <select>
+                    updateSelectColor($select[0]);
+
+                    // ✅ Update warna baris setelah status diubah
+                    updateRowColors();
+
+                    // Tidak perlu update DOM manual, karena <select> sudah mencerminkan pilihan baru.
                 },
-                error: function(xhr) {
+                error: function() {
+                    $select.val($select.data('current')); // Rollback pilihan ke yang sebelumnya
                     Swal.fire({
                         title: "Gagal!",
                         text: "Terjadi kesalahan saat memperbarui status sub pekerjaan.",
@@ -869,7 +875,7 @@
                         confirmButtonText: "Coba Lagi"
                     });
 
-                    fetchData();
+                    // (Opsional) bisa rollback pilihan dropdown jika perlu
                 }
             });
         });
@@ -970,7 +976,7 @@
                         
                         <td>${escapeHtml(sub.get_prioritas.prioritas)}</td>
                         <td>
-                            <select class="form-select status-pekerjaan form-select-sm sub-status" data-id="${sub.id}">
+                            <select class="form-select status-pekerjaan form-select-sm sub-status" data-id="${sub.id}" data-current="${sub.get_status_pekerjaan.id}">
                                 <option value="${sub.get_status_pekerjaan.id}" selected>${escapeHtml(sub.get_status_pekerjaan.status_pekerjaan)}</option>
                                 ${statusOptions}
                             </select>
