@@ -17,9 +17,17 @@ use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
+use App\Services\OpenAIService;
 
 class LogharianController extends Controller
 {
+    protected $openAI;
+
+    public function __construct(OpenAIService $openAI)
+    {
+        $this->openAI = $openAI;
+    }
+
     public function index(Request $request)
     {
         confirmDelete('Hapus data!', 'Kamu yakin ingin menghapus data ini ?');
@@ -551,5 +559,18 @@ class LogharianController extends Controller
         return Pekerjaan::where('user_id', $user)
             ->select('id', 'deskripsi_pekerjaan')
             ->get();
+    }
+
+    public function translate(Request $request)
+    {
+        $request->validate([
+            'message' => 'required|string'
+        ]);
+
+        $translated = $this->openAI->translateToMandarin($request->message);
+
+        return response()->json([
+            'translated' => $translated
+        ]);
     }
 }

@@ -151,12 +151,20 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-12 mb-3">
+
+                        <div class="col-md-6 mb-3">
                             <label for="deskripsiTugas" class="form-label">Deskripsi Tugas
                                 <span class="text-danger">*</span>
                                 <sup>maks 45 Karakter</sup>
                             </label>
-                            <textarea class="form-control" maxlength="45" name="deskripsi_pekerjaan" id="deskripsiTugas" placeholder="Isi Tugas" rows="1" required></textarea>
+                            <textarea class="form-control" maxlength="45" name="deskripsi_pekerjaan" id="deskripsiTugas" placeholder="Isi Tugas" rows="3" required></textarea>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="translated_mandarin" class="form-label">Translated Mandarin
+                                <span class="text-danger">*</span>
+                            </label>
+                            <textarea class="form-control" name="translated_mandarin" id="translated_mandarin" rows="3" required></textarea>
                         </div>
 
                         <div class="col-md-4 mb-3">
@@ -227,6 +235,58 @@
 
 @push('script')
 <script>
+    let timer;
+    let lastInput = ""; // simpan input terakhir yg sudah diterjemahkan
+    let token = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+
+    document.getElementById("deskripsiTugas").addEventListener("input", function() {
+        clearTimeout(timer);
+
+        // debounce 1.5 detik
+        timer = setTimeout(() => {
+            translateText();
+        }, 1500);
+    });
+
+    async function translateText() {
+        let message = document.getElementById("deskripsiTugas").value.trim();
+
+        if (message === "") {
+            document.getElementById("translated_mandarin").value = "";
+            lastInput = "";
+            return;
+        }
+
+        // jika input sama dengan yang terakhir diterjemahkan, jangan request lagi
+        if (message === lastInput) {
+            return;
+        }
+
+        document.getElementById("translated_mandarin").value = "⏳ Menerjemahkan...";
+
+        try {
+            let response = await fetch("{{ route('chat.translate') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": token
+                },
+                body: JSON.stringify({
+                    message
+                })
+            });
+
+            let data = await response.json();
+
+            // simpan input terakhir yang sudah diterjemahkan
+            lastInput = message;
+
+            document.getElementById("translated_mandarin").value = data.translated;
+        } catch (e) {
+            document.getElementById("translated_mandarin").value = "⚠️ Gagal terjemahkan";
+        }
+    }
+
     function calculateDays() {
         const startDate = new Date(document.getElementById("tanggalMulai").value);
         const endDate = new Date(document.getElementById("tanggalSelesai").value);

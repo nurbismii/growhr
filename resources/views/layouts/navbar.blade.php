@@ -40,6 +40,31 @@
                 </div>
             </li> -->
 
+            <!-- Language Switcher Dropdown -->
+            <!-- Language Switcher Dropdown -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="javascript:void(0);" id="languageDropdown" role="button"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bx bx-globe fs-4"></i> Language
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 p-2" aria-labelledby="languageDropdown">
+                    <!-- Default / Reset -->
+                    <li>
+                        <a class="dropdown-item" href="javascript:void(0);" onclick="restoreOriginal()">
+                            <i class="bx bx-refresh me-2"></i> Indonesia (Default)
+                        </a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+
+                    <!-- Google Translate Dropdown -->
+                    <li class="text-center">
+                        <div id="google_translate_element"></div>
+                    </li>
+                </ul>
+            </li>
+
             <li class="nav-item navbar-dropdown dropdown-user dropdown">
                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">

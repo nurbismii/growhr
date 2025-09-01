@@ -142,6 +142,8 @@
 <body>
     <!-- Layout wrapper -->
     <div class="layout-wrapper layout-content-navbar">
+
+
         <div class="layout-container">
             <!-- Menu -->
             @include('layouts.sidebar')
@@ -179,6 +181,8 @@
                     <div class="content-backdrop fade"></div>
                 </div>
                 <!-- Content wrapper -->
+
+
             </div>
             <!-- / Layout page -->
         </div>
@@ -222,6 +226,31 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     @stack('script')
+
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'id', // bahasa default web
+                includedLanguages: 'en,zh-CN', // bahasa lain
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+
+        function restoreOriginal() {
+            // Hack untuk reset Google Translate ke bahasa asli
+            var iframe = document.querySelector('iframe.goog-te-menu-frame');
+            if (iframe) {
+                var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+                var restore = innerDoc.querySelector('.goog-te-menu2-item span.text:contains("Indonesian")');
+                if (restore) restore.click();
+            }
+
+            // Alternatif paling aman → reload halaman (reset translate)
+            location.reload();
+        }
+    </script>
+
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 
 </html>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LogharianController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -45,6 +46,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/get-kategori/{divisi_id}', [App\Http\Controllers\PelayananController::class, 'getKategori']);
     Route::get('/get-sub-kategori/{kategori_id}', [App\Http\Controllers\PelayananController::class, 'getSubKategori']);
     Route::get('/get-karyawan/{nik}', [App\Http\Controllers\PelayananController::class, 'getNamaKaryawan']);
+    Route::post('/chat/translate', [LogharianController::class, 'translate'])->name('chat.translate');
     # End Api
 
     Route::resource('laporan-masalah', 'App\Http\Controllers\LaporanmasalahController');
