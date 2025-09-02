@@ -11,19 +11,19 @@ class OpenAIService
     public function __construct()
     {
         $this->client = new Client([
-            'base_uri' => 'https://api.groq.com/openai/v1/', // pakai Groq API
+            'base_uri' => 'https://api.groq.com/openai/v1/',
             'headers' => [
-                'Authorization' => 'Bearer ' . env('GROQ_API_KEY'),
+                'Authorization' => 'Bearer ' . config('services.groq.key'),
                 'Content-Type'  => 'application/json',
             ],
-        ]); 
+        ]);
     }
 
     public function translateToMandarin($text)
     {
         try {
             $response = $this->client->post('chat/completions', [
-                'json' => [ 
+                'json' => [
                     'model' => 'openai/gpt-oss-20b',
                     'messages' => [
                         ['role' => 'system', 'content' => "You're a translator who only translates text into simple Chinese. Don't explain, just translate."],

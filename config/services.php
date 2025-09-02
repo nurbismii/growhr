@@ -30,4 +30,9 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    // config/services.php
+    'groq' => [
+        'key' => env('GROQ_API_KEY'),
+    ],
+
 ];
